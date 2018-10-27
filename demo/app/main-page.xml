@@ -14,7 +14,10 @@
 
     <Label text="wat" />
 
-    <ui:MyButton text="MyButton1" tap="onTap" />
+    <ui:MyButton
+      text="MyButton1"
+      tap="onTap"
+    />
 
     <Button
       android:id="@+id/button"

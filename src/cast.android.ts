@@ -47,10 +47,89 @@ function initializeClickListener(): void {
 declare const com: any;
 declare const android: any;
 
+
+//@Interfaces([android.support.v7.media.MediaRouter.Callback])
+class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
+  public owner: MyButton;
+
+  /*
+  constructor() {
+    super();
+    // Required by android runtime when native class is extended through TypeScript.
+    return global.__native(this);
+  }
+  */
+
+  public onProviderAdded(router, provider): void {
+    console.log("onProviderAdded");
+    //console.dir(router);
+    //console.dir(provider);
+  }
+
+  public onProviderChanged(router, provider): void {
+    console.log("onProviderChanged");
+    //console.dir(router);
+    //console.dir(provider);
+  }
+
+  public onProviderRemoved(router, provider): void {
+    console.log("onProviderRemoved");
+  }
+
+  public onRouteAdded(router, route): void {
+    console.log("onRouteAdded");
+    /*
+    if (++mRouteCount == 1) {
+      // Show the button when a device is discovered.
+      mMediaRouteButton.setVisibility(View.VISIBLE);
+    }
+    */
+  }
+
+  public onRoutePresentationDisplayChanged(router, route): void {
+    console.log("onRoutePresentationDisplayChanged");
+  }
+
+  public onRouteRemoved(router, route): void {
+    console.log("onRouteRemoved");
+    /*
+    if (--mRouteCount == 0) {
+      // Hide the button if there are no devices discovered.
+      mMediaRouteButton.setVisibility(View.GONE);
+    }
+    */
+  }
+
+  public onRouteSelected(router, info): void {
+    console.log("onRouteSelected");
+    // Handle route selection.
+    //mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
+
+    // Just display a message for now; In a real app this would be the
+    // hook to connect to the selected device and launch the receiver
+    // app
+    /*
+    Toast.makeText(MediaRouterButtonActivity.this,
+      getString(R.string.todo_connect), Toast.LENGTH_LONG).show();
+    */
+  }
+
+  public onRouteUnselected(router, info): void {
+    console.log("onRouteUnselected: info=" + info);
+    //mSelectedDevice = null;
+  }
+
+  public onRouteVolumeChanged(router, route): void {
+    console.log("onRouteVolumeChanged");
+  }
+}
+
+
+//@Interfaces([android.support.v7.app.MediaRouteActionProvider])
 export class MyButton extends MyButtonBase {
 
   // added for TypeScript intellisense.
-  nativeView: android.widget.Button;
+  //nativeView: android.support.v7.app.MediaRouteButton;
 
   /**
    * Creates new native button.
@@ -60,17 +139,53 @@ export class MyButton extends MyButtonBase {
     initializeClickListener();
 
     // Create new instance of android.widget.Button.
-    const button = new android.widget.Button(this._context);
+    //const button = new android.widget.Button(this._context);
 
     // set onClickListener on the nativeView.
-    button.setOnClickListener(clickListener);
+    //button.setOnClickListener(clickListener);
+
+    const context = application.android.context.getApplicationContext();
+
+    const MediaRouter = android.support.v7.media.MediaRouter;
+    const MediaRouteButton = new android.support.v7.app.MediaRouteButton(this._context);
+    const MediaRouteSelector = android.support.v7.media.MediaRouteSelector;
+
+    const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
+    CastButtonFactory.setUpMediaRouteButton(context, MediaRouteButton);
 
     // getCastContext
-    const context = application.android.context.getApplicationContext();
+    /*
+    const CastContext = com.google.android.gms.cast.framework.CastContext;
     const mCastContext = com.google.android.gms.cast.framework.CastContext.getSharedInstance(context);
+    console.log('mCastContext');
     console.dir(mCastContext);
+    */
 
-    return button;
+    // Get strings?
+    // const CastMediaControlIntent = com.google.android.gms.cast.CastMediaControlIntent;
+    // CastMediaControlIntent.categoryForCast(getResources().getString(R.string.app_id))
+
+    const mMediaRouter = MediaRouter.getInstance(context);
+    //console.log('mMediaRouter');
+    //console.dir(mMediaRouter);
+    const mMediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory('APP_ID').build();
+    //console.log('mMediaRouteSelector');
+    //console.dir(mMediaRouteSelector);
+    // Create a MediaRouter callback for discovery events
+    const mMediaRouterCallback = new MyMediaRouterCallback();
+
+    // Set the MediaRouteButton selector for device discovery.
+    //const mMediaRouteButton = (MediaRouteButton) findViewById(R.id.media_route_button);  // button
+    //const mMediaRouteButton = MediaRouteButton;  // button
+    MediaRouteButton.setRouteSelector(mMediaRouteSelector);
+
+    // Add the callback to start device discovery
+    mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+
+    //const View = android.view.View;
+    //MediaRouteButton.setVisibility(View.VISIBLE);
+
+    return MediaRouteButton;
   }
 
   /**
@@ -100,9 +215,11 @@ export class MyButton extends MyButtonBase {
   }
 
   // transfer JS text value to nativeView.
+  /*
   [textProperty.setNative](value: string) {
     this.nativeView.setText(value);
   }
+  */
 
   // gets the default native value for opacity property.
   // Alpha could be controlled from Android theme.
