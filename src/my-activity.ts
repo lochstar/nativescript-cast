@@ -1,46 +1,110 @@
+import * as application from 'tns-core-modules/application';
+
 import {
   setActivityCallbacks,
-  setFragmentCallbacks,
   AndroidActivityCallbacks,
-  AndroidFragmentCallbacks
-} from "ui/frame";
-import { View } from "ui/page";
+} from 'tns-core-modules/ui/frame';
 
-// android.app.Activity
-// android.support.v4.app.FragmentActivity
+declare const com: any;
+declare const android: any;
 
-export interface AndroidFragmentActivityCallbacks {
-  getRootView(): View;
-  resetActivityContent(activity: any): void;
+class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
+  public onProviderAdded(router, provider): void {
+    console.log("onProviderAdded");
+    //console.dir(router);
+    //console.dir(provider);
+  }
 
-  onCreate(activity: any, savedInstanceState: any, superFunc: Function): void;
-  onSaveInstanceState(activity: any, outState: any, superFunc: Function): void;
-  onStart(activity: any, superFunc: Function): void;
-  onStop(activity: any, superFunc: Function): void;
-  onDestroy(activity: any, superFunc: Function): void;
-  onBackPressed(activity: any, superFunc: Function): void;
-  onRequestPermissionsResult(activity: any, requestCode: number, permissions: Array<String>, grantResults: Array<number>, superFunc: Function): void;
-  onActivityResult(activity: any, requestCode: number, resultCode: number, data: any, superFunc: Function);
+  public onProviderChanged(router, provider): void {
+    console.log("onProviderChanged");
+    //console.dir(router);
+    //console.dir(provider);
+  }
 
-  /*
-  onNewIntent(activity: any, superFunc: Function);
-  onPause(activity: any, superFunc: Function);
-  onPostResume(activity: any, superFunc: Function);
-  onResume(activity: any, superFunc: Function);
-  onResumeFragments(activity: any, superFunc: Function);
-  */
+  public onProviderRemoved(router, provider): void {
+    console.log("onProviderRemoved");
+  }
+
+  public onRouteAdded(router, route): void {
+    console.log("onRouteAdded");
+    /*
+    if (++mRouteCount == 1) {
+      // Show the button when a device is discovered.
+      mMediaRouteButton.setVisibility(View.VISIBLE);
+    }
+    */
+  }
+
+  public onRoutePresentationDisplayChanged(router, route): void {
+    console.log("onRoutePresentationDisplayChanged");
+  }
+
+  public onRouteRemoved(router, route): void {
+    console.log("onRouteRemoved");
+    /*
+    if (--mRouteCount == 0) {
+      // Hide the button if there are no devices discovered.
+      mMediaRouteButton.setVisibility(View.GONE);
+    }
+    */
+  }
+
+  public onRouteSelected(router, info): void {
+    console.log("onRouteSelected");
+    // Handle route selection.
+    //mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
+
+    // Just display a message for now; In a real app this would be the
+    // hook to connect to the selected device and launch the receiver
+    // app
+    /*
+    Toast.makeText(MediaRouterButtonActivity.this,
+      getString(R.string.todo_connect), Toast.LENGTH_LONG).show();
+    */
+  }
+
+  public onRouteUnselected(router, info): void {
+    console.log("onRouteUnselected: info=" + info);
+    //mSelectedDevice = null;
+  }
+
+  public onRouteVolumeChanged(router, route): void {
+    console.log("onRouteVolumeChanged");
+  }
 }
 
-@JavaProxy("org.nativescript.currencyconversion.MyNativeScriptActivity")
+@JavaProxy("org.nativescript.cast.MyNativeScriptActivity")
 class MyNativeScriptActivity extends android.support.v4.app.FragmentActivity {
   private _callbacks: AndroidActivityCallbacks;
 
   public onCreate(savedInstanceState: android.os.Bundle): void {
-    console.log('onCreate');
+    console.log('MyNativeScriptActivity: onCreate');
     if (!this._callbacks) {
-      console.log('setting callbacks');
       setActivityCallbacks(this);
     }
+
+    const context = application.android.context.getApplicationContext();
+    const MediaRouter = android.support.v7.media.MediaRouter;
+    const MediaRouteSelector = android.support.v7.media.MediaRouteSelector;
+
+    const CastMediaControlIntent = com.google.android.gms.cast.CastMediaControlIntent;
+
+    // Get strings?
+    // CastMediaControlIntent.categoryForCast(getResources().getString(R.string.app_id))
+
+    const mMediaRouter = MediaRouter.getInstance(context);
+
+    //const mMediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory('4E0FE981').build();
+    const mMediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory(CastMediaControlIntent.categoryForCast('4E0FE981')).build();
+
+    // Create a MediaRouter callback for discovery events
+    const mMediaRouterCallback = new MyMediaRouterCallback();
+
+    // Add the callback to start device discovery
+    mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+
+    //const View = android.view.View;
+    //MediaRouteButton.setVisibility(View.VISIBLE);
 
     this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
   }
@@ -72,34 +136,4 @@ class MyNativeScriptActivity extends android.support.v4.app.FragmentActivity {
   public onActivityResult(requestCode: number, resultCode: number, data: android.content.Intent): void {
     this._callbacks.onActivityResult(this, requestCode, resultCode, data, super.onActivityResult);
   }
-
-  /*
-  public onNewIntent(activity, superFunc: Function): void {
-    console.log('onNewIntent');
-    superFunc.call(activity);
-  }
-  */
-
-  /*
-  public onPause(): void {
-    console.log('onPause');
-    this._callbacks.onPause(this, super.onPause);
-  }
-
-  public onPostResume(): void {
-    console.log('onPostResume');
-    this._callbacks.onPostResume(this, super.onPostResume);
-  }
-
-  public onResume(activity, superFunc: Function) {
-    console.log('onResume');
-    //superFunc.call(activity);
-    //this._callbacks.onResume(this, super.onResume);
-  }
-
-  public onResumeFragments(): void {
-    console.log('onResumeFragments');
-    this._callbacks.onResumeFragments(this, super.onResumeFragments);
-  }
-  */
 }

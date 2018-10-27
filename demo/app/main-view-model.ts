@@ -19,11 +19,14 @@ export class HelloWorldModel extends Observable {
     console.dir(this.castContext);
   }
 
+  onCastTap(args: EventData) {
+    console.log('onCastTap');
+    console.log(args);
+  }
+
   onTap(args: EventData) {
     this.count++;
     const button = <Button>args.object;
     button.text = `Tapped ${this.count} times`;
-
-    this.cast.setUpCastButton();
   }
 }

@@ -7,7 +7,6 @@ declare const com: any;
 
 // Event handler for Page 'loaded' event attached in main-page.xml
 export function pageLoaded(args: observable.EventData) {
-    console.log('pageLoaded');
     // Get the event sender
     let page = <pages.Page>args.object;
     //page.bindingContext = new HelloWorldModel();

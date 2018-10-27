@@ -1,13 +1,13 @@
-import { MyButtonBase, textProperty, myOpacityProperty } from "./cast.common";
+import { CastButtonBase, textProperty, myOpacityProperty } from './cast.common';
 
 // class that handles all native 'tap' callbacks
 class TapHandler extends NSObject {
 
   public tap(nativeButton: UIButton, nativeEvent: _UIEvent) {
     // Gets the owner from the nativeView.
-    const owner: MyButton = (<any>nativeButton).owner;
+    const owner: CastButton = (<any>nativeButton).owner;
     if (owner) {
-      owner.notify({ eventName: MyButtonBase.tapEvent, object: owner });
+      owner.notify({ eventName: CastButtonBase.tapEvent, object: owner });
     }
   }
 
@@ -18,7 +18,7 @@ class TapHandler extends NSObject {
 
 const handler = TapHandler.new();
 
-export class MyButton extends MyButtonBase {
+export class CastButton extends CastButtonBase {
 
   // added for TypeScript intellisense.
   nativeView: UIButton;
