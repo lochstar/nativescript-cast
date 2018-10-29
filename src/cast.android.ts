@@ -13,12 +13,15 @@ export class CastButton extends CastButtonBase {
 
   //nativeView: android.support.v7.app.MediaRouteButton;
   nativeView: any;
+  mMediaRouter: any;
+  mMediaRouteSelector: any;
+  mMediaRouterCallback: any;
 
   /**
    * Creates new native button.
    */
   public createNativeView(): Object {
-    const appContext = application.android.context.getApplicationContext();
+    const appContext = ad.getApplicationContext();
     const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
 
     // Create new instance of MediaRouteButton
@@ -51,10 +54,27 @@ export class CastButton extends CastButtonBase {
     // Remove reference from native view to this instance.
     (<any>this.nativeView).owner = null;
 
+    this.removeCallback();
+
     // If you want to recycle nativeView and have modified the nativeView
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
+  }
+
+  addCallback(cb): void {
+    const appContext = ad.getApplicationContext();
+    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
+    this.mMediaRouter = MediaRouter.getInstance(appContext);
+    this.mMediaRouteSelector = new MediaRouteSelector.Builder().build();
+    this.mMediaRouterCallback = cb();
+
+    // Add the callback to start device discovery
+    this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+  }
+
+  removeCallback(): void {
+    this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
   }
 
   [textProperty.setNative](value: string) {
@@ -62,13 +82,6 @@ export class CastButton extends CastButtonBase {
   }
 
   [mediaRouterCallbackProperty.setNative](value: any) {
-    const context = ad.getApplicationContext();
-    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
-    const mMediaRouter = MediaRouter.getInstance(context);
-    const mMediaRouteSelector = new MediaRouteSelector.Builder().build();
-    const mMediaRouterCallback = value();
-
-    // Add the callback to start device discovery
-    mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+    this.addCallback(value);
   }
 }

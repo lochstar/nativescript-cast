@@ -4,18 +4,26 @@ import { Page, NavigatedData } from "tns-core-modules/ui/page";
 import { ad } from 'tns-core-modules/utils/utils';
 import { EventData, View } from 'tns-core-modules/ui/core/view';
 
-//import { testCastFunction } from 'nativescript-cast';
-
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
+  public parent: MainViewModel;
+
+  constructor(parent) {
+    super();
+
+    this.parent = parent;
+
+    return global.__native(this);
+  }
+
   public onProviderAdded(router, provider): void {
     console.log('onProviderAdded');
-    console.log(this.super);
   }
 
   public onProviderChanged(router, provider): void {
     console.log('onProviderChanged');
     //console.dir(router);
     //console.dir(provider);
+    //this.parent.hideButton();
   }
 
   public onProviderRemoved(router, provider): void {
@@ -25,9 +33,19 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteAdded(router, route): void {
     console.log('onRouteAdded');
     /*
-    if (++mRouteCount == 1) {
-      // Show the button when a device is discovered.
-      mMediaRouteButton.setVisibility(View.VISIBLE);
+    if (++this.parent.mRouteCount == 1) {
+      // Show the button when a device is discovered
+      this.parent.showButton();
+    }
+    */
+  }
+
+  public onRouteChanged(router, route): void {
+    console.log('onRouteChanged');
+    /*
+    if (++this.parent.mRouteCount == 1) {
+      // Show the button when a device is discovered
+      this.parent.showButton();
     }
     */
   }
@@ -39,9 +57,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteRemoved(router, route): void {
     console.log('onRouteRemoved');
     /*
-    if (--mRouteCount == 0) {
-      // Hide the button if there are no devices discovered.
-      mMediaRouteButton.setVisibility(View.GONE);
+    if (--this.parent.mRouteCount == 0) {
+      // Hide the button if there are no devices discovered
+      this.parent.hideButton();
     }
     */
   }
@@ -70,10 +88,13 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 }
 
-export class HelloWorldModel extends Observable {
+export class MainViewModel extends Observable {
   public count: number;
   public message: string;
   public castVisibility: string;
+  //public mediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
+  //public mediaRouterCallback: any;
+  public mRouteCount: number;
 
   constructor() {
     super();
@@ -81,42 +102,34 @@ export class HelloWorldModel extends Observable {
     this.count = 0;
     this.message = 'hello';
     this.castVisibility = 'visible';
+    this.mRouteCount = 0;
 
-    //this.mMediaRouteButton = page.getViewById<layout.StackLayout>('cast');
-
-    // Init cast button with a MediaRouter.Callback
-    //this.initCastButton(new MediaRouterCallback());
+    //this.mediaRouterCallback = new MediaRouterCallback();
+    //this.mediaRouterCallback = new MediaRouterCallback(this);
   }
 
-  /*
-  initCastButton(mMediaRouterCallback: object) {
-    const context = ad.getApplicationContext();
-    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
-    const mMediaRouter = MediaRouter.getInstance(context);
-    const mMediaRouteSelector = new MediaRouteSelector.Builder().build();
-
-    // Add the callback to start device discovery
-    mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
-  }
-  */
+  //public mediaRouterCallback = new MediaRouterCallback()
 
   mediaRouterCallback() {
-    return new MediaRouterCallback();
+    return new MediaRouterCallback(this);
+  }
+
+  showButton(): void {
+    this.set('castVisibility', 'visible');
+  }
+
+  hideButton(): void {
+    this.set('castVisibility', 'collapsed');
   }
 
   onTap(args: EventData) {
     this.count++;
     const button = <Button>args.object;
-    button.text = `Tapped ${this.count} times`;
+    button.text = `Tapped ${this.mRouteCount} times`;
 
-    const page = button.page;
-    console.log("Page reference from button tap event: ", page);
+    //const page = button.page;
+    //console.log("Page reference from button tap event: ", page);
 
-    //const mMediaRouteButton = page.getViewById<layout.StackLayout>('cast');
-    //mMediaRouteButton.visibility = mMediaRouteButton.visibility === 'visible' ? 'collapsed' : 'visible';
-    const v = this.castVisibility === 'visible' ? 'collapsed' : 'visible';
-    console.log(v);
-
-    this.set('castVisibility', v);
+    this.castVisibility === 'visible' ? this.hideButton() : this.showButton();
   }
 }
