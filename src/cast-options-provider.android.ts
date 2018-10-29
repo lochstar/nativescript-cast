@@ -2,7 +2,7 @@ import * as application from 'tns-core-modules/application';
 
 declare const com: any;
 
-@JavaProxy('com.tns.CastOptionsProvider')
+@JavaProxy('com.codelab.CastOptionsProvider')
 @Interfaces([com.google.android.gms.cast.framework.OptionsProvider])
 class CastOptionsProvider extends java.lang.Object {
   constructor() {

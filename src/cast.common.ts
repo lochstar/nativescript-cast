@@ -1,54 +1,6 @@
-import { CastButton as ButtonDefinition } from "./cast";
-import { View, Style, Property, CssProperty, isIOS, HorizontalAlignment } from "tns-core-modules/ui/core/view";
+import { CastButton } from './cast';
+import { View } from 'tns-core-modules/ui/core/view';
 
-export const textProperty = new Property<CastButtonBase, string>({ name: "text", defaultValue: "", affectsLayout: isIOS });
-export const horizontalAlignmentProperty = new Property<CastButtonBase, string>({ name: "horizontalAlignment", defaultValue: "right", affectsLayout: isIOS });
-
-// using myOpacity instead of opacity as it will override the one defined in `tns-core-modules`
-export const myOpacityProperty = new CssProperty<Style, number>({
-  name: "myOpacity", cssName: "my-opacity", defaultValue: 1, valueConverter: (v) => {
-    const x = parseFloat(v);
-    if (x < 0 || x > 1) {
-      throw new Error(`opacity accepts values in the range [0, 1]. Value: ${v}`);
-    }
-
-    return x;
-  }
-});
-
-export abstract class CastButtonBase extends View implements ButtonDefinition {
-  public static tapEvent = "tap";
-  text: string;
-
-  // Exposing myOpacity style property through CastButton.
-  // This is all optional. If not exposed users will have to set it
-  // through style: <control:CastButton style.myOpacity='0.4' />.
-  get myOpacity(): number {
-    return this.style.myOpacity;
-  }
-  set myOpacity(value: number) {
-    this.style.myOpacity = value;
-  }
+export abstract class CastButtonBase extends View implements CastButton {
+  public static tapEvent = 'tap';
 }
-
-// Augmenting Style definition so it includes our myOpacity property
-declare module "tns-core-modules/ui/styling/style" {
-  interface Style {
-    myOpacity: number;
-  }
-}
-
-declare module "tns-core-modules/ui/styling/style" {
-  interface Style {
-    horizontalAlignment: HorizontalAlignment;
-  }
-}
-
-// Defines 'text' property on CastButtonBase class.
-textProperty.register(CastButtonBase);
-
-// Defines 'myOpacity' property on Style class.
-myOpacityProperty.register(Style);
-
-// Defines 'myOpacity' property on Style class.
-horizontalAlignmentProperty.register(CastButtonBase);

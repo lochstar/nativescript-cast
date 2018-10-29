@@ -1,5 +1,5 @@
 import { Observable } from 'tns-core-modules/data/observable';
-import { Cast } from 'nativescript-cast';
+//import { Cast } from 'nativescript-cast';
 
 export class HelloWorldModel extends Observable {
   public count: number;
@@ -12,11 +12,11 @@ export class HelloWorldModel extends Observable {
     super();
 
     this.count = 0;
-    this.cast = new Cast();
-    this.message = this.cast.getVersion();
-    this.castContext = this.cast.getCastContext();
+    //this.cast = new Cast();
+    //this.message = this.cast.getVersion();
+    //this.castContext = this.cast.getCastContext();
 
-    console.dir(this.castContext);
+    //console.dir(this.castContext);
   }
 
   onCastTap(args: EventData) {

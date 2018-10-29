@@ -1,9 +1,5 @@
 import * as application from 'tns-core-modules/application';
-import {
-  CastButtonBase,
-  textProperty,
-  myOpacityProperty
-} from "./cast.common";
+import { CastButtonBase } from './cast.common';
 
 declare const com: any;
 declare const android: any;
@@ -49,7 +45,6 @@ function initializeClickListener(): void {
 
 export class CastButton extends CastButtonBase {
 
-  // added for TypeScript intellisense.
   //nativeView: android.support.v7.app.MediaRouteButton;
   context: any;
   nativeView: any;
@@ -63,14 +58,11 @@ export class CastButton extends CastButtonBase {
     // Initialize ClickListener.
     initializeClickListener();
 
-    // Create new instance of android.widget.Button.
-    //const button = new android.widget.Button(this._context);
-    //button.setOnClickListener(clickListener);
-
+    // Create new instance of android.support.v7.app.MediaRouteButton
     this.nativeView = new android.support.v7.app.MediaRouteButton(this._context);
     const mMediaRouteButton = this.nativeView;
 
-    // TODOL remove
+    // TODO: remove listener
     mMediaRouteButton.setOnClickListener(clickListener);
 
     const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
@@ -103,26 +95,5 @@ export class CastButton extends CastButtonBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
-  }
-
-  // transfer JS text value to nativeView.
-  /*
-  [textProperty.setNative](value: string) {
-    this.nativeView.setText(value);
-  }
-  */
-
-  // gets the default native value for opacity property.
-  // Alpha could be controlled from Android theme.
-  // Thus we take the default native value from the nativeView.
-  // If view is recycled the value returned from this method
-  // will be passed to [myOppacityProperty.setNative]
-  [myOpacityProperty.getDefault](): number {
-    return this.nativeView.getAlpha()
-  }
-
-  // set opacity to the native view.
-  [myOpacityProperty.setNative](value: number) {
-    return this.nativeView.setAlpha(value);
   }
 }

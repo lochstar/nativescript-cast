@@ -1,4 +1,4 @@
-import { CastButtonBase, textProperty, myOpacityProperty } from './cast.common';
+import { CastButtonBase } from './cast.common';
 
 // class that handles all native 'tap' callbacks
 class TapHandler extends NSObject {
@@ -60,22 +60,5 @@ export class CastButton extends CastButtonBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
-  }
-
-  // transfer JS text value to nativeView.
-  [textProperty.setNative](value: string) {
-    this.nativeView.setTitleForState(value, UIControlState.Normal);
-  }
-
-  // gets the default native value for opacity property.
-  // If view is recycled the value returned from this method
-  // will be passed to [myOppacityProperty.setNative]
-  [myOpacityProperty.getDefault](): number {
-    return this.nativeView.alpha;
-  }
-
-  // set opacity to the native view.
-  [myOpacityProperty.setNative](value: number) {
-    return this.nativeView.alpha = value;
   }
 }

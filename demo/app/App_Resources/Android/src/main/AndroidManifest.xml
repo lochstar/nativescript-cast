@@ -26,7 +26,7 @@
 		android:theme="@style/AppTheme">
 
 		<activity
-			android:name="org.nativescript.cast.MyNativeScriptActivity"
+			android:name="com.codelab.cast.CastActivity"
 			android:label="@string/title_activity_kimera"
 			android:configChanges="keyboardHidden|orientation|screenSize"
 			android:theme="@style/LaunchScreenTheme">

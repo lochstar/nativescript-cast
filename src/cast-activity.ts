@@ -1,5 +1,4 @@
 import * as application from 'tns-core-modules/application';
-
 import {
   setActivityCallbacks,
   AndroidActivityCallbacks,
@@ -10,23 +9,23 @@ declare const android: any;
 
 class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public onProviderAdded(router, provider): void {
-    console.log("onProviderAdded");
+    console.log('onProviderAdded');
     //console.dir(router);
     //console.dir(provider);
   }
 
   public onProviderChanged(router, provider): void {
-    console.log("onProviderChanged");
+    console.log('onProviderChanged');
     //console.dir(router);
     //console.dir(provider);
   }
 
   public onProviderRemoved(router, provider): void {
-    console.log("onProviderRemoved");
+    console.log('onProviderRemoved');
   }
 
   public onRouteAdded(router, route): void {
-    console.log("onRouteAdded");
+    console.log('onRouteAdded');
     /*
     if (++mRouteCount == 1) {
       // Show the button when a device is discovered.
@@ -36,11 +35,11 @@ class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callbac
   }
 
   public onRoutePresentationDisplayChanged(router, route): void {
-    console.log("onRoutePresentationDisplayChanged");
+    console.log('onRoutePresentationDisplayChanged');
   }
 
   public onRouteRemoved(router, route): void {
-    console.log("onRouteRemoved");
+    console.log('onRouteRemoved');
     /*
     if (--mRouteCount == 0) {
       // Hide the button if there are no devices discovered.
@@ -50,7 +49,7 @@ class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callbac
   }
 
   public onRouteSelected(router, info): void {
-    console.log("onRouteSelected");
+    console.log('onRouteSelected');
     // Handle route selection.
     //mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
 
@@ -64,21 +63,21 @@ class MyMediaRouterCallback extends android.support.v7.media.MediaRouter.Callbac
   }
 
   public onRouteUnselected(router, info): void {
-    console.log("onRouteUnselected: info=" + info);
+    console.log('onRouteUnselected: info=' + info);
     //mSelectedDevice = null;
   }
 
   public onRouteVolumeChanged(router, route): void {
-    console.log("onRouteVolumeChanged");
+    console.log('onRouteVolumeChanged');
   }
 }
 
-@JavaProxy("org.nativescript.cast.MyNativeScriptActivity")
-class MyNativeScriptActivity extends android.support.v4.app.FragmentActivity {
+@JavaProxy('com.codelab.cast.CastActivity')
+class CastActivity extends android.support.v4.app.FragmentActivity {
   private _callbacks: AndroidActivityCallbacks;
 
   public onCreate(savedInstanceState: android.os.Bundle): void {
-    console.log('MyNativeScriptActivity: onCreate');
+    console.log('CastActivity: onCreate');
     if (!this._callbacks) {
       setActivityCallbacks(this);
     }
