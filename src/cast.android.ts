@@ -10,7 +10,6 @@ declare const com: any;
 declare const android: any;
 
 export class CastButton extends CastButtonBase {
-
   //nativeView: android.support.v7.app.MediaRouteButton;
   nativeView: any;
   mMediaRouter: any;
@@ -64,10 +63,15 @@ export class CastButton extends CastButtonBase {
 
   addCallback(cb): void {
     const appContext = ad.getApplicationContext();
-    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
+    //const CastMediaControlIntent = com.google.android.gms.cast.CastMediaControlIntent;
+    const { MediaRouter, MediaRouteSelector, MediaControlIntent } = android.support.v7.media;
     this.mMediaRouter = MediaRouter.getInstance(appContext);
-    this.mMediaRouteSelector = new MediaRouteSelector.Builder().build();
-    this.mMediaRouterCallback = cb();
+    this.mMediaRouteSelector = new MediaRouteSelector.Builder()
+      //.addControlCategory(CastMediaControlIntent.categoryForCast(appId))
+      .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
+      .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
+      .build();
+    this.mMediaRouterCallback = cb;
 
     // Add the callback to start device discovery
     this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);

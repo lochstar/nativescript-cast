@@ -1,3 +1,4 @@
+import * as application from 'tns-core-modules/application';
 import {
   setActivityCallbacks,
   AndroidActivityCallbacks,
