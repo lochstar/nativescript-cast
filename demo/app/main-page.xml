@@ -6,11 +6,7 @@
 >
   <ActionBar title="Cast">
     <ActionItem>
-      <ui:CastButton
-        tap="onCastTap"
-        opacity="1"
-        class="btn-cast"
-      />
+      <ui:CastButton />
     </ActionItem>
   </ActionBar>
 
