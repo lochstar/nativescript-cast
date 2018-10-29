@@ -10,4 +10,7 @@ export function pageLoaded(args: observable.EventData) {
   // Get the event sender
   let page = <pages.Page>args.object;
   page.bindingContext = new HelloWorldModel();
+
+  //const mMediaRouteButton = page.getViewById<layout.StackLayout>('cast');
+  //mMediaRouteButton.visibility = mMediaRouteButton.visibility === 'visible' ? 'collapsed' : 'visible';
 }

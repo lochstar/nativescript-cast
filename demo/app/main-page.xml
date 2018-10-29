@@ -5,13 +5,17 @@
   xmlns:ui="nativescript-cast"
 >
   <ActionBar title="Cast">
-    <ActionItem>
-      <ui:CastButton mediaRouterCallback="{{ mediaRouterCallback }}" />
+    <ActionItem visibility="{{ castVisibility }}">
+      <ui:CastButton
+        id="cast"
+        mediaRouterCallback="{{ mediaRouterCallback }}"
+      />
     </ActionItem>
   </ActionBar>
 
   <StackLayout class="p-20">
     <Label text="{{ message }}" class="t-20 text-center c-black" textWrap="true"/>
+    <Label text="{{ castVisibility }}" class="t-20 text-center c-black" textWrap="true"/>
     <Button
       text="Tap Me!"
       tap="{{ onTap }}"
