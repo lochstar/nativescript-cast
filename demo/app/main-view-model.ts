@@ -1,6 +1,7 @@
 import * as application from 'tns-core-modules/application';
 import { Observable } from 'tns-core-modules/data/observable';
-import { View } from 'tns-core-modules/ui/core/view';
+import { ad } from 'tns-core-modules/utils/utils';
+import { EventData, View } from 'tns-core-modules/ui/core/view';
 //import { testCastFunction } from 'nativescript-cast';
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
@@ -78,32 +79,24 @@ export class HelloWorldModel extends Observable {
     this.count = 0;
     this.message = 'hello';
 
-    console.dir(this);
-
-    // Init cast button with APP_ID and a MediaRouter.Callback
-    this.initCastButton(new MediaRouterCallback());
+    // Init cast button with a MediaRouter.Callback
+    //this.initCastButton(new MediaRouterCallback());
   }
 
+  /*
   initCastButton(mMediaRouterCallback: object) {
-    const context = application.android.context.getApplicationContext();
-    const MediaRouter = android.support.v7.media.MediaRouter;
-    const MediaRouteSelector = android.support.v7.media.MediaRouteSelector;
-
-    const CastMediaControlIntent = com.google.android.gms.cast.CastMediaControlIntent;
-
-    // Get strings?
-    // CastMediaControlIntent.categoryForCast(getResources().getString(R.string.app_id))
-
+    const context = ad.getApplicationContext();
+    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
     const mMediaRouter = MediaRouter.getInstance(context);
-
-    //const mMediaRouteSelector = new MediaRouteSelector.Builder().addControlCategory(CastMediaControlIntent.categoryForCast(appId)).build();
     const mMediaRouteSelector = new MediaRouteSelector.Builder().build();
 
     // Add the callback to start device discovery
     mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+  }
+  */
 
-    //const View = android.view.View;
-    //MediaRouteButton.setVisibility(View.VISIBLE);
+  mediaRouterCallback() {
+    return new MediaRouterCallback();
   }
 
   onTap(args: EventData) {

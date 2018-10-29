@@ -1,5 +1,10 @@
 import * as application from 'tns-core-modules/application';
-import { CastButtonBase } from './cast.common';
+import { ad } from 'tns-core-modules/utils/utils';
+import {
+  CastButtonBase,
+  textProperty,
+  mediaRouterCallbackProperty
+} from './cast.common';
 
 declare const com: any;
 declare const android: any;
@@ -29,11 +34,10 @@ export class CastButton extends CastButtonBase {
    * Initializes properties/listeners of the native view.
    */
   initNativeView(): void {
-    console.log('initNativeView');
-
     // Attach the owner to nativeView.
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
+
     super.initNativeView();
   }
 
@@ -51,5 +55,20 @@ export class CastButton extends CastButtonBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
+  }
+
+  [textProperty.setNative](value: string) {
+    this.nativeView.setText(value);
+  }
+
+  [mediaRouterCallbackProperty.setNative](value: any) {
+    const context = ad.getApplicationContext();
+    const { MediaRouter, MediaRouteSelector } = android.support.v7.media;
+    const mMediaRouter = MediaRouter.getInstance(context);
+    const mMediaRouteSelector = new MediaRouteSelector.Builder().build();
+    const mMediaRouterCallback = value();
+
+    // Add the callback to start device discovery
+    mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
   }
 }

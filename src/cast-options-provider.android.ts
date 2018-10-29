@@ -1,4 +1,5 @@
 import * as application from 'tns-core-modules/application';
+import { ad } from 'tns-core-modules/utils/utils';
 
 declare const com: any;
 
@@ -11,8 +12,11 @@ class CastOptionsProvider extends java.lang.Object {
   }
 
   public getCastOptions(appContext: any) {
-    console.log('getCastOptions... pass APP_ID ?');
-    return new com.google.android.gms.cast.framework.CastOptions.Builder().setReceiverApplicationId('4E0FE981').build();
+    // Get app_id from strings.xml
+    const appStringId = ad.resources.getStringId('app_id');
+    const appId = ad.getApplication().getString(appStringId);
+
+    return new com.google.android.gms.cast.framework.CastOptions.Builder().setReceiverApplicationId(appId).build();
   }
 
   public getAdditionalSessionProviders(context: any) {
