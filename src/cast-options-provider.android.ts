@@ -1,7 +1,4 @@
-import * as application from 'tns-core-modules/application';
 import { ad } from 'tns-core-modules/utils/utils';
-
-declare const com: any;
 
 @JavaProxy('com.codelab.CastOptionsProvider')
 @Interfaces([com.google.android.gms.cast.framework.OptionsProvider])

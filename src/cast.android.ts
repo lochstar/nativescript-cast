@@ -1,27 +1,21 @@
-import * as application from 'tns-core-modules/application';
 import { ad } from 'tns-core-modules/utils/utils';
-import {
-  CastButtonBase,
-  textProperty,
-  mediaRouterCallbackProperty
-} from './cast.common';
+import { CastButtonBase, mediaRouterCallbackProperty } from './cast.common';
 
-declare const com: any;
-declare const android: any;
+const { MediaRouter, MediaRouteSelector, MediaControlIntent } = android.support.v7.media;
+const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
 
 export class CastButton extends CastButtonBase {
-  //nativeView: android.support.v7.app.MediaRouteButton;
-  nativeView: any;
-  mMediaRouter: any;
-  mMediaRouteSelector: any;
-  mMediaRouterCallback: any;
+  nativeView: android.support.v7.app.MediaRouteButton;
+
+  mMediaRouter: android.support.v7.media.MediaRouter;
+  mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
+  mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
 
   /**
    * Creates new native button.
    */
   public createNativeView(): Object {
     const appContext = ad.getApplicationContext();
-    const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
 
     // Create new instance of MediaRouteButton
     this.nativeView = new android.support.v7.app.MediaRouteButton(this._context);
@@ -63,11 +57,8 @@ export class CastButton extends CastButtonBase {
 
   addCallback(cb): void {
     const appContext = ad.getApplicationContext();
-    //const CastMediaControlIntent = com.google.android.gms.cast.CastMediaControlIntent;
-    const { MediaRouter, MediaRouteSelector, MediaControlIntent } = android.support.v7.media;
     this.mMediaRouter = MediaRouter.getInstance(appContext);
     this.mMediaRouteSelector = new MediaRouteSelector.Builder()
-      //.addControlCategory(CastMediaControlIntent.categoryForCast(appId))
       .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
       .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
       .build();
@@ -79,10 +70,6 @@ export class CastButton extends CastButtonBase {
 
   removeCallback(): void {
     this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
-  }
-
-  [textProperty.setNative](value: string) {
-    this.nativeView.setText(value);
   }
 
   [mediaRouterCallbackProperty.setNative](value: any) {

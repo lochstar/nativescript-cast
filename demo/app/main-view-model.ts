@@ -1,6 +1,8 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
+const CastDevice = com.google.android.gms.cast.CastDevice;
+
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public parent: MainViewModel;
 
@@ -55,7 +57,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteSelected(router, info): void {
     console.log('onRouteSelected');
     // Handle route selection.
-    const mSelectedDevice = com.google.android.gms.cast.CastDevice.getFromBundle(info.getExtras());
+    const mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
     console.log(mSelectedDevice);
 
     // Just display a message for now; In a real app this would be the
