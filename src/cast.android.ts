@@ -1,8 +1,15 @@
 import { ad } from 'tns-core-modules/utils/utils';
 import { CastButtonBase } from './cast.common';
 
-const { MediaRouter, MediaRouteSelector, MediaControlIntent } = android.support.v7.media;
-const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
+const {
+  MediaRouter,
+  MediaRouteSelector,
+  MediaControlIntent
+} = android.support.v7.media;
+const {
+  CastButtonFactory,
+  CastContext
+} = com.google.android.gms.cast.framework;
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -18,8 +25,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onProviderAdded(router, provider): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onProviderAdded',
-      object: router,
+      router: router,
       provider: provider
     });
   }
@@ -27,8 +35,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onProviderChanged(router, provider): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onProviderChanged',
-      object: router,
+      router: router,
       provider: provider
     });
   }
@@ -36,8 +45,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onProviderRemoved(router, provider): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onProviderRemoved',
-      object: router,
+      router: router,
       provider: provider
     });
   }
@@ -45,8 +55,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteAdded(router, route): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteAdded',
-      object: router,
+      router: router,
       route: route
     });
   }
@@ -54,8 +65,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteChanged(router, route): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteChanged',
-      object: router,
+      router: router,
       route: route
     });
   }
@@ -63,8 +75,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRoutePresentationDisplayChanged(router, route): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onProviderChanged',
-      object: router,
+      router: router,
       route: route
     });
   }
@@ -72,8 +85,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteRemoved(router, route): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteRemoved',
-      object: router,
+      router: router,
       route: route
     });
   }
@@ -81,8 +95,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteSelected(router, info): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteSelected',
-      object: router,
+      router: router,
       info: info
     });
   }
@@ -90,8 +105,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteUnselected(router, info): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteUnselected',
-      object: router,
+      router: router,
       info: info
     });
   }
@@ -99,8 +115,9 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   public onRouteVolumeChanged(router, route): void {
     this.owner.notify({
       eventName: CastButtonBase.mediaRouterEventEvent,
+      object: this.owner,
       mediaRouterEventName: 'onRouteVolumeChanged',
-      object: router,
+      router: router,
       route: route
     });
   }
@@ -109,9 +126,12 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
 export class CastButton extends CastButtonBase {
   nativeView: android.support.v7.app.MediaRouteButton;
 
-  mMediaRouter: android.support.v7.media.MediaRouter;
-  mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
-  mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
+  public mCastContext: com.google.android.gms.cast.framework.CastContext;
+  public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
+
+  public mMediaRouter: android.support.v7.media.MediaRouter;
+  public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
+  public mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
 
   /**
    * Creates new native button.
@@ -124,6 +144,100 @@ export class CastButton extends CastButtonBase {
 
     // Wire up the MediaRouteButton to the Cast framework
     CastButtonFactory.setUpMediaRouteButton(appContext, this.nativeView);
+
+    // Get cast context and set up session manager
+    this.mCastContext = CastContext.getSharedInstance(appContext);
+    this.mSessionManager = this.mCastContext.getSessionManager();
+
+    this.mSessionManager.addSessionManagerListener(new com.google.android.gms.cast.framework.SessionManagerListener({
+      onSessionEnded: (session, error): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionEnded',
+          session: session,
+          error: error
+        });
+      },
+
+      onSessionEnding: (session): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionEnding',
+          session: session
+        });
+      },
+
+      onSessionResumeFailed: (session, error) => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionResumeFailed',
+          session: session,
+          error: error
+        });
+      },
+
+      onSessionResumed: (session, wasSuspended) => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionResumed',
+          session: session,
+          wasSuspended: wasSuspended
+        });
+      },
+
+      onSessionResuming: (session, sessionId): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionResuming',
+          session: session,
+          sessionId: sessionId
+        });
+      },
+
+      onSessionStartFailed: (session, error): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionStartFailed',
+          session: session,
+          error: error
+        });
+      },
+
+      onSessionStarted: (session, sessionId): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionStarted',
+          session: session,
+          sessionId: sessionId
+        });
+      },
+
+      onSessionStarting: (session): void => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionStarting',
+          session: session
+        });
+      },
+
+      onSessionSuspended: (session, reason) => {
+        this.notify({
+          eventName: CastButtonBase.sessionEventEvent,
+          object: this,
+          sessionEventName: 'onSessionSuspended',
+          session: session,
+          reason: reason
+        });
+      }
+    }));
 
     return this.nativeView;
   }
