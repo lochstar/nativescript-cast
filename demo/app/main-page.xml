@@ -8,13 +8,13 @@
     <ActionItem visibility="{{ castVisibility }}">
       <ui:CastButton
         id="cast"
-        mediaRouterCallback="{{ mediaRouterCallback }}"
+        mediaRouterEvent="{{ handleMediaRouterEvent }}"
+        sessionEvent="{{ handleSessionEvent }}"
       />
     </ActionItem>
   </ActionBar>
 
   <StackLayout class="p-20">
-    <Label text="{{ message }}" class="t-20 text-center c-black" textWrap="true"/>
     <Label text="{{ castVisibility }}" class="t-20 text-center c-black" textWrap="true"/>
     <Button
       text="Tap Me!"

@@ -1,8 +1,110 @@
 import { ad } from 'tns-core-modules/utils/utils';
-import { CastButtonBase, mediaRouterCallbackProperty } from './cast.common';
+import { CastButtonBase } from './cast.common';
 
 const { MediaRouter, MediaRouteSelector, MediaControlIntent } = android.support.v7.media;
 const CastButtonFactory = com.google.android.gms.cast.framework.CastButtonFactory;
+
+class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
+  public owner: CastButton;
+
+  constructor(owner) {
+    super();
+
+    this.owner = owner;
+
+    return global.__native(this);
+  }
+
+  public onProviderAdded(router, provider): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onProviderAdded',
+      object: router,
+      provider: provider
+    });
+  }
+
+  public onProviderChanged(router, provider): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onProviderChanged',
+      object: router,
+      provider: provider
+    });
+  }
+
+  public onProviderRemoved(router, provider): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onProviderRemoved',
+      object: router,
+      provider: provider
+    });
+  }
+
+  public onRouteAdded(router, route): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteAdded',
+      object: router,
+      route: route
+    });
+  }
+
+  public onRouteChanged(router, route): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteChanged',
+      object: router,
+      route: route
+    });
+  }
+
+  public onRoutePresentationDisplayChanged(router, route): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onProviderChanged',
+      object: router,
+      route: route
+    });
+  }
+
+  public onRouteRemoved(router, route): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteRemoved',
+      object: router,
+      route: route
+    });
+  }
+
+  public onRouteSelected(router, info): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteSelected',
+      object: router,
+      info: info
+    });
+  }
+
+  public onRouteUnselected(router, info): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteUnselected',
+      object: router,
+      info: info
+    });
+  }
+
+  public onRouteVolumeChanged(router, route): void {
+    this.owner.notify({
+      eventName: CastButtonBase.mediaRouterEventEvent,
+      mediaRouterEventName: 'onRouteVolumeChanged',
+      object: router,
+      route: route
+    });
+  }
+}
 
 export class CastButton extends CastButtonBase {
   nativeView: android.support.v7.app.MediaRouteButton;
@@ -34,6 +136,8 @@ export class CastButton extends CastButtonBase {
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
 
+    this.addCallback();
+
     super.initNativeView();
   }
 
@@ -55,24 +159,22 @@ export class CastButton extends CastButtonBase {
     super.disposeNativeView();
   }
 
-  addCallback(cb): void {
+  addCallback(): void {
     const appContext = ad.getApplicationContext();
     this.mMediaRouter = MediaRouter.getInstance(appContext);
     this.mMediaRouteSelector = new MediaRouteSelector.Builder()
       .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
       .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
       .build();
-    this.mMediaRouterCallback = cb;
+    this.mMediaRouterCallback = new MediaRouterCallback(this);
 
     // Add the callback to start device discovery
     this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
   }
 
   removeCallback(): void {
-    this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
-  }
-
-  [mediaRouterCallbackProperty.setNative](value: any) {
-    this.addCallback(value);
+    if (this.mMediaRouter && this.mMediaRouterCallback) {
+      this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
+    }
   }
 }

@@ -7,84 +7,6 @@ const CastDevice = com.google.android.gms.cast.CastDevice;
 const MediaInfo = com.google.android.gms.cast.MediaInfo;
 const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
 
-class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
-  public parent: MainViewModel;
-
-  constructor(parent) {
-    super();
-
-    this.parent = parent;
-
-    return global.__native(this);
-  }
-
-  /*
-  public onProviderAdded(router, provider): void {
-    console.log('onProviderAdded');
-  }
-
-  public onProviderChanged(router, provider): void {
-    console.log('onProviderChanged');
-  }
-
-  public onProviderRemoved(router, provider): void {
-    console.log('onProviderRemoved');
-  }
-  */
-
-  public onRouteAdded(router, route): void {
-    console.log('onRouteAdded');
-    if (++this.parent.mRouteCount == 1) {
-      // Show the button when a device is discovered
-      this.parent.showButton();
-    }
-  }
-
-  public onRouteChanged(router, route): void {
-    console.log('onRouteChanged');
-    /*
-    if (++this.parent.mRouteCount == 1) {
-      // Show the button when a device is discovered
-      this.parent.showButton();
-    }
-    */
-  }
-
-  public onRouteRemoved(router, route): void {
-    console.log('onRouteRemoved');
-    if (--this.parent.mRouteCount == 0) {
-      // Hide the button if there are no devices discovered
-      this.parent.hideButton();
-    }
-  }
-
-  public onRouteSelected(router, info): void {
-    console.log('onRouteSelected');
-    // Handle route selection.
-    const mSelectedDevice = CastDevice.getFromBundle(info.getExtras());
-    if (mSelectedDevice) {
-      console.log(mSelectedDevice.getIpAddress());
-    }
-
-    // Just display a message for now; In a real app this would be the
-    // hook to connect to the selected device and launch the receiver
-    // app
-    /*
-    Toast.makeText(MediaRouterButtonActivity.this,
-      getString(R.string.todo_connect), Toast.LENGTH_LONG).show();
-    */
-  }
-
-  public onRouteUnselected(router, info): void {
-    console.log('onRouteUnselected: info=' + info);
-    //mSelectedDevice = null;
-  }
-
-  public onRouteVolumeChanged(router, route): void {
-    console.log('onRouteVolumeChanged');
-  }
-}
-
 interface SessionManagerListener {
   new(): com.google.android.gms.cast.framework.SessionManagerListener;
 }
@@ -98,7 +20,7 @@ function initSessionManagerListener(): void {
 
   @Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
   class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener {
-    //public parent: MainViewModel;
+    public parent: MainViewModel;
 
     constructor() {
       super();
@@ -159,7 +81,7 @@ export class MainViewModel extends Observable {
   public count: number;
   public message: string;
   public castVisibility: string;
-  public mediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
+  //public mediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
   public mRouteCount: number;
 
   public mCastContext: any;
@@ -170,14 +92,11 @@ export class MainViewModel extends Observable {
 
     initSessionManagerListener();
 
-    console.log('init MainViewModel');
-    console.log(this.castVisibility);
-
     this.count = 0;
     this.message = 'hello';
     this.castVisibility = 'collapsed';  // mediaRouterCallback sets to visible onRouteAdded
     this.mRouteCount = 0;
-    this.mediaRouterCallback = new MediaRouterCallback(this);
+    //this.mediaRouterCallback = new MediaRouterCallback(this);
 
     const appContext = ad.getApplicationContext();
     this.mCastContext = CastContext.getSharedInstance(appContext);
@@ -186,13 +105,54 @@ export class MainViewModel extends Observable {
     this.mSessionManager.addSessionManagerListener(new SessionManagerListener());
   }
 
+  handleMediaRouterEvent(event): void {
+    switch (event.mediaRouterEventName) {
+      case 'onRouteAdded':
+        if (++this.mRouteCount == 1) {
+          // Show the button when a device is discovered
+          this.showButton();
+        }
+        break;
+      case 'onRouteChanged':
+        if (++this.mRouteCount == 1) {
+          // Show the button when a device is discovered
+          this.showButton();
+        }
+        break;
+      case 'onRouteRemoved':
+        if (--this.mRouteCount == 0) {
+          // Hide the button if there are no devices discovered
+          this.hideButton();
+        }
+        break;
+      case 'onRouteSelected':
+        // Handle route selection.
+        const mSelectedDevice = CastDevice.getFromBundle(event.info.getExtras());
+        if (mSelectedDevice) {
+          console.log(mSelectedDevice);
+          console.log(mSelectedDevice.getIpAddress());
+        }
+        break;
+      case 'onRouteUnselected':
+        //mSelectedDevice = null;
+        break;
+      default:
+        console.log('mediaRouterEvent: ' + event.mediaRouterEventName);
+        break;
+    }
+  }
+
+  handleSessionEvent(eventName, event): void {
+    console.log('handleSessionEvent');
+    console.log(eventName);
+    console.log(event);
+  }
+
   showButton(): void {
-    console.log('showButton');
     this.set('castVisibility', 'visible');
   }
 
   hideButton(): void {
-    console.log('hideButton!!');
     this.set('castVisibility', 'collapsed');
   }
 
