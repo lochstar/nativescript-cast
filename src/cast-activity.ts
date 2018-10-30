@@ -4,9 +4,6 @@ import {
   AndroidActivityCallbacks,
 } from 'tns-core-modules/ui/frame';
 
-declare const com: any;
-declare const android: any;
-
 @JavaProxy('com.codelab.cast.CastActivity')
 class CastActivity extends android.support.v4.app.FragmentActivity {
   private _callbacks: AndroidActivityCallbacks;
@@ -15,6 +12,7 @@ class CastActivity extends android.support.v4.app.FragmentActivity {
     if (!this._callbacks) {
       setActivityCallbacks(this);
     }
+
     this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
   }
 
