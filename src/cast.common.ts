@@ -10,6 +10,14 @@ export abstract class CastButtonBase extends View implements CastButton {
   public static mediaRouterEventEvent = 'mediaRouterEvent';
   public static sessionEventEvent = 'sessionEvent';
   visibility: Visibility;
+
+  public sendEvent(eventName: string, data?: any) {
+    this.notify({
+      eventName,
+      object: this,
+      data
+    });
+  }
 }
 
 textProperty.register(CastButtonBase);

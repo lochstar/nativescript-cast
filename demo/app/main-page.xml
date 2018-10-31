@@ -2,12 +2,13 @@
   xmlns="http://schemas.nativescript.org/tns.xsd"
   loaded="pageLoaded"
   class="page"
-  xmlns:ui="nativescript-cast"
+  xmlns:cast="nativescript-cast"
 >
-  <ActionBar title="Cast">
+  <ActionBar>
     <ActionItem visibility="{{ castVisibility }}">
-      <ui:CastButton
+      <cast:CastButton
         id="cast"
+        loaded="castLoaded"
         mediaRouterEvent="{{ handleMediaRouterEvent }}"
         sessionEvent="{{ handleSessionEvent }}"
       />
@@ -15,7 +16,9 @@
   </ActionBar>
 
   <StackLayout class="p-20">
-    <Label text="{{ castVisibility }}" class="t-20 text-center c-black" textWrap="true"/>
+    <Label text="{{ mSelectedDeviceName }}" class="t-20 text-center c-black" textWrap="true"/>
+    <Label text="{{ mSelectedDeviceIp }}" class="t-20 text-center c-black" textWrap="true"/>
+
     <Button
       text="Tap Me!"
       tap="{{ onTap }}"
