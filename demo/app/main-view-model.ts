@@ -1,8 +1,6 @@
-//import { ad } from 'tns-core-modules/utils/utils';
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
-//const CastContext = com.google.android.gms.cast.framework.CastContext;
 const CastDevice = com.google.android.gms.cast.CastDevice;
 const MediaInfo = com.google.android.gms.cast.MediaInfo;
 const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
