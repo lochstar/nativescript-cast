@@ -9,7 +9,6 @@ const {
 const {
   CastButtonFactory,
   CastContext,
-  Session
 } = com.google.android.gms.cast.framework;
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
@@ -124,106 +123,120 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 }
 
-@Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
-class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
-  public owner: CastButton;
+interface SessionManagerListener {
+  new(owner): com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
+}
 
-  constructor(owner) {
-    super();
+let SessionManagerListener: SessionManagerListener;
 
-    this.owner = owner;
-
-    // necessary when extending TypeScript constructors
-    return global.__native(this);
+function initSessionManagerListener(): void {
+  if (SessionManagerListener) {
+    return;
   }
 
-  onSessionEnded(session, error): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionEnded',
-      session: session,
-      error: error
-    });
+  @Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
+  class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
+    public owner: CastButton;
+
+    constructor(owner) {
+      super();
+
+      this.owner = owner;
+
+      // necessary when extending TypeScript constructors
+      return global.__native(this);
+    }
+
+    onSessionEnded(session, error): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionEnded',
+        session: session,
+        error: error
+      });
+    }
+
+    onSessionEnding(session): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionEnding',
+        session: session
+      });
+    }
+
+    onSessionResumeFailed(session, error) {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionResumeFailed',
+        session: session,
+        error: error
+      });
+    }
+
+    onSessionResumed(session, wasSuspended) {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionResumed',
+        session: session,
+        wasSuspended: wasSuspended
+      });
+    }
+
+    onSessionResuming(session, sessionId): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionResuming',
+        session: session,
+        sessionId: sessionId
+      });
+    }
+
+    onSessionStartFailed(session, error): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionStartFailed',
+        session: session,
+        error: error
+      });
+    }
+
+    onSessionStarted(session, sessionId): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionStarted',
+        session: session,
+        sessionId: sessionId
+      });
+    }
+
+    onSessionStarting(session): void {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionStarting',
+        session: session
+      });
+    }
+
+    onSessionSuspended(session, reason) {
+      this.owner.notify({
+        eventName: CastButtonBase.sessionEventEvent,
+        object: this.owner,
+        sessionEventName: 'onSessionSuspended',
+        session: session,
+        reason: reason
+      });
+    }
   }
 
-  onSessionEnding(session): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionEnding',
-      session: session
-    });
-  }
-
-  onSessionResumeFailed(session, error) {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionResumeFailed',
-      session: session,
-      error: error
-    });
-  }
-
-  onSessionResumed(session, wasSuspended) {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionResumed',
-      session: session,
-      wasSuspended: wasSuspended
-    });
-  }
-
-  onSessionResuming(session, sessionId): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionResuming',
-      session: session,
-      sessionId: sessionId
-    });
-  }
-
-  onSessionStartFailed(session, error): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionStartFailed',
-      session: session,
-      error: error
-    });
-  }
-
-  onSessionStarted(session, sessionId): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionStarted',
-      session: session,
-      sessionId: sessionId
-    });
-  }
-
-  onSessionStarting(session): void {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionStarting',
-      session: session
-    });
-  }
-
-  onSessionSuspended(session, reason) {
-    this.owner.notify({
-      eventName: CastButtonBase.sessionEventEvent,
-      object: this.owner,
-      sessionEventName: 'onSessionSuspended',
-      session: session,
-      reason: reason
-    });
-  }
+  SessionManagerListener = SessionManagerListenerImpl;
 }
 
 export class CastButton extends CastButtonBase {
@@ -243,6 +256,8 @@ export class CastButton extends CastButtonBase {
   public createNativeView(): Object {
     const appContext = ad.getApplicationContext();
 
+    initSessionManagerListener();
+
     // Create new instance of MediaRouteButton
     this.nativeView = new android.support.v7.app.MediaRouteButton(this._context);
 
@@ -260,7 +275,7 @@ export class CastButton extends CastButtonBase {
     // Get cast context and session manager
     this.mCastContext = CastContext.getSharedInstance(appContext);
     this.mSessionManager = this.mCastContext.getSessionManager();
-    this.mSessionManagerListener = new SessionManagerListenerImpl(this);
+    this.mSessionManagerListener = new SessionManagerListener(this);
 
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
