@@ -145,10 +145,64 @@ export class CastButton extends CastButtonBase {
     // Wire up the MediaRouteButton to the Cast framework
     CastButtonFactory.setUpMediaRouteButton(appContext, this.nativeView);
 
-    // Get cast context and set up session manager
+    // Create media router
+    this.mMediaRouter = MediaRouter.getInstance(appContext);
+    this.mMediaRouteSelector = new MediaRouteSelector.Builder()
+      .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
+      .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
+      .build();
+    this.mMediaRouterCallback = new MediaRouterCallback(this);
+
+    // Get cast context and session manager
     this.mCastContext = CastContext.getSharedInstance(appContext);
     this.mSessionManager = this.mCastContext.getSessionManager();
 
+    this.addMediaRouterCallback();
+    this.addSessionManagerListener();
+
+    return this.nativeView;
+  }
+
+  /**
+   * Initializes properties/listeners of the native view.
+   */
+  initNativeView(): void {
+    // Attach the owner to nativeView.
+    // When nativeView is tapped we get the owning JS object through this field.
+    (<any>this.nativeView).owner = this;
+
+    super.initNativeView();
+  }
+
+  /**
+   * Clean up references to the native view and resets nativeView to its original state.
+   * If you have changed nativeView in some other way except through setNative callbacks
+   * you have a chance here to revert it back to its original state
+   * so that it could be reused later.
+   */
+  disposeNativeView(): void {
+    // Remove reference from native view to this instance.
+    (<any>this.nativeView).owner = null;
+
+    this.removeMediaRouterCallback();
+
+    // If you want to recycle nativeView and have modified the nativeView
+    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
+    // you have to reset it to its initial state here.
+    super.disposeNativeView();
+  }
+
+  addMediaRouterCallback(): void {
+    this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
+  }
+
+  removeMediaRouterCallback(): void {
+    if (this.mMediaRouter && this.mMediaRouterCallback) {
+      this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
+    }
+  }
+
+  addSessionManagerListener(): void {
     this.mSessionManager.addSessionManagerListener(new com.google.android.gms.cast.framework.SessionManagerListener({
       onSessionEnded: (session, error): void => {
         this.notify({
@@ -238,57 +292,9 @@ export class CastButton extends CastButtonBase {
         });
       }
     }));
-
-    return this.nativeView;
   }
 
-  /**
-   * Initializes properties/listeners of the native view.
-   */
-  initNativeView(): void {
-    // Attach the owner to nativeView.
-    // When nativeView is tapped we get the owning JS object through this field.
-    (<any>this.nativeView).owner = this;
+  removeSessionManagerListener(): void {
 
-    this.addCallback();
-
-    super.initNativeView();
-  }
-
-  /**
-   * Clean up references to the native view and resets nativeView to its original state.
-   * If you have changed nativeView in some other way except through setNative callbacks
-   * you have a chance here to revert it back to its original state
-   * so that it could be reused later.
-   */
-  disposeNativeView(): void {
-    // Remove reference from native view to this instance.
-    (<any>this.nativeView).owner = null;
-
-    this.removeCallback();
-
-    // If you want to recycle nativeView and have modified the nativeView
-    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
-    // you have to reset it to its initial state here.
-    super.disposeNativeView();
-  }
-
-  addCallback(): void {
-    const appContext = ad.getApplicationContext();
-    this.mMediaRouter = MediaRouter.getInstance(appContext);
-    this.mMediaRouteSelector = new MediaRouteSelector.Builder()
-      .addControlCategory(MediaControlIntent.CATEGORY_LIVE_VIDEO)
-      .addControlCategory(MediaControlIntent.CATEGORY_REMOTE_PLAYBACK)
-      .build();
-    this.mMediaRouterCallback = new MediaRouterCallback(this);
-
-    // Add the callback to start device discovery
-    this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
-  }
-
-  removeCallback(): void {
-    if (this.mMediaRouter && this.mMediaRouterCallback) {
-      this.mMediaRouter.removeCallback(this.mMediaRouterCallback);
-    }
   }
 }
