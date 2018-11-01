@@ -5,14 +5,16 @@
   xmlns:cast="nativescript-cast"
 >
   <ActionBar>
-    <ActionItem visibility="{{ castVisibility }}">
-      <cast:CastButton
-        id="cast"
-        loaded="castLoaded"
-        mediaRouterEvent="{{ handleMediaRouterEvent }}"
-        sessionEvent="{{ handleSessionEvent }}"
-      />
+    <ActionItem ios.position="right" visibility="{{ castVisibility }}">
+
     </ActionItem>
+    <cast:CastButton
+      id="cast"
+      text="Cast Button"
+      loaded="castLoaded"
+      mediaRouterEvent="{{ handleMediaRouterEvent }}"
+      sessionEvent="{{ handleSessionEvent }}"
+    />
   </ActionBar>
 
   <StackLayout class="p-20">

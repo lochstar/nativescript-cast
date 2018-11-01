@@ -1,10 +1,12 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
+/*
 const CastDevice = com.google.android.gms.cast.CastDevice;
 const MediaInfo = com.google.android.gms.cast.MediaInfo;
 const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
 const WebImage = com.google.android.gms.common.images.WebImage;
+*/
 
 export class MainViewModel extends Observable {
   public count: number;
@@ -22,7 +24,8 @@ export class MainViewModel extends Observable {
 
     this.count = 0;
     this.message = 'hello';
-    this.castVisibility = 'collapsed';
+    //this.castVisibility = 'collapsed';
+    this.castVisibility = 'visible';
 
     this.mRouteCount = 0;
     this.mSelectedDevice = null;
@@ -52,11 +55,14 @@ export class MainViewModel extends Observable {
         break;
       case 'onRouteSelected':
         // Handle route selection.
+        console.log('onRouteSelected');
+        /*
         this.mSelectedDevice = CastDevice.getFromBundle(event.data.route.getExtras());
         if (this.mSelectedDevice) {
           this.set('mSelectedDeviceName', this.mSelectedDevice.getFriendlyName());
           this.set('mSelectedDeviceIp', this.mSelectedDevice.getIpAddress());
         }
+        */
         break;
       case 'onRouteUnselected':
         this.mSelectedDevice = null;
@@ -70,6 +76,9 @@ export class MainViewModel extends Observable {
   handleSessionEvent(event): void {
     switch (event.data.sessionEventName) {
       case 'onSessionStarted':
+        console.log('onSessionStarted');
+
+        /*
         const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
         metadata.putString(MediaMetadata.KEY_TITLE, 'Big Buck Bunny');
         metadata.putString(MediaMetadata.KEY_SUBTITLE, 'By Blender Foundation');
@@ -85,6 +94,7 @@ export class MainViewModel extends Observable {
           .setMetadata(metadata)
           //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
           .build();
+        */
 
         /*
         const contentId = 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8';
@@ -96,11 +106,13 @@ export class MainViewModel extends Observable {
           .build();
         */
 
+        /*
         const autoPlay = true;
         const position = 0;
         const session = event.data.session;
         this.remoteMediaClient = session.getRemoteMediaClient();
         this.remoteMediaClient.load(mediaInfo, autoPlay, position);
+        */
         break;
       default:
         console.log('sessionEvent: ' + event.data.sessionEventName);

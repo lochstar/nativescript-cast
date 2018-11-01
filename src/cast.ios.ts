@@ -1,6 +1,13 @@
-import { CastButtonBase } from './cast.common';
+import { CastButtonBase, textProperty } from './cast.common';
+
+declare let GCKUICastButton: any;
+declare let CGRectMake: any;
+declare let CGRect: any;
+declare let GCKCastContext: any;
+declare let CGRectZero: any;
 
 // class that handles all native 'tap' callbacks
+/*
 class TapHandler extends NSObject {
 
   public tap(nativeButton: UIButton, nativeEvent: _UIEvent) {
@@ -17,23 +24,32 @@ class TapHandler extends NSObject {
 }
 
 const handler = TapHandler.new();
+*/
 
 export class CastButton extends CastButtonBase {
 
   // added for TypeScript intellisense.
-  nativeView: UIButton;
+  //nativeView: UIButton;
+  nativeView: any;
 
   /**
    * Creates new native button.
    */
   public createNativeView(): Object {
+    console.log('createNativeView');
+
     // Create new instance
-    const button = UIButton.buttonWithType(UIButtonType.System);
+    //const button = UIButton.buttonWithType(UIButtonType.System);
+    //button.setTitleForState('test', UIControlState.Normal);
+
+    const castButton = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
 
     // Set the handler as callback function.
-    button.addTargetActionForControlEvents(handler, "tap", UIControlEvents.TouchUpInside);
+    //button.addTargetActionForControlEvents(handler, "tap", UIControlEvents.TouchUpInside);
 
-    return button;
+    console.log('returning view');
+
+    return castButton;
   }
 
   /**
@@ -43,6 +59,7 @@ export class CastButton extends CastButtonBase {
     // Attach the owner to nativeView.
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
+
     super.initNativeView();
   }
 
@@ -61,4 +78,11 @@ export class CastButton extends CastButtonBase {
     // you have to reset it to its initial state here.
     super.disposeNativeView();
   }
+
+  // transfer JS text value to nativeView.
+  /*
+  [textProperty.setNative](value: string) {
+    this.nativeView.setTitleForState(value, UIControlState.Normal);
+  }
+  */
 }

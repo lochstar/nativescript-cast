@@ -12,3 +12,10 @@ export function pageLoaded(args: observable.EventData) {
     page.bindingContext = new MainViewModel();
   }
 }
+
+export function castLoaded(args: observable.EventData) {
+  const page = <pages.Page>args.object;
+
+  console.log('castLoaded');
+  console.log(page);
+}
