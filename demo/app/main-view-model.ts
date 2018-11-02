@@ -56,13 +56,12 @@ export class MainViewModel extends Observable {
       case 'onRouteSelected':
         // Handle route selection.
         console.log('onRouteSelected');
-        /*
-        this.mSelectedDevice = CastDevice.getFromBundle(event.data.route.getExtras());
+        //this.mSelectedDevice = event.object.mSelectedDevice;
+        this.mSelectedDevice = event.object.CastDevice.getFromBundle(event.data.route.getExtras());
         if (this.mSelectedDevice) {
           this.set('mSelectedDeviceName', this.mSelectedDevice.getFriendlyName());
           this.set('mSelectedDeviceIp', this.mSelectedDevice.getIpAddress());
         }
-        */
         break;
       case 'onRouteUnselected':
         this.mSelectedDevice = null;
@@ -77,6 +76,10 @@ export class MainViewModel extends Observable {
     switch (event.data.sessionEventName) {
       case 'onSessionStarted':
         console.log('onSessionStarted');
+
+        const remoteMediaClient = event.object.getRemoteMediaClient();
+        console.log('remoteMediaClient');
+        console.dir(remoteMediaClient);
 
         /*
         const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);

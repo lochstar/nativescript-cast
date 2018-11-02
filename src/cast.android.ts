@@ -79,10 +79,11 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteSelected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+    //this.owner.mSelectedDevice = CastDevice.getFromBundle(route.getExtras());
     this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
       mediaRouterEventName: 'onRouteSelected',
       router: router,
-      route: route
+      route: route,
     });
   }
 
@@ -204,9 +205,12 @@ function initSessionManagerListener(): void {
 export class CastButton extends CastButtonBase {
   public nativeView: android.support.v7.app.MediaRouteButton;
 
+  public CastDevice: com.google.android.gms.cast.CastDevice;
+
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
+  public mSelectedDevice: any;
 
   public mMediaRouter: android.support.v7.media.MediaRouter;
   public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
@@ -225,10 +229,10 @@ export class CastButton extends CastButtonBase {
     initSessionManagerListener();
 
     // Create new instance of MediaRouteButton
-    this.nativeView = new android.support.v7.app.MediaRouteButton(this._context);
+    const button = new android.support.v7.app.MediaRouteButton(this._context);
 
     // Wire up the MediaRouteButton to the Cast framework
-    CastButtonFactory.setUpMediaRouteButton(appContext, this.nativeView);
+    CastButtonFactory.setUpMediaRouteButton(appContext, button);
 
     // Create media router
     this.mMediaRouter = MediaRouter.getInstance(appContext);
@@ -246,7 +250,9 @@ export class CastButton extends CastButtonBase {
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
 
-    return this.nativeView;
+    this.CastDevice = com.google.android.gms.cast.CastDevice;
+
+    return button;
   }
 
   /**
@@ -295,5 +301,9 @@ export class CastButton extends CastButtonBase {
 
   removeSessionManagerListener(): void {
     this.mSessionManager.removeSessionManagerListener(this.mSessionManagerListener);
+  }
+
+  getRemoteMediaClient() {
+    return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
   }
 }

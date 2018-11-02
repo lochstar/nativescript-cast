@@ -23,7 +23,7 @@
 
     <Button
       text="Tap Me!"
-      tap="{{ onTap }}"
+      tap="onTap"
       class="btn btn-primary btn-active"
     />
   </StackLayout>

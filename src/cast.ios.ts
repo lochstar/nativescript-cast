@@ -1,30 +1,102 @@
-import { CastButtonBase, textProperty } from './cast.common';
+import { CastButtonBase } from './cast.common';
 
 declare let GCKUICastButton: any;
+declare let GCKSession: any;
+declare let GCKCastSession: any;
+declare let GCKSessionManager: any;
+declare let GCKDevice: any;
+declare let GCKSessionManagerListener: any;
 declare let CGRectMake: any;
 declare let CGRect: any;
 declare let GCKCastContext: any;
 declare let CGRectZero: any;
 
-// class that handles all native 'tap' callbacks
-/*
-class TapHandler extends NSObject {
+class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
+  public static ObjCProtocols = [GCKSessionManagerListener];
 
-  public tap(nativeButton: UIButton, nativeEvent: _UIEvent) {
-    // Gets the owner from the nativeView.
-    const owner: CastButton = (<any>nativeButton).owner;
-    if (owner) {
-      owner.notify({ eventName: CastButtonBase.tapEvent, object: owner });
+  owner: null;
+
+  public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
+    console.log('willStartSession');
+    if (!this.owner) {
+      return;
     }
+    this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
+      sessionEventName: 'onSessionStarting',
+      session: session
+    });
   }
-
-  public static ObjCExposedMethods = {
-    "tap": { returns: interop.types.void, params: [interop.types.id, interop.types.id] }
-  };
+  public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
+    console.log('didStartSession');
+    if (!this.owner) {
+      return;
+    }
+    this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
+      sessionEventName: 'onSessionStarted',
+      session: session
+    });
+  }
+  public sessionManagerWillStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
+    console.log('willStartCastSession');
+  }
+  public sessionManagerDidStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
+    console.log('didStartCastSession');
+  }
+  public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
+    console.log('willEndSession');
+  }
+  public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, withError: NSError) {
+    console.log('didEndSession');
+  }
+  public sessionManagerWillEndCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
+    console.log('willEndCastSession');
+  }
+  public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, withError: NSError) {
+    console.log('didEndCastSession');
+  }
+  public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, withError: NSError) {
+    console.log('didFailToStartSession');
+  }
+  public sessionManagerDidFailToStartCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, withError: NSError) {
+    console.log('didFailToStartCastSession');
+  }
+  public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, withReason: GCKConnectionSuspendReason) {
+    console.log('didSuspendSession');
+  }
+  public sessionManagerDidSuspendCastSessionWithReason(sessionManager: GCKSessionManager, session: GCKCastSession, withReason: GCKConnectionSuspendReason) {
+    console.log('didSuspendCastSession');
+  }
+  public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
+    console.log('willResumeSession');
+  }
+  public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
+    console.log('didResumeSession');
+  }
+  public sessionManagerWillResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
+    console.log('willResumeCastSession');
+  }
+  public sessionManagerDidResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
+    console.log('didResumeCastSession');
+  }
+  public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
+    console.log('didUpdateDevice');
+  }
+  public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, muted: boolean) {
+    console.log('didReceiveDeviceVolume');
+  }
+  public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, muted: boolean) {
+    console.log('castSession: didReceiveDeviceVolume');
+  }
+  public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, muted: boolean) {
+    console.log('didReceiveDeviceStatus');
+  }
+  public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
+    console.log('castSession: didReceiveDeviceStatus');
+  }
+  public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
+    console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
+  }
 }
-
-const handler = TapHandler.new();
-*/
 
 export class CastButton extends CastButtonBase {
 
@@ -32,24 +104,36 @@ export class CastButton extends CastButtonBase {
   //nativeView: UIButton;
   nativeView: any;
 
+  public CastDevice: any;
+
+  public mCastContext: any;
+  public mSessionManager: any;
+  public mSessionManagerListener: any;
+
+  constructor() {
+    super();
+  }
+
   /**
    * Creates new native button.
    */
   public createNativeView(): Object {
     console.log('createNativeView');
 
-    // Create new instance
-    //const button = UIButton.buttonWithType(UIButtonType.System);
-    //button.setTitleForState('test', UIControlState.Normal);
+    // Create new instance of GCKUICastButton
+    const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
 
-    const castButton = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
+    // Get cast context and session manager
+    this.mCastContext = GCKCastContext.sharedInstance();
+    this.mSessionManager = this.mCastContext.sessionManager;
+    this.mSessionManagerListener = new SessionManagerListenerImpl;
+    this.mSessionManagerListener.owner = this;
 
-    // Set the handler as callback function.
-    //button.addTargetActionForControlEvents(handler, "tap", UIControlEvents.TouchUpInside);
+    this.addSessionManagerListener();
 
-    console.log('returning view');
+    this.CastDevice = GCKDevice;
 
-    return castButton;
+    return button;
   }
 
   /**
@@ -73,16 +157,24 @@ export class CastButton extends CastButtonBase {
     // Remove reference from native listener to this instance.
     (<any>this.nativeView).owner = null;
 
+    //this.removeSessionManagerListener();
+
     // If you want to recycle nativeView and have modified the nativeView
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
   }
 
-  // transfer JS text value to nativeView.
-  /*
-  [textProperty.setNative](value: string) {
-    this.nativeView.setTitleForState(value, UIControlState.Normal);
+  addSessionManagerListener(): void {
+    this.mSessionManager.addListener(this.mSessionManagerListener);
   }
-  */
+
+  removeSessionManagerListener(): void {
+    this.mSessionManager.removeListener(this.mSessionManagerListener);
+  }
+
+  getRemoteMediaClient() {
+    return this.mSessionManager.currentCastSession.remoteMediaClient;
+  }
+
 }

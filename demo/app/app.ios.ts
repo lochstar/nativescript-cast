@@ -1,19 +1,15 @@
 ﻿import * as application from 'tns-core-modules/application';
 import { ios } from 'tns-core-modules/application';
 
-class MyLoggerDelegateImpl
-  extends NSObject // native delegates mostly always extend NSObject
-  implements GCKLoggerDelegate {
-
-  static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate] // define our native protocalls
+class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
+  static ObjCProtocols = [GCKLoggerDelegate];
 
   static new(): MyLoggerDelegateImpl {
-    return <MyLoggerDelegateImpl>super.new() // calls new() on the NSObject
+    return <MyLoggerDelegateImpl>super.new();
   }
 
-  logMessage(message, func) {
-    console.log('~~~~~~~~~~~~~~~~~~~');
-    console.log(message, func);
+  logMessageFromFunction(message, fromFunction) {
+    console.log(message);
   }
 }
 

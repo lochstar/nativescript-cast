@@ -1,6 +1,7 @@
 //import * as application from 'tns-core-modules/application';
 import * as observable from 'tns-core-modules/data/observable';
 import * as pages from 'tns-core-modules/ui/page';
+import { View } from 'tns-core-modules/ui/core/view';
 import { MainViewModel } from './main-view-model';
 
 // Event handler for Page 'loaded' event attached in main-page.xml
@@ -14,8 +15,8 @@ export function pageLoaded(args: observable.EventData) {
 }
 
 export function castLoaded(args: observable.EventData) {
-  const page = <pages.Page>args.object;
-
+  const cast = <View>args.object;
   console.log('castLoaded');
-  console.log(page);
+  console.log(cast.mCastContext);
+  console.log(cast.mSessionManager);
 }
