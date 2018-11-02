@@ -11,6 +11,13 @@ const {
   CastContext,
 } = com.google.android.gms.cast.framework;
 
+// @ts-ignore
+const MediaInfo = com.google.android.gms.cast.MediaInfo;
+// @ts-ignore
+const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
+// @ts-ignore
+const WebImage = com.google.android.gms.common.images.WebImage;
+
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
 
@@ -205,6 +212,7 @@ function initSessionManagerListener(): void {
 export class CastButton extends CastButtonBase {
   public nativeView: android.support.v7.app.MediaRouteButton;
 
+  // @ts-ignore
   public CastDevice: com.google.android.gms.cast.CastDevice;
 
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
@@ -250,6 +258,7 @@ export class CastButton extends CastButtonBase {
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
 
+    // @ts-ignore
     this.CastDevice = com.google.android.gms.cast.CastDevice;
 
     return button;
@@ -305,5 +314,38 @@ export class CastButton extends CastButtonBase {
 
   getRemoteMediaClient() {
     return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
+  }
+
+  remoteMediaClientLoad() {
+    const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+    metadata.putString(MediaMetadata.KEY_TITLE, 'Big Buck Bunny');
+    metadata.putString(MediaMetadata.KEY_SUBTITLE, 'By Blender Foundation');
+
+    const uri = android.net.Uri.parse('https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg')
+    const thumbnail = new WebImage(uri, 768, 1158);
+    metadata.addImage(thumbnail);
+
+    const contentId = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+    const mediaInfo = new MediaInfo.Builder(contentId)
+      .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+      .setContentType('videos/mp4')
+      .setMetadata(metadata)
+      //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
+      .build();
+
+    /*
+    const contentId = 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8';
+    const mediaInfo = new MediaInfo.Builder(contentId)
+      .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)  // STREAM_TYPE_LIVE ?
+      .setContentType('application/x-mpegurl')
+      .setMetadata(metadata)
+      //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
+      .build();
+    */
+
+    const autoPlay = true;
+    const position = 0;
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.load(mediaInfo, autoPlay, position);
   }
 }

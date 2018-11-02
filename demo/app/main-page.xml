@@ -4,17 +4,17 @@
   class="page"
   xmlns:cast="nativescript-cast"
 >
-  <ActionBar>
+  <ActionBar title="Cast Demo">
     <ActionItem ios.position="right" visibility="{{ castVisibility }}">
-
+      <StackLayout>
+        <cast:CastButton
+          id="cast"
+          loaded="castLoaded"
+          mediaRouterEvent="{{ handleMediaRouterEvent }}"
+          sessionEvent="{{ handleSessionEvent }}"
+        />
+      </StackLayout>
     </ActionItem>
-    <cast:CastButton
-      id="cast"
-      text="Cast Button"
-      loaded="castLoaded"
-      mediaRouterEvent="{{ handleMediaRouterEvent }}"
-      sessionEvent="{{ handleSessionEvent }}"
-    />
   </ActionBar>
 
   <StackLayout class="p-20">

@@ -10,11 +10,12 @@ declare let CGRectMake: any;
 declare let CGRect: any;
 declare let GCKCastContext: any;
 declare let CGRectZero: any;
+declare let GCKMediaStreamTypeBuffered: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
 
-  owner: null;
+  owner: any;
 
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     console.log('willStartSession');
@@ -81,13 +82,13 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
     console.log('didUpdateDevice');
   }
-  public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, muted: boolean) {
+  public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
     console.log('didReceiveDeviceVolume');
   }
-  public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, muted: boolean) {
+  public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, volume: number) {
     console.log('castSession: didReceiveDeviceVolume');
   }
-  public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, muted: boolean) {
+  public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, statusText: string) {
     console.log('didReceiveDeviceStatus');
   }
   public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
@@ -177,4 +178,29 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.currentCastSession.remoteMediaClient;
   }
 
+  remoteMediaClientLoad() {
+    // @ts-ignore
+    const metadata = GCKMediaMetadata.alloc().initWithMetadataType(GCKMediaMetadataTypeMovie);
+    metadata.setStringForKey('Big Buck Bunny', 'kGCKMetadataKeyTitle');
+    metadata.setStringForKey('Big Buck Bunny', 'kGCKMetadataKeySubTitle');
+
+    const uri = NSURL.URLWithString('https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg')
+    metadata.addImage(GCKImage.alloc().initWithURLWidthHeight(uri, 768, 1158));
+
+    const contentID = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+    const streamType = GCKMediaStreamTypeBuffered;
+    const contentType = 'videos/mp4';
+    const streamDuration = null;
+    const mediaTracks = null;
+    const textTrackStyle = null;
+    const customData = null;
+
+    const mediaInfo = GCKMediaInformation.alloc().initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(contentID, streamType, contentType, metadata, streamDuration, mediaTracks, textTrackStyle, customData)
+
+    const options = GCKMediaLoadOptions.alloc().init();
+    options.autoplay = true;
+    options.playPosition = 0;
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.loadMediaWithOptions(mediaInfo, options);
+  }
 }

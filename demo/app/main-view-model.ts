@@ -77,9 +77,7 @@ export class MainViewModel extends Observable {
       case 'onSessionStarted':
         console.log('onSessionStarted');
 
-        const remoteMediaClient = event.object.getRemoteMediaClient();
-        console.log('remoteMediaClient');
-        console.dir(remoteMediaClient);
+        event.object.remoteMediaClientLoad();
 
         /*
         const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
