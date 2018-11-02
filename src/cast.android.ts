@@ -328,7 +328,7 @@ export class CastButton extends CastButtonBase {
     const contentId = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
     const mediaInfo = new MediaInfo.Builder(contentId)
       .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-      .setContentType('videos/mp4')
+      .setContentType('video/mp4')
       .setMetadata(metadata)
       //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
       .build();

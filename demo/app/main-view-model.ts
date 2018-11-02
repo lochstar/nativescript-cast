@@ -24,8 +24,8 @@ export class MainViewModel extends Observable {
 
     this.count = 0;
     this.message = 'hello';
-    //this.castVisibility = 'collapsed';
-    this.castVisibility = 'visible';
+    this.castVisibility = 'collapsed';
+    //this.castVisibility = 'visible';
 
     this.mRouteCount = 0;
     this.mSelectedDevice = null;

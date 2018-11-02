@@ -5,7 +5,10 @@
   xmlns:cast="nativescript-cast"
 >
   <ActionBar title="Cast Demo">
-    <ActionItem ios.position="right" visibility="{{ castVisibility }}">
+    <ActionItem
+      ios.position="right"
+      android:visibility="{{ castVisibility }}"
+    >
       <StackLayout>
         <cast:CastButton
           id="cast"
@@ -18,12 +21,13 @@
   </ActionBar>
 
   <StackLayout class="p-20">
+    <Label text="{{ castVisibility }}" class="t-20 text-center c-black" textWrap="true"/>
     <Label text="{{ mSelectedDeviceName }}" class="t-20 text-center c-black" textWrap="true"/>
     <Label text="{{ mSelectedDeviceIp }}" class="t-20 text-center c-black" textWrap="true"/>
 
     <Button
       text="Tap Me!"
-      tap="onTap"
+      tap="{{ onTap }}"
       class="btn btn-primary btn-active"
     />
   </StackLayout>
