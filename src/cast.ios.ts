@@ -92,7 +92,11 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     console.log('didReceiveDeviceStatus');
   }
   public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
+    console.log('---------------------------------------');
     console.log('castSession: didReceiveDeviceStatus');
+    //console.log(session.remoteMediaClient);
+    //console.dir(session.remoteMediaClient);
+    //console.log(kGCKMetadataKeyTitle);
   }
   public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
     console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
@@ -158,7 +162,7 @@ export class CastButton extends CastButtonBase {
     // Remove reference from native listener to this instance.
     (<any>this.nativeView).owner = null;
 
-    //this.removeSessionManagerListener();
+    this.removeSessionManagerListener();
 
     // If you want to recycle nativeView and have modified the nativeView
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
@@ -178,29 +182,65 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.currentCastSession.remoteMediaClient;
   }
 
-  remoteMediaClientLoad() {
-    // @ts-ignore
-    const metadata = GCKMediaMetadata.alloc().initWithMetadataType(GCKMediaMetadataTypeMovie);
-    metadata.setStringForKey('Big Buck Bunny', 'kGCKMetadataKeyTitle');
-    metadata.setStringForKey('Big Buck Bunny', 'kGCKMetadataKeySubTitle');
+  showButton(): void {
 
-    const uri = NSURL.URLWithString('https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg')
-    metadata.addImage(GCKImage.alloc().initWithURLWidthHeight(uri, 768, 1158));
+  }
 
-    const contentID = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-    const streamType = GCKMediaStreamTypeBuffered;
-    const contentType = 'videos/mp4';
-    const streamDuration = null;
+  hideButton(): void {
+
+  }
+
+  loadMedia(mediaInfo: any, autoplay = true, position?: number) {
+    const upperFirst = require('lodash/fp/upperFirst');
+    const metadataPrefix = 'kGCKMetadataKey';
+    let metadata;
+
+    // Build metadata
+    // https://developers.google.com/cast/v2/reference/ios/interface_g_c_k_media_metadata
+    if (mediaInfo.metadata) {
+      metadata = GCKMediaMetadata.alloc().initWithMetadataType(mediaInfo.metadata.metadataType || 0);
+
+      // Add each valid metadata field
+      Object.keys(mediaInfo.metadata).forEach(key => {
+        if (CastButtonBase.validMetadataKeys.indexOf(key) > -1) {
+          const fixedKey = metadataPrefix + upperFirst(key);
+          const value = mediaInfo.metadata[key];
+          console.log(fixedKey, value);
+          metadata.setStringForKey(value, eval(fixedKey));
+        }
+      });
+
+      // Images
+      if (mediaInfo.metadata.images && mediaInfo.metadata.images.length) {
+        mediaInfo.metadata.images.forEach(img => {
+          const uri = NSURL.URLWithString(img.url)
+          metadata.addImage(GCKImage.alloc().initWithURLWidthHeight(uri, img.width, img.height));
+        });
+      }
+    }
+
+    // Build media info
+
+    // TODO: handle these fields
     const mediaTracks = null;
     const textTrackStyle = null;
     const customData = null;
 
-    const mediaInfo = GCKMediaInformation.alloc().initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(contentID, streamType, contentType, metadata, streamDuration, mediaTracks, textTrackStyle, customData)
+    const builtMediaInfo = GCKMediaInformation.alloc().initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(
+      mediaInfo.contentId,
+      mediaInfo.streamType,
+      mediaInfo.contentType,
+      metadata,
+      mediaInfo.streamDuration,
+      mediaTracks,
+      textTrackStyle,
+      customData
+    );
 
     const options = GCKMediaLoadOptions.alloc().init();
-    options.autoplay = true;
-    options.playPosition = 0;
+    options.autoplay = autoplay;
+    options.playPosition = position;
     const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.loadMediaWithOptions(mediaInfo, options);
+    remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
   }
 }

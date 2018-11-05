@@ -3,11 +3,30 @@ import { View, Property, isIOS } from 'tns-core-modules/ui/core/view';
 import { ViewBase } from 'tns-core-modules/ui/core/view-base';
 import { Visibility } from "tns-core-modules/ui/styling/style-properties";
 
-// TODO: remove textProperty
-//export const textProperty = new Property<CastButtonBase, string>({ name: 'text', defaultValue: '', affectsLayout: isIOS });
-
 export abstract class CastButtonBase extends View implements CastButton {
-  public static tapEvent = 'tap';
+  public static validMetadataKeys = [
+    'creationDate',
+    'releaseDate',
+    'broadcastDate',
+    'title',
+    'subtitle',
+    'artist',
+    'albumArtist',
+    'albumTitle',
+    'composer',
+    'discNumber',
+    'trackNumber',
+    'seasonNumber',
+    'episodeNumber',
+    'seriesTitle',
+    'studio',
+    'width',
+    'height',
+    'locationName',
+    'locationLatitude',
+    'locationLongitude',
+  ];
+
   public static mediaRouterEventEvent = 'mediaRouterEvent';
   public static sessionEventEvent = 'sessionEvent';
   visibility: Visibility;
@@ -20,5 +39,3 @@ export abstract class CastButtonBase extends View implements CastButton {
     });
   }
 }
-
-//textProperty.register(CastButtonBase);

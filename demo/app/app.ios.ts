@@ -9,7 +9,7 @@ class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
   }
 
   logMessageFromFunction(message, fromFunction) {
-    console.log(message);
+    //console.log(message);
   }
 }
 

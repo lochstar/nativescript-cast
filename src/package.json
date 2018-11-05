@@ -47,11 +47,11 @@
     "tns-core-modules": "^4.2.0",
     "tns-platform-declarations": "^4.2.0",
     "typescript": "~2.8.2",
+    "lodash": "^4.17.11",
     "prompt": "^1.0.0",
     "rimraf": "^2.6.2",
     "tslint": "^5.11.0",
     "semver": "^5.5.0"
   },
-  "dependencies": {},
   "bootstrapper": "nativescript-plugin-seed"
 }

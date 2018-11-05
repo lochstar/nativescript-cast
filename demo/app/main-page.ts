@@ -17,6 +17,5 @@ export function pageLoaded(args: observable.EventData) {
 export function castLoaded(args: observable.EventData) {
   const cast = <View>args.object;
   console.log('castLoaded');
-  console.log(cast.mCastContext);
-  console.log(cast.mSessionManager);
+  //cast.visibility = 'collapsed';
 }

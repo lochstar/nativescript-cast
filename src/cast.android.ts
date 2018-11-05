@@ -1,3 +1,4 @@
+//import _ from 'lodash';
 import { ad } from 'tns-core-modules/utils/utils';
 import { CastButtonBase } from './cast.common';
 
@@ -220,6 +221,7 @@ export class CastButton extends CastButtonBase {
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
   public mSelectedDevice: any;
 
+  public mRouteCount: number;
   public mMediaRouter: android.support.v7.media.MediaRouter;
   public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
   public mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
@@ -316,36 +318,58 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
   }
 
-  remoteMediaClientLoad() {
-    const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-    metadata.putString(MediaMetadata.KEY_TITLE, 'Big Buck Bunny');
-    metadata.putString(MediaMetadata.KEY_SUBTITLE, 'By Blender Foundation');
+  showButton(): void {
+    this.nativeView.setVisibility(android.view.View.VISIBLE);
+  }
 
-    const uri = android.net.Uri.parse('https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg')
-    const thumbnail = new WebImage(uri, 768, 1158);
-    metadata.addImage(thumbnail);
+  hideButton(): void {
+    this.nativeView.setVisibility(android.view.View.INVISIBLE);
+  }
 
-    const contentId = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-    const mediaInfo = new MediaInfo.Builder(contentId)
-      .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-      .setContentType('video/mp4')
-      .setMetadata(metadata)
-      //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
-      .build();
+  loadMedia(mediaInfo: any, autoplay = true, position?: number) {
+    const snakeCase = require('lodash/fp/snakeCase');
+    const metadataPrefix = 'KEY_';
+    let metadata;
 
-    /*
-    const contentId = 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8';
-    const mediaInfo = new MediaInfo.Builder(contentId)
-      .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)  // STREAM_TYPE_LIVE ?
-      .setContentType('application/x-mpegurl')
-      .setMetadata(metadata)
-      //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
-      .build();
-    */
+    // Build metadata
+    // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata
+    if (mediaInfo.metadata) {
+      metadata = new MediaMetadata(mediaInfo.metadata.metadataType || 0);
 
-    const autoPlay = true;
-    const position = 0;
+      // Add each valid metadata field
+      Object.keys(mediaInfo.metadata).forEach(key => {
+        if (CastButtonBase.validMetadataKeys.indexOf(key) > -1) {
+          const fixedKey = metadataPrefix + snakeCase(key).toUpperCase();
+          const value = mediaInfo.metadata[key];
+          metadata.putString(MediaMetadata[fixedKey], value);
+        }
+      });
+
+      // Images
+      if (mediaInfo.metadata.images && mediaInfo.metadata.images.length) {
+        mediaInfo.metadata.images.forEach(img => {
+          const uri = android.net.Uri.parse(img.url)
+          const thumb = new WebImage(uri, img.width, img.height);
+          metadata.addImage(thumb);
+        });
+      }
+    }
+
+    // Build media info
+    const builtMediaInfo = new MediaInfo.Builder(mediaInfo.contentId)
+      .setContentType(mediaInfo.contentType)
+      .setStreamType(MediaInfo[mediaInfo.streamType])
+
+    if (metadata) {
+      builtMediaInfo.setMetadata(metadata)
+    }
+
+    if (mediaInfo.duration) {
+      builtMediaInfo.setStreamDuration(mediaInfo.duration)
+    }
+
+    // Load media in to remote client
     const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.load(mediaInfo, autoPlay, position);
+    remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
   }
 }

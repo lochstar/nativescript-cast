@@ -24,7 +24,7 @@ export class MainViewModel extends Observable {
 
     this.count = 0;
     this.message = 'hello';
-    this.castVisibility = 'collapsed';
+    //this.castVisibility = 'collapsed';
     //this.castVisibility = 'visible';
 
     this.mRouteCount = 0;
@@ -35,24 +35,6 @@ export class MainViewModel extends Observable {
 
   handleMediaRouterEvent(event): void {
     switch (event.data.mediaRouterEventName) {
-      case 'onRouteAdded':
-        if (++this.mRouteCount == 1) {
-          // Show the button when a device is discovered
-          this.showButton();
-        }
-        break;
-      case 'onRouteChanged':
-        if (++this.mRouteCount == 1) {
-          // Show the button when a device is discovered
-          this.showButton();
-        }
-        break;
-      case 'onRouteRemoved':
-        if (--this.mRouteCount == 0) {
-          // Hide the button if there are no devices discovered
-          this.hideButton();
-        }
-        break;
       case 'onRouteSelected':
         // Handle route selection.
         console.log('onRouteSelected');
@@ -77,7 +59,27 @@ export class MainViewModel extends Observable {
       case 'onSessionStarted':
         console.log('onSessionStarted');
 
-        event.object.remoteMediaClientLoad();
+        event.object.loadMedia({
+          contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+          contentType: 'video/mp4',
+          streamType: 1,
+          duration: undefined,
+          metadata: {
+            metadataType: 1,
+            //albumName: stations[station].name,
+            //albumArtist: artist,
+            //artist: artist,
+            title: 'Big Buck Bunny',
+            subtitle: 'By Blender Foundation',
+            images: [
+              {
+                url: 'https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg',
+                width: 768,
+                height: 1158,
+              }
+            ]
+          }
+        });
 
         /*
         const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
@@ -119,14 +121,6 @@ export class MainViewModel extends Observable {
         console.log('sessionEvent: ' + event.data.sessionEventName);
         break;
     }
-  }
-
-  showButton(): void {
-    this.set('castVisibility', 'visible');
-  }
-
-  hideButton(): void {
-    this.set('castVisibility', 'collapsed');
   }
 
   onTap(args: EventData) {
