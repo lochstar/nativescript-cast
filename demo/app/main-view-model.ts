@@ -11,8 +11,10 @@ const WebImage = com.google.android.gms.common.images.WebImage;
 export class MainViewModel extends Observable {
   public count: number;
   public message: string;
+  public textData: string;
   public castVisibility: string;
 
+  public cast: any;
   public mRouteCount: number;
   public remoteMediaClient: any;
   public mSelectedDevice: any;
@@ -27,6 +29,7 @@ export class MainViewModel extends Observable {
     //this.castVisibility = 'collapsed';
     //this.castVisibility = 'visible';
 
+    this.cast = null;
     this.mRouteCount = 0;
     this.mSelectedDevice = null;
     this.mSelectedDeviceName = '';
@@ -55,68 +58,11 @@ export class MainViewModel extends Observable {
   }
 
   handleSessionEvent(event): void {
+    if (event.object && !this.cast) {
+      this.cast = event.object;
+    }
+
     switch (event.data.sessionEventName) {
-      case 'onSessionStarted':
-        console.log('onSessionStarted');
-
-        event.object.loadMedia({
-          contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-          contentType: 'video/mp4',
-          streamType: 1,
-          duration: undefined,
-          metadata: {
-            metadataType: 1,
-            //albumName: stations[station].name,
-            //albumArtist: artist,
-            //artist: artist,
-            title: 'Big Buck Bunny',
-            subtitle: 'By Blender Foundation',
-            images: [
-              {
-                url: 'https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg',
-                width: 768,
-                height: 1158,
-              }
-            ]
-          }
-        });
-
-        /*
-        const metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-        metadata.putString(MediaMetadata.KEY_TITLE, 'Big Buck Bunny');
-        metadata.putString(MediaMetadata.KEY_SUBTITLE, 'By Blender Foundation');
-
-        const uri = android.net.Uri.parse('https://peach.blender.org/wp-content/uploads/poster_bunny_small.jpg')
-        const thumbnail = new WebImage(uri, 768, 1158);
-        metadata.addImage(thumbnail);
-
-        const contentId = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-        const mediaInfo = new MediaInfo.Builder(contentId)
-          .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-          .setContentType('videos/mp4')
-          .setMetadata(metadata)
-          //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
-          .build();
-        */
-
-        /*
-        const contentId = 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8';
-        const mediaInfo = new MediaInfo.Builder(contentId)
-          .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)  // STREAM_TYPE_LIVE ?
-          .setContentType('application/x-mpegurl')
-          .setMetadata(metadata)
-          //.setStreamDuration(mSelectedMedia.getDuration() * 1000)
-          .build();
-        */
-
-        /*
-        const autoPlay = true;
-        const position = 0;
-        const session = event.data.session;
-        this.remoteMediaClient = session.getRemoteMediaClient();
-        this.remoteMediaClient.load(mediaInfo, autoPlay, position);
-        */
-        break;
       default:
         console.log('sessionEvent: ' + event.data.sessionEventName);
         break;
@@ -127,5 +73,48 @@ export class MainViewModel extends Observable {
     this.count++;
     const button = <Button>args.object;
     button.text = `Tapped ${this.count} times`;
+  }
+
+  onLoadTap(args: EventData) {
+    this.cast.loadMedia({
+      contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+      contentType: 'video/mp4',
+      streamType: 'BUFFERED',  // LIVE, NONE
+      duration: undefined,
+      metadata: {
+        metadataType: 1,
+        title: 'Sintel',
+        subtitle: 'By Blender Foundation',
+        description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world.\nwww.sintel.org',
+        images: [
+          {
+            url: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg',
+            width: 480,
+            height: 360,
+          }
+        ]
+      }
+    });
+  }
+
+  onPlayTap(args: EventData) {
+    this.cast.playMedia();
+  }
+
+  onPauseTap(args: EventData) {
+    this.cast.pauseMedia();
+  }
+
+  onSeekTap(args: EventData) {
+    this.cast.seekMedia(23);
+  }
+
+  onStopTap(args: EventData) {
+    this.cast.stopMedia();
+  }
+
+  onGetMediaInfoTap() {
+    const mediaInfo = this.cast.getMediaInfo();
+    this.set('textData', JSON.stringify(mediaInfo, null, '  '));
   }
 }

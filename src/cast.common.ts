@@ -38,4 +38,26 @@ export abstract class CastButtonBase extends View implements CastButton {
       data
     });
   }
+
+  public streamTypeStringToNumber(streamType: string) {
+    switch (streamType) {
+      case 'BUFFERED':
+        return 1;
+      case 'LIVE':
+        return 2;
+      default:
+        return 0;
+    }
+  }
+
+  public streamTypeNumberToString(streamType: number) {
+    switch (streamType) {
+      case 1:
+        return 'BUFFERED';
+      case 2:
+        return 'LIVE';
+      default:
+        return 'NONE';
+    }
+  }
 }

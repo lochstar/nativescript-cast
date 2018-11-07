@@ -296,6 +296,14 @@ export class CastButton extends CastButtonBase {
     super.disposeNativeView();
   }
 
+  showButton(): void {
+    this.nativeView.setVisibility(android.view.View.VISIBLE);
+  }
+
+  hideButton(): void {
+    this.nativeView.setVisibility(android.view.View.INVISIBLE);
+  }
+
   addMediaRouterCallback(): void {
     this.mMediaRouter.addCallback(this.mMediaRouteSelector, this.mMediaRouterCallback, MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
   }
@@ -314,16 +322,9 @@ export class CastButton extends CastButtonBase {
     this.mSessionManager.removeSessionManagerListener(this.mSessionManagerListener);
   }
 
+  // https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient
   getRemoteMediaClient() {
     return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
-  }
-
-  showButton(): void {
-    this.nativeView.setVisibility(android.view.View.VISIBLE);
-  }
-
-  hideButton(): void {
-    this.nativeView.setVisibility(android.view.View.INVISIBLE);
   }
 
   loadMedia(mediaInfo: any, autoplay = true, position?: number) {
@@ -355,10 +356,13 @@ export class CastButton extends CastButtonBase {
       }
     }
 
+    // Convert streamType to number value
+    const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
+
     // Build media info
     const builtMediaInfo = new MediaInfo.Builder(mediaInfo.contentId)
       .setContentType(mediaInfo.contentType)
-      .setStreamType(MediaInfo[mediaInfo.streamType])
+      .setStreamType(MediaInfo[streamType])
 
     if (metadata) {
       builtMediaInfo.setMetadata(metadata)
@@ -371,5 +375,66 @@ export class CastButton extends CastButtonBase {
     // Load media in to remote client
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
+  }
+
+  // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
+  getMediaInfo() {
+    const camelCase = require('lodash/fp/camelCase');
+    const mediaInfo = this.getRemoteMediaClient().getMediaInfo();
+    const metadata = mediaInfo.getMetadata();
+    const metaDataKeys = ad.collections.stringSetToStringArray(metadata.keySet());
+    const images = metadata.getImages();
+
+    let jsonMetadata = {
+      metadataType: metadata.getMediaType(),
+      images: [],
+    }
+
+    metaDataKeys.forEach(key => {
+      const fixedKey = camelCase(key.replace('com.google.android.gms.cast.metadata.', ''));
+      jsonMetadata[fixedKey] = metadata.getString(key);
+    });
+
+    for (let index = 0; index < images.size(); index++) {
+      const img = images.get(index);
+      jsonMetadata.images.push({
+        url: img.getUrl().toString(),
+        width: img.getWidth(),
+        height: img.getHeight()
+      });
+    }
+
+    const jsonData = {
+      contentId: mediaInfo.getContentId(),
+      streamType: this.streamTypeNumberToString(mediaInfo.getStreamType()),
+      contentType: mediaInfo.getContentType(),
+      metadata: jsonMetadata,
+      duration: mediaInfo.getStreamDuration() / 1000,
+    };
+
+    return jsonData;
+  }
+
+  // @ts-ignore
+  pauseMedia(customData?: java.lang.Object.JSONObject) {
+    this.getRemoteMediaClient().pause(customData);
+  }
+
+  // @ts-ignore
+  playMedia(customData?: java.lang.Object.JSONObject) {
+    this.getRemoteMediaClient().play(customData);
+  }
+
+  // @ts-ignore
+  seekMedia(position: number, resumeState = 0, customData?: java.lang.Object.JSONObject) {
+    // RESUME_STATE_UNCHANGED: 0
+    // RESUME_STATE_PAUSE: 2
+    // RESUME_STATE_PLAY: 1
+    this.getRemoteMediaClient().seek(position * 1000, resumeState, customData);
+  }
+
+  // @ts-ignore
+  stopMedia(customData?: java.lang.Object.JSONObject) {
+    this.getRemoteMediaClient().stop(customData);
   }
 }

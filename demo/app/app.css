@@ -3,3 +3,10 @@
 .cast-btn {
 
 }
+
+.text-data {
+  font-family: monospace;
+  font-size: 12;
+  background-color: #ccc;
+  border-color: #111;
+}
