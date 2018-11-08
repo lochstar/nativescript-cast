@@ -1,5 +1,5 @@
 import { ios } from 'tns-core-modules/utils/utils';
-import { StackLayout } from 'tns-core-modules/ui/layouts/stack-layout';
+import { StackLayout } from "tns-core-modules/ui/layouts/stack-layout";
 import { CastButtonBase, CastMiniControllerBase } from './cast.common';
 
 declare let GCKUICastButton: any;
@@ -316,7 +316,6 @@ export class CastMiniController extends CastMiniControllerBase {
 
   constructor() {
     super();
-
     this.castControlBarsEnabled = true;
   }
 
@@ -324,35 +323,9 @@ export class CastMiniController extends CastMiniControllerBase {
    * Creates new native button.
    */
   public createNativeView(): Object {
-    // Create new instance of GCKUICastButton
-    const button = UIButton.buttonWithType(UIButtonType.System);
-
-    //const mCastContext = GCKCastContext.sharedInstance();
-
-    //const miniController = mCastContext.createCastContainerControllerForViewController(this);
-    //const miniController = mCastContext.createMiniMediaControlsViewController();
-    //miniController.delegate = this;
-    //console.dir(miniController);
-    //console.log(miniController.view);
-    //console.log(miniController.bottomLayoutGuide);
-    //console.dir(miniController);
-
-    //const castContainerVC = new GCKUICastContainerViewController();
-    //castContainerVC.miniMediaControlsItemEnabled = true;
-    //mCastContext.createCastContainerControllerForViewController()
-    //console.log();
-
-    //const button = GCKUIMiniMediaControlsViewController;
-
-    //const stackLayout = new StackLayout();
-    //const stackLayout = this.getViewById('stackLayout');
-    //stackLayout.ios.addSubview(miniController.view);
-
-    return button;
-  }
-
-  setCastControlBarsEnabled(notificationsEnabled: boolean): void {
-    console.log('setCastControlBarsEnabled');
+    const stackLayout = new StackLayout();
+    //stackLayout.orientation = 'horizontal';
+    return stackLayout.nativeView;
   }
 
   /**
@@ -362,10 +335,6 @@ export class CastMiniController extends CastMiniControllerBase {
     // Attach the owner to nativeView.
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
-
-    //const mCastContext = GCKCastContext.sharedInstance();
-    //const miniController = mCastContext.createMiniMediaControlsViewController();
-    //this.ios.addSubview(miniController.view);
 
     super.initNativeView();
   }
@@ -384,5 +353,18 @@ export class CastMiniController extends CastMiniControllerBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
+  }
+
+  onLoaded(): void {
+    const mCastContext = GCKCastContext.sharedInstance();
+    const miniController = mCastContext.createMiniMediaControlsViewController();
+    miniController.delegate = this;
+    this.ios.addSubview(miniController.view);
+
+    super.onLoaded();
+  }
+
+  setCastControlBarsEnabled(notificationsEnabled: boolean): void {
+    console.log('setCastControlBarsEnabled: ' + notificationsEnabled);
   }
 }

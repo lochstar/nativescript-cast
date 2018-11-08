@@ -72,13 +72,9 @@
       </StackLayout>
     </ScrollView>
 
-    <StackLayout loaded="layoutLoaded">
-      <cast:CastMiniController
-        height="50"
-        horizontalAlignment="stretch"
-        verticalAlignment="bottom"
-        loaded="castMiniControllerLoaded"
-      />
-    </StackLayout>
+    <cast:CastMiniController
+      height="50"
+      loaded="castMiniControllerLoaded"
+    />
   </StackLayout>
 </Page>

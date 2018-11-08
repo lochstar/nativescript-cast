@@ -27,18 +27,14 @@ export function castLoaded(args: observable.EventData) {
 export function castMiniControllerLoaded(args: observable.EventData) {
   const cast = <View>args.object;
   console.log('castMiniControllerLoaded');
+  //console.dir(cast);
   //cast.visibility = 'collapsed';
   //cast.nativeView.inflate();
   //cast.nativeView.setVisibility(android.view.View.VISIBLE);
-}
 
-export function layoutLoaded(args: observable.EventData) {
-  const layout = <View>args.object;
-  console.log('layoutLoaded');
-
+  /*
   const mCastContext = GCKCastContext.sharedInstance();
   const miniController = mCastContext.createMiniMediaControlsViewController();
-  //miniController.delegate = layout.view;
-  //miniController.ios.view.frame = layout;
-  layout.ios.addSubview(miniController.view);
+  cast.ios.addSubview(miniController.view);
+  */
 }
