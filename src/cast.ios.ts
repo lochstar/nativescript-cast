@@ -1,5 +1,6 @@
 import { ios } from 'tns-core-modules/utils/utils';
-import { CastButtonBase } from './cast.common';
+import { StackLayout } from 'tns-core-modules/ui/layouts/stack-layout';
+import { CastButtonBase, CastMiniControllerBase } from './cast.common';
 
 declare let GCKUICastButton: any;
 declare let GCKSession: any;
@@ -12,6 +13,9 @@ declare let CGRect: any;
 declare let GCKCastContext: any;
 declare let CGRectZero: any;
 declare let GCKMediaStreamTypeBuffered: any;
+
+declare let UIButton: any;
+declare let UIButtonType: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -124,8 +128,6 @@ export class CastButton extends CastButtonBase {
    * Creates new native button.
    */
   public createNativeView(): Object {
-    console.log('createNativeView');
-
     // Create new instance of GCKUICastButton
     const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
 
@@ -248,10 +250,10 @@ export class CastButton extends CastButtonBase {
     remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
   }
 
+  // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
   getMediaInfo() {
     const camelCase = require('lodash/fp/camelCase');
     const mediaInfo = this.getRemoteMediaClient().mediaStatus.mediaInformation;
-
     const metadata = mediaInfo.metadata;
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
     const images = ios.collections.nsArrayToJSArray(metadata.images());
@@ -274,7 +276,7 @@ export class CastButton extends CastButtonBase {
         width: img.width,
         // @ts-ignore
         height: img.height
-      })
+      });
     });
 
     const jsonData = {
@@ -305,5 +307,82 @@ export class CastButton extends CastButtonBase {
 
   stopMedia(customData?: any) {
     this.getRemoteMediaClient().stopWithCustomData(customData);
+  }
+}
+
+export class CastMiniController extends CastMiniControllerBase {
+  nativeView: any;
+  castControlBarsEnabled: boolean;
+
+  constructor() {
+    super();
+
+    this.castControlBarsEnabled = true;
+  }
+
+  /**
+   * Creates new native button.
+   */
+  public createNativeView(): Object {
+    // Create new instance of GCKUICastButton
+    const button = UIButton.buttonWithType(UIButtonType.System);
+
+    //const mCastContext = GCKCastContext.sharedInstance();
+
+    //const miniController = mCastContext.createCastContainerControllerForViewController(this);
+    //const miniController = mCastContext.createMiniMediaControlsViewController();
+    //miniController.delegate = this;
+    //console.dir(miniController);
+    //console.log(miniController.view);
+    //console.log(miniController.bottomLayoutGuide);
+    //console.dir(miniController);
+
+    //const castContainerVC = new GCKUICastContainerViewController();
+    //castContainerVC.miniMediaControlsItemEnabled = true;
+    //mCastContext.createCastContainerControllerForViewController()
+    //console.log();
+
+    //const button = GCKUIMiniMediaControlsViewController;
+
+    //const stackLayout = new StackLayout();
+    //const stackLayout = this.getViewById('stackLayout');
+    //stackLayout.ios.addSubview(miniController.view);
+
+    return button;
+  }
+
+  setCastControlBarsEnabled(notificationsEnabled: boolean): void {
+    console.log('setCastControlBarsEnabled');
+  }
+
+  /**
+   * Initializes properties/listeners of the native view.
+   */
+  initNativeView(): void {
+    // Attach the owner to nativeView.
+    // When nativeView is tapped we get the owning JS object through this field.
+    (<any>this.nativeView).owner = this;
+
+    //const mCastContext = GCKCastContext.sharedInstance();
+    //const miniController = mCastContext.createMiniMediaControlsViewController();
+    //this.ios.addSubview(miniController.view);
+
+    super.initNativeView();
+  }
+
+  /**
+   * Clean up references to the native view and resets nativeView to its original state.
+   * If you have changed nativeView in some other way except through setNative callbacks
+   * you have a chance here to revert it back to its original state
+   * so that it could be reused later.
+   */
+  disposeNativeView(): void {
+    // Remove reference from native listener to this instance.
+    (<any>this.nativeView).owner = null;
+
+    // If you want to recycle nativeView and have modified the nativeView
+    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
+    // you have to reset it to its initial state here.
+    super.disposeNativeView();
   }
 }

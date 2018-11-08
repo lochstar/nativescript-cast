@@ -1,6 +1,6 @@
-//import _ from 'lodash';
+import * as app from 'tns-core-modules/application';
 import { ad } from 'tns-core-modules/utils/utils';
-import { CastButtonBase } from './cast.common';
+import { CastButtonBase, CastMiniControllerBase } from './cast.common';
 
 const {
   MediaRouter,
@@ -436,5 +436,88 @@ export class CastButton extends CastButtonBase {
   // @ts-ignore
   stopMedia(customData?: java.lang.Object.JSONObject) {
     this.getRemoteMediaClient().stop(customData);
+  }
+}
+
+export class CastMiniController extends CastMiniControllerBase {
+  nativeView: any;
+
+  constructor() {
+    super();
+  }
+
+  /**
+   * Creates new native button.
+   */
+  public createNativeView(): Object {
+    //const appContext = ad.getApplicationContext();
+
+    //const layoutId = android.view.View.generateViewId();
+    const context = app.android.context;
+    const resourceId = context.getResources().getIdentifier('cast_mini_controller', 'layout', context.getPackageName());
+    const stubLayout = new android.view.ViewStub(this._context);
+    stubLayout.setLayoutResource(resourceId);
+
+    console.dir(this);
+    console.log(this._context.setFragmentClass);
+
+    //this.setFragmentClass('com.google.android.gms.cast.framework.media.widget.MiniControllerFragment');
+
+    //nativeView.inflate();
+    //const button = new android.widget.Button(this._context);
+    //button.setText('hello');
+    //console.log(this._context.setContentView);
+
+    //this._context.setContentView(resourceId);
+    /*
+    const layoutId = android.view.View.generateViewId();
+    const nativeView = new android.widget.LinearLayout(this._context);
+    nativeView.setId(layoutId);
+
+    nativeView.setOrientation(android.widget.LinearLayout.VERTICAL);
+    nativeView.setLayoutParams(new android.widget.FrameLayout.LayoutParams(
+      -1, // android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+      -1  // android.widget.FrameLayout.LayoutParams.MATCH_PARENT
+    ));
+    nativeView.setLayoutInflater(stubLayout);
+    */
+
+    // @ts-ignore
+    return stubLayout;
+  }
+
+  /**
+   * Initializes properties/listeners of the native view.
+   */
+  initNativeView(): void {
+    // Attach the owner to nativeView.
+    // When nativeView is tapped we get the owning JS object through this field.
+    (<any>this.nativeView).owner = this;
+
+    //console.dir(this.nativeView);
+    //this.nativeView.draw();
+    //this.nativeView.inflate();
+
+    super.initNativeView();
+  }
+
+  /**
+   * Clean up references to the native view and resets nativeView to its original state.
+   * If you have changed nativeView in some other way except through setNative callbacks
+   * you have a chance here to revert it back to its original state
+   * so that it could be reused later.
+   */
+  disposeNativeView(): void {
+    // Remove reference from native view to this instance.
+    (<any>this.nativeView).owner = null;
+
+    // If you want to recycle nativeView and have modified the nativeView
+    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
+    // you have to reset it to its initial state here.
+    super.disposeNativeView();
+  }
+
+  inflate(): void {
+
   }
 }

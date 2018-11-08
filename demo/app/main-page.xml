@@ -20,54 +20,65 @@
     </ActionItem>
   </ActionBar>
 
-  <ScrollView>
-    <StackLayout class="p-20">
-      <!--
-      <Label text="{{ mSelectedDeviceName }}" class="t-20 text-center c-black" textWrap="true"/>
-      <Label text="{{ mSelectedDeviceIp }}" class="t-20 text-center c-black" textWrap="true"/>
-      -->
+  <StackLayout>
+    <ScrollView>
+      <StackLayout class="p-20">
+        <!--
+        <Label text="{{ mSelectedDeviceName }}" class="t-20 text-center c-black" textWrap="true"/>
+        <Label text="{{ mSelectedDeviceIp }}" class="t-20 text-center c-black" textWrap="true"/>
+        -->
 
-      <Button
-        text="Tap Me!"
-        tap="{{ onTap }}"
-        class="btn btn-primary btn-active"
-      />
-      <Button
-        text="Load"
-        tap="{{ onLoadTap }}"
-        class="btn btn-active"
-      />
-      <Button
-        text="Play"
-        tap="{{ onPlayTap }}"
-        class="btn btn-active"
-      />
-      <Button
-        text="Pause"
-        tap="{{ onPauseTap }}"
-        class="btn btn-active"
-      />
-      <Button
-        text="Seek"
-        tap="{{ onSeekTap }}"
-        class="btn btn-active"
-      />
-      <Button
-        text="Stop"
-        tap="{{ onStopTap }}"
-        class="btn btn-active"
-      />
+        <Button
+          text="Tap Me!"
+          tap="{{ onTap }}"
+          class="btn btn-primary btn-active"
+        />
+        <Button
+          text="Load"
+          tap="{{ onLoadTap }}"
+          class="btn btn-active"
+        />
+        <Button
+          text="Play"
+          tap="{{ onPlayTap }}"
+          class="btn btn-active"
+        />
+        <Button
+          text="Pause"
+          tap="{{ onPauseTap }}"
+          class="btn btn-active"
+        />
+        <Button
+          text="Seek"
+          tap="{{ onSeekTap }}"
+          class="btn btn-active"
+        />
+        <Button
+          text="Stop"
+          tap="{{ onStopTap }}"
+          class="btn btn-active"
+        />
 
-      <Button
-        text="Get Media Info"
-        tap="{{ onGetMediaInfoTap }}"
-        class="btn btn-active"
-      />
-      <TextView
-        text="{{ textData }}"
-        editable="false"
-        class="text-data"
+        <Button
+          text="Get Media Info"
+          tap="{{ onGetMediaInfoTap }}"
+          class="btn btn-active"
+        />
+        <TextView
+          text="{{ textData }}"
+          editable="false"
+          class="text-data"
+        />
+      </StackLayout>
+    </ScrollView>
+
+    <StackLayout loaded="layoutLoaded">
+      <cast:CastMiniController
+        height="50"
+        horizontalAlignment="stretch"
+        verticalAlignment="bottom"
+        loaded="castMiniControllerLoaded"
       />
     </StackLayout>
-  </ScrollView>
+  </StackLayout>
 </Page>

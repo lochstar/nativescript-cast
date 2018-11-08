@@ -13,7 +13,17 @@ class CastOptionsProvider extends java.lang.Object {
     const appStringId = ad.resources.getStringId('app_id');
     const appId = ad.getApplication().getString(appStringId);
 
-    return new com.google.android.gms.cast.framework.CastOptions.Builder().setReceiverApplicationId(appId).build();
+    const notificationOptions = new com.google.android.gms.cast.framework.media.NotificationOptions.Builder()
+      .setTargetActivityClassName('com.codelab.cast.CastActivity')
+      .build();
+    const mediaOptions = new com.google.android.gms.cast.framework.media.CastMediaOptions.Builder()
+      .setNotificationOptions(notificationOptions)
+      .build();
+
+    return new com.google.android.gms.cast.framework.CastOptions.Builder()
+      .setReceiverApplicationId(appId)
+      .setCastMediaOptions(mediaOptions)
+      .build();
   }
 
   public getAdditionalSessionProviders(context: any) {
