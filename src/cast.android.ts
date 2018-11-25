@@ -1,5 +1,6 @@
 import * as app from 'tns-core-modules/application';
 import { ad } from 'tns-core-modules/utils/utils';
+import { StackLayout } from "tns-core-modules/ui/layouts/stack-layout";
 import { CastButtonBase, CastMiniControllerBase } from './cast.common';
 
 const {
@@ -453,13 +454,6 @@ export class CastMiniController extends CastMiniControllerBase {
     //const appContext = ad.getApplicationContext();
 
     //const layoutId = android.view.View.generateViewId();
-    const context = app.android.context;
-    const resourceId = context.getResources().getIdentifier('cast_mini_controller', 'layout', context.getPackageName());
-    const stubLayout = new android.view.ViewStub(this._context);
-    stubLayout.setLayoutResource(resourceId);
-
-    console.dir(this);
-    console.log(this._context.setFragmentClass);
 
     //this.setFragmentClass('com.google.android.gms.cast.framework.media.widget.MiniControllerFragment');
 
@@ -483,7 +477,12 @@ export class CastMiniController extends CastMiniControllerBase {
     */
 
     // @ts-ignore
-    return stubLayout;
+
+    const stackLayout = new StackLayout();
+
+    //this.nativeView = stackLayout.nativeView;
+    //stackLayout.orientation = 'horizontal';
+    return stackLayout.nativeView;
   }
 
   /**
@@ -494,7 +493,8 @@ export class CastMiniController extends CastMiniControllerBase {
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
 
-    //console.dir(this.nativeView);
+    console.log('initNativeView');
+    console.dir(this.nativeView);
     //this.nativeView.draw();
     //this.nativeView.inflate();
 
@@ -517,7 +517,18 @@ export class CastMiniController extends CastMiniControllerBase {
     super.disposeNativeView();
   }
 
-  inflate(): void {
+  onLoaded(): void {
+    console.log('onLoaded');
+    console.dir(this);
+    const context = app.android.context;
+    const resourceId = context.getResources().getIdentifier('cast_mini_controller', 'layout', context.getPackageName());
+    const stubLayout = new android.view.ViewStub(this._context);
+    stubLayout.setLayoutResource(resourceId);
+    //console.log(this.ad);
+    //this.android.addSubview(stubLayout);
+    //stubLayout.inflate();
+    //this.nativeView.setContentView(resourceId);
 
+    super.onLoaded();
   }
 }

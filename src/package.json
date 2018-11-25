@@ -1,7 +1,7 @@
 {
   "name": "nativescript-cast",
   "version": "1.0.0",
-  "description": "Your awesome NativeScript plugin.",
+  "description": "NativeScript Chromecast Plugin.",
   "main": "cast",
   "typings": "cast.d.ts",
   "nativescript": {
@@ -31,7 +31,9 @@
     "NativeScript",
     "JavaScript",
     "Android",
-    "iOS"
+    "iOS",
+    "Chromecast",
+    "Cast"
   ],
   "author": {
     "name": "Lochlan McBride",

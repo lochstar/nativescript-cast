@@ -312,11 +312,9 @@ export class CastButton extends CastButtonBase {
 
 export class CastMiniController extends CastMiniControllerBase {
   nativeView: any;
-  castControlBarsEnabled: boolean;
 
   constructor() {
     super();
-    this.castControlBarsEnabled = true;
   }
 
   /**
@@ -358,13 +356,8 @@ export class CastMiniController extends CastMiniControllerBase {
   onLoaded(): void {
     const mCastContext = GCKCastContext.sharedInstance();
     const miniController = mCastContext.createMiniMediaControlsViewController();
-    miniController.delegate = this;
     this.ios.addSubview(miniController.view);
 
     super.onLoaded();
-  }
-
-  setCastControlBarsEnabled(notificationsEnabled: boolean): void {
-    console.log('setCastControlBarsEnabled: ' + notificationsEnabled);
   }
 }
