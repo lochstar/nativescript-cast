@@ -71,10 +71,5 @@
         />
       </StackLayout>
     </ScrollView>
-
-    <cast:CastMiniController
-      height="50"
-      loaded="castMiniControllerLoaded"
-    />
   </StackLayout>
 </Page>
