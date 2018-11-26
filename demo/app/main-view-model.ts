@@ -1,13 +1,6 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
-/*
-const CastDevice = com.google.android.gms.cast.CastDevice;
-const MediaInfo = com.google.android.gms.cast.MediaInfo;
-const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
-const WebImage = com.google.android.gms.common.images.WebImage;
-*/
-
 export class MainViewModel extends Observable {
   public count: number;
   public message: string;
