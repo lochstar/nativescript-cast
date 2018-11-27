@@ -1,6 +1,5 @@
 import { CastButton, CastMiniController } from './cast';
 import { View } from 'tns-core-modules/ui/core/view';
-import { Frame } from 'tns-core-modules/ui/frame';
 import { Visibility } from "tns-core-modules/ui/styling/style-properties";
 
 export abstract class CastButtonBase extends View implements CastButton {
@@ -27,8 +26,9 @@ export abstract class CastButtonBase extends View implements CastButton {
     'locationLongitude',
   ];
 
-  public static mediaRouterEventEvent = 'mediaRouterEvent';
-  public static sessionEventEvent = 'sessionEvent';
+  //public static mediaRouterEventEvent = 'mediaRouterEvent';
+  //public static sessionEventEvent = 'sessionEvent';
+  public static eventEvent = 'event';
   visibility: Visibility;
 
   public sendEvent(eventName: string, data?: any) {
@@ -60,8 +60,4 @@ export abstract class CastButtonBase extends View implements CastButton {
         return 'NONE';
     }
   }
-}
-
-export abstract class CastMiniControllerBase extends View implements CastMiniController {
-  visibility: Visibility;
 }

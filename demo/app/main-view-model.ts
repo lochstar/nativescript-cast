@@ -2,70 +2,39 @@ import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
 export class MainViewModel extends Observable {
-  public count: number;
-  public message: string;
   public textData: string;
   public castVisibility: string;
 
   public cast: any;
-  public mRouteCount: number;
-  public remoteMediaClient: any;
-  public mSelectedDevice: any;
-  public mSelectedDeviceName: string;
-  public mSelectedDeviceIp: string;
+  public canCast: boolean;
 
   constructor() {
     super();
 
-    this.count = 0;
-    this.message = 'hello';
     //this.castVisibility = 'collapsed';
     //this.castVisibility = 'visible';
 
     this.cast = null;
-    this.mRouteCount = 0;
-    this.mSelectedDevice = null;
-    this.mSelectedDeviceName = '';
-    this.mSelectedDeviceIp = '';
+    this.canCast = false;
   }
 
-  handleMediaRouterEvent(event): void {
-    switch (event.data.mediaRouterEventName) {
-      case 'onRouteSelected':
-        // Handle route selection.
-        console.log('onRouteSelected');
-        //this.mSelectedDevice = event.object.mSelectedDevice;
-        this.mSelectedDevice = event.object.CastDevice.getFromBundle(event.data.route.getExtras());
-        if (this.mSelectedDevice) {
-          this.set('mSelectedDeviceName', this.mSelectedDevice.getFriendlyName());
-          this.set('mSelectedDeviceIp', this.mSelectedDevice.getIpAddress());
-        }
-        break;
-      case 'onRouteUnselected':
-        this.mSelectedDevice = null;
-        break;
-      default:
-        console.log('mediaRouterEvent: ' + event.data.mediaRouterEventName);
-        break;
-    }
-  }
-
-  handleSessionEvent(event): void {
+  handleEvent(event): void {
+    console.log('event: ' + event.data.eventName);
     if (event.object && !this.cast) {
       this.cast = event.object;
     }
 
-    switch (event.data.sessionEventName) {
+    switch (event.data.eventName) {
+      case 'onSessionStarted':
+      case 'onSessionResumed':
+        this.set('canCast', true);
+        break;
+      case 'onSessionEnding':
+        this.set('canCast', false);
+        break;
       default:
-        console.log('sessionEvent: ' + event.data.sessionEventName);
         break;
     }
-  }
-
-  onTap(args: EventData) {
-    this.count++;
-    const button = <Button>args.object;
-    button.text = `Tapped ${this.count} times`;
   }
 
   onLoadTap(args: EventData) {

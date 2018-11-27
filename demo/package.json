@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "lodash": "^4.17.11",
+    "nativescript-cast": "file:../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "^0.3.4",
-    "nativescript-cast": "file:../src",
     "tns-core-modules": "^4.2.0"
   },
   "devDependencies": {

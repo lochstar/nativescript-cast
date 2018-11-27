@@ -13,8 +13,7 @@
         <cast:CastButton
           id="cast"
           loaded="castLoaded"
-          mediaRouterEvent="{{ handleMediaRouterEvent }}"
-          sessionEvent="{{ handleSessionEvent }}"
+          event="{{ handleEvent }}"
         />
       </StackLayout>
     </ActionItem>
@@ -29,45 +28,54 @@
         -->
 
         <Button
-          text="Tap Me!"
-          tap="{{ onTap }}"
-          class="btn btn-primary btn-active"
-        />
-        <Button
-          text="Load"
+          text="Load Media"
           tap="{{ onLoadTap }}"
-          class="btn btn-active"
+          class="btn btn-primary"
+          isEnabled="{{ canCast }}"
         />
-        <Button
-          text="Play"
-          tap="{{ onPlayTap }}"
-          class="btn btn-active"
-        />
-        <Button
-          text="Pause"
-          tap="{{ onPauseTap }}"
-          class="btn btn-active"
-        />
-        <Button
-          text="Seek"
-          tap="{{ onSeekTap }}"
-          class="btn btn-active"
-        />
-        <Button
-          text="Stop"
-          tap="{{ onStopTap }}"
-          class="btn btn-active"
-        />
+
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+          <Button
+            text="&#xff04b; Play"
+            tap="{{ onPlayTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xff04c; Pause"
+            tap="{{ onPauseTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xff04e; Seek"
+            tap="{{ onSeekTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xff04d; Stop"
+            tap="{{ onStopTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+        </FlexboxLayout>
 
         <Button
           text="Get Media Info"
           tap="{{ onGetMediaInfoTap }}"
-          class="btn btn-active"
+          class="btn btn-primary"
+          isEnabled="{{ canCast }}"
         />
         <TextView
           text="{{ textData }}"
           editable="false"
           class="text-data"
+          isEnabled="{{ canCast }}"
         />
       </StackLayout>
     </ScrollView>

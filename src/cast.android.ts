@@ -1,7 +1,5 @@
-import * as app from 'tns-core-modules/application';
 import { ad } from 'tns-core-modules/utils/utils';
-import { StackLayout } from "tns-core-modules/ui/layouts/stack-layout";
-import { CastButtonBase, CastMiniControllerBase } from './cast.common';
+import { CastButtonBase } from './cast.common';
 
 const {
   MediaRouter,
@@ -32,56 +30,72 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onProviderAdded(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onProviderAdded',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onProviderAdded',
       router: router,
       provider: provider
     });
   }
 
   public onProviderChanged(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onProviderChanged',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onProviderChanged',
       router: router,
       provider: provider
     });
   }
 
   public onProviderRemoved(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onProviderRemoved',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onProviderRemoved',
       router: router,
       provider: provider
     });
   }
 
   public onRouteAdded(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteAdded',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRouteAdded',
       router: router,
       route: route
     });
   }
 
   public onRouteChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteChanged',
+    const d = this.owner.CastDevice.getFromBundle(route.getExtras());
+    const address = d.getIpAddress();
+
+    const deviceJSON = {
+      id: route.getId(),
+      name: route.getName(),
+      description: route.getDescription(),
+      address: address,
+
+      deviceType: route.getDeviceType(),
+      playbackType: route.getPlaybackType(),
+      volume: route.getVolume(),
+    };
+    console.log(deviceJSON);
+    console.log('-----------------');
+
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRouteChanged',
       router: router,
       route: route
     });
   }
 
   public onRoutePresentationDisplayChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRoutePresentationDisplayChanged',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRoutePresentationDisplayChanged',
       router: router,
       route: route
     });
   }
 
   public onRouteRemoved(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteRemoved',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRouteRemoved',
       router: router,
       route: route
     });
@@ -89,26 +103,27 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
 
   public onRouteSelected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
     //this.owner.mSelectedDevice = CastDevice.getFromBundle(route.getExtras());
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteSelected',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRouteSelected',
       router: router,
       route: route,
     });
   }
 
   public onRouteUnselected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteUnselected',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onRouteUnselected',
       router: router,
       route: route
     });
   }
 
   public onRouteVolumeChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.mediaRouterEventEvent, {
-      mediaRouterEventName: 'onRouteVolumeChanged',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onDeviceVolumeChanged',
       router: router,
-      route: route
+      route: route,
+      volume: route.getVolume() / 20,  // Android volume is 0-20, change to 0-1
     });
   }
 }
@@ -138,70 +153,72 @@ function initSessionManagerListener(): void {
     }
 
     onSessionEnded(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionEnded',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionEnded',
         session: session,
         error: error
       });
     }
 
     onSessionEnding(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionEnding',
-        session: session,
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionEnding',
+        session: session
       });
     }
 
     onSessionResumeFailed(session: com.google.android.gms.cast.framework.Session, error: number) {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionResumeFailed',
+      /* Ignored due to no iOS equivalent
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionResumeFailed',
         session: session,
         error: error
       });
+      */
     }
 
     onSessionResumed(session: com.google.android.gms.cast.framework.Session, wasSuspended: boolean) {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionResumed',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionResumed',
         session: session,
         wasSuspended: wasSuspended
       });
     }
 
     onSessionResuming(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionResuming',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionResuming',
         session: session,
         sessionId: sessionId
       });
     }
 
     onSessionStartFailed(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionStartFailed',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionStartFailed',
         session: session,
         error: error
       });
     }
 
     onSessionStarted(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionStarted',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionStarted',
         session: session,
         sessionId: sessionId
       });
     }
 
     onSessionStarting(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionStarting',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionStarting',
         session: session
       });
     }
 
     onSessionSuspended(session: com.google.android.gms.cast.framework.Session, reason: number) {
-      this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-        sessionEventName: 'onSessionSuspended',
+      this.owner.sendEvent(CastButtonBase.eventEvent, {
+        eventName: 'onSessionSuspended',
         session: session,
         reason: reason
       });
@@ -220,9 +237,7 @@ export class CastButton extends CastButtonBase {
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
-  public mSelectedDevice: any;
 
-  public mRouteCount: number;
   public mMediaRouter: android.support.v7.media.MediaRouter;
   public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
   public mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
@@ -295,14 +310,6 @@ export class CastButton extends CastButtonBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
-  }
-
-  showButton(): void {
-    this.nativeView.setVisibility(android.view.View.VISIBLE);
-  }
-
-  hideButton(): void {
-    this.nativeView.setVisibility(android.view.View.INVISIBLE);
   }
 
   addMediaRouterCallback(): void {
@@ -429,106 +436,13 @@ export class CastButton extends CastButtonBase {
   // @ts-ignore
   seekMedia(position: number, resumeState = 0, customData?: java.lang.Object.JSONObject) {
     // RESUME_STATE_UNCHANGED: 0
-    // RESUME_STATE_PAUSE: 2
     // RESUME_STATE_PLAY: 1
+    // RESUME_STATE_PAUSE: 2
     this.getRemoteMediaClient().seek(position * 1000, resumeState, customData);
   }
 
   // @ts-ignore
   stopMedia(customData?: java.lang.Object.JSONObject) {
     this.getRemoteMediaClient().stop(customData);
-  }
-}
-
-export class CastMiniController extends CastMiniControllerBase {
-  nativeView: any;
-
-  constructor() {
-    super();
-  }
-
-  /**
-   * Creates new native button.
-   */
-  public createNativeView(): Object {
-    //const appContext = ad.getApplicationContext();
-
-    //const layoutId = android.view.View.generateViewId();
-
-    //this.setFragmentClass('com.google.android.gms.cast.framework.media.widget.MiniControllerFragment');
-
-    //nativeView.inflate();
-    //const button = new android.widget.Button(this._context);
-    //button.setText('hello');
-    //console.log(this._context.setContentView);
-
-    //this._context.setContentView(resourceId);
-    /*
-    const layoutId = android.view.View.generateViewId();
-    const nativeView = new android.widget.LinearLayout(this._context);
-    nativeView.setId(layoutId);
-
-    nativeView.setOrientation(android.widget.LinearLayout.VERTICAL);
-    nativeView.setLayoutParams(new android.widget.FrameLayout.LayoutParams(
-      -1, // android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-      -1  // android.widget.FrameLayout.LayoutParams.MATCH_PARENT
-    ));
-    nativeView.setLayoutInflater(stubLayout);
-    */
-
-    // @ts-ignore
-
-    const stackLayout = new StackLayout();
-
-    //this.nativeView = stackLayout.nativeView;
-    //stackLayout.orientation = 'horizontal';
-    return stackLayout.nativeView;
-  }
-
-  /**
-   * Initializes properties/listeners of the native view.
-   */
-  initNativeView(): void {
-    // Attach the owner to nativeView.
-    // When nativeView is tapped we get the owning JS object through this field.
-    (<any>this.nativeView).owner = this;
-
-    console.log('initNativeView');
-    console.dir(this.nativeView);
-    //this.nativeView.draw();
-    //this.nativeView.inflate();
-
-    super.initNativeView();
-  }
-
-  /**
-   * Clean up references to the native view and resets nativeView to its original state.
-   * If you have changed nativeView in some other way except through setNative callbacks
-   * you have a chance here to revert it back to its original state
-   * so that it could be reused later.
-   */
-  disposeNativeView(): void {
-    // Remove reference from native view to this instance.
-    (<any>this.nativeView).owner = null;
-
-    // If you want to recycle nativeView and have modified the nativeView
-    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
-    // you have to reset it to its initial state here.
-    super.disposeNativeView();
-  }
-
-  onLoaded(): void {
-    console.log('onLoaded');
-    console.dir(this);
-    const context = app.android.context;
-    const resourceId = context.getResources().getIdentifier('cast_mini_controller', 'layout', context.getPackageName());
-    const stubLayout = new android.view.ViewStub(this._context);
-    stubLayout.setLayoutResource(resourceId);
-    //console.log(this.ad);
-    //this.android.addSubview(stubLayout);
-    //stubLayout.inflate();
-    //this.nativeView.setContentView(resourceId);
-
-    super.onLoaded();
   }
 }

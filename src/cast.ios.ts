@@ -1,118 +1,165 @@
 import { ios } from 'tns-core-modules/utils/utils';
-import { StackLayout } from "tns-core-modules/ui/layouts/stack-layout";
-import { CastButtonBase, CastMiniControllerBase } from './cast.common';
+import { CastButtonBase } from './cast.common';
 
 declare let GCKUICastButton: any;
-declare let GCKSession: any;
-declare let GCKCastSession: any;
-declare let GCKSessionManager: any;
 declare let GCKDevice: any;
 declare let GCKSessionManagerListener: any;
 declare let CGRectMake: any;
-declare let CGRect: any;
 declare let GCKCastContext: any;
-declare let CGRectZero: any;
-declare let GCKMediaStreamTypeBuffered: any;
-
-declare let UIButton: any;
-declare let UIButtonType: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
+  public owner: CastButton;
 
-  owner: any;
+  constructor() {
+    super();
+
+    // necessary when extending TypeScript constructors
+    return global.__native(this);
+  }
 
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    console.log('willStartSession');
-    if (!this.owner) {
-      return;
-    }
-    this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-      sessionEventName: 'onSessionStarting',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionStarting',
       session: session
     });
   }
+
   public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    console.log('didStartSession');
-    if (!this.owner) {
-      return;
-    }
-    this.owner.sendEvent(CastButtonBase.sessionEventEvent, {
-      sessionEventName: 'onSessionStarted',
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionStarted',
       session: session
     });
   }
+
   public sessionManagerWillStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('willStartCastSession');
+    //console.log('willStartCastSession');
   }
+
   public sessionManagerDidStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('didStartCastSession');
+    //console.log('didStartCastSession');
   }
+
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    console.log('willEndSession');
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionEnding',
+      session: session
+    });
   }
-  public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, withError: NSError) {
-    console.log('didEndSession');
+
+  public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionEnded',
+      session: session,
+      error: error
+    });
   }
+
   public sessionManagerWillEndCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('willEndCastSession');
+    //console.log('willEndCastSession');
   }
-  public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, withError: NSError) {
-    console.log('didEndCastSession');
+
+  public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
+    //console.log('didEndCastSession');
   }
-  public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, withError: NSError) {
-    console.log('didFailToStartSession');
+
+  public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionStartFailed',
+      session: session,
+      error: error
+    });
   }
-  public sessionManagerDidFailToStartCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, withError: NSError) {
-    console.log('didFailToStartCastSession');
+
+  public sessionManagerDidFailToStartCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
+    //console.log('didFailToStartCastSession');
   }
-  public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, withReason: GCKConnectionSuspendReason) {
-    console.log('didSuspendSession');
+
+  public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionSuspended',
+      session: session,
+      reason: reason
+    });
   }
-  public sessionManagerDidSuspendCastSessionWithReason(sessionManager: GCKSessionManager, session: GCKCastSession, withReason: GCKConnectionSuspendReason) {
-    console.log('didSuspendCastSession');
+
+  public sessionManagerDidSuspendCastSessionWithReason(sessionManager: GCKSessionManager, session: GCKCastSession, reason: GCKConnectionSuspendReason) {
+    //console.log('didSuspendCastSession');
   }
+
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    console.log('willResumeSession');
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionResuming',
+      session: session
+    });
   }
+
   public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    console.log('didResumeSession');
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onSessionResumed',
+      session: session
+    });
   }
+
   public sessionManagerWillResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('willResumeCastSession');
+    //console.log('willResumeCastSession');
   }
+
   public sessionManagerDidResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('didResumeCastSession');
+    //console.log('didResumeCastSession');
   }
+
   public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
     console.log('didUpdateDevice');
+    console.log(device);
+    console.log('----------------');
+
+    const deviceJSON = {
+      id: device.uniqueID,
+      name: device.friendlyName,
+      description: device.statusText,
+      address: device.ipAddress,
+
+      deviceType: device.type,
+      category: device.category,
+      version: device.deviceVersion,
+      deviceId: device.deviceID,
+      deviceVersion: device.deviceVersion,
+      modelName: device.modelName,
+      status: device.status,
+      statusText: device.statusText,
+    };
+    console.log(deviceJSON);
   }
+
   public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
-    console.log('didReceiveDeviceVolume');
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onDeviceVolumeChanged',
+      session: session,
+      volume: volume
+    });
   }
+
   public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, volume: number) {
-    console.log('castSession: didReceiveDeviceVolume');
+    //console.log('castSession: didReceiveDeviceVolume');
   }
+
   public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, statusText: string) {
     console.log('didReceiveDeviceStatus');
+    console.log(statusText);
   }
+
   public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
-    console.log('---------------------------------------');
-    console.log('castSession: didReceiveDeviceStatus');
-    //console.log(session.remoteMediaClient);
-    //console.dir(session.remoteMediaClient);
-    //console.log(kGCKMetadataKeyTitle);
+    //console.log('castSession: didReceiveDeviceStatus');
   }
+
   public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
     console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
   }
 }
 
 export class CastButton extends CastButtonBase {
-
-  // added for TypeScript intellisense.
-  //nativeView: UIButton;
-  nativeView: any;
+  nativeView: GCKUICastButton;
 
   public CastDevice: any;
 
@@ -171,14 +218,6 @@ export class CastButton extends CastButtonBase {
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
     super.disposeNativeView();
-  }
-
-  showButton(): void {
-
-  }
-
-  hideButton(): void {
-
   }
 
   addSessionManagerListener(): void {
@@ -299,65 +338,13 @@ export class CastButton extends CastButtonBase {
   }
 
   seekMedia(position: number, resumeState = 0, customData?: any) {
-    // GCKMediaControlChannelResumeStateUnchanged
-    // GCKMediaControlChannelResumeStatePlay
-    // GCKMediaControlChannelResumeStatePause
+    // GCKMediaControlChannelResumeStateUnchanged: 0
+    // GCKMediaControlChannelResumeStatePlay: 1
+    // GCKMediaControlChannelResumeStatePause: 2
     this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeState, customData);
   }
 
   stopMedia(customData?: any) {
     this.getRemoteMediaClient().stopWithCustomData(customData);
-  }
-}
-
-export class CastMiniController extends CastMiniControllerBase {
-  nativeView: any;
-
-  constructor() {
-    super();
-  }
-
-  /**
-   * Creates new native button.
-   */
-  public createNativeView(): Object {
-    const stackLayout = new StackLayout();
-    //stackLayout.orientation = 'horizontal';
-    return stackLayout.nativeView;
-  }
-
-  /**
-   * Initializes properties/listeners of the native view.
-   */
-  initNativeView(): void {
-    // Attach the owner to nativeView.
-    // When nativeView is tapped we get the owning JS object through this field.
-    (<any>this.nativeView).owner = this;
-
-    super.initNativeView();
-  }
-
-  /**
-   * Clean up references to the native view and resets nativeView to its original state.
-   * If you have changed nativeView in some other way except through setNative callbacks
-   * you have a chance here to revert it back to its original state
-   * so that it could be reused later.
-   */
-  disposeNativeView(): void {
-    // Remove reference from native listener to this instance.
-    (<any>this.nativeView).owner = null;
-
-    // If you want to recycle nativeView and have modified the nativeView
-    // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
-    // you have to reset it to its initial state here.
-    super.disposeNativeView();
-  }
-
-  onLoaded(): void {
-    const mCastContext = GCKCastContext.sharedInstance();
-    const miniController = mCastContext.createMiniMediaControlsViewController();
-    this.ios.addSubview(miniController.view);
-
-    super.onLoaded();
   }
 }

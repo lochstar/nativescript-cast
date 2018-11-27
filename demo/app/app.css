@@ -1,7 +1,13 @@
 ﻿@import '~nativescript-theme-core/css/core.light.css';
 
-.cast-btn {
+.controls {
+  margin: 10 0;
+}
 
+.controls .btn {
+  font-family: 'Font Awesome 5 Free', 'fa-solid-900';
+  font-size: 18;
+  margin: 0;
 }
 
 .text-data {
