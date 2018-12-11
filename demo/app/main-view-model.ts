@@ -3,7 +3,7 @@ import { EventData } from 'tns-core-modules/ui/core/view';
 
 export class MainViewModel extends Observable {
   public textData: string;
-  public castVisibility: string;
+  //public castVisibility: string;
 
   public cast: any;
   public canCast: boolean;
@@ -18,7 +18,7 @@ export class MainViewModel extends Observable {
     this.canCast = false;
   }
 
-  handleEvent(event): void {
+  handleCastEvent(event): void {
     console.log('event: ' + event.data.eventName);
     if (event.object && !this.cast) {
       this.cast = event.object;
@@ -44,7 +44,7 @@ export class MainViewModel extends Observable {
       streamType: 'BUFFERED',  // LIVE, NONE
       duration: undefined,
       metadata: {
-        metadataType: 1,
+        metadataType: 'MOVIE',
         title: 'Sintel',
         subtitle: 'By Blender Foundation',
         description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world.\nwww.sintel.org',

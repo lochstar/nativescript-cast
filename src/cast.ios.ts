@@ -241,7 +241,9 @@ export class CastButton extends CastButtonBase {
     // Build metadata
     // https://developers.google.com/cast/v2/reference/ios/interface_g_c_k_media_metadata
     if (mediaInfo.metadata) {
-      metadata = GCKMediaMetadata.alloc().initWithMetadataType(mediaInfo.metadata.metadataType || 0);
+      // Convert metadataType to number value
+      const metadataType = typeof mediaInfo.metadata.metadataType === 'string' ? this.metadataTypeStringToNumber(mediaInfo.metadata.metadataType) : mediaInfo.metadata.metadataType;
+      metadata = GCKMediaMetadata.alloc().initWithMetadataType(metadataType);
 
       // Add each valid metadata field
       Object.keys(mediaInfo.metadata).forEach(key => {

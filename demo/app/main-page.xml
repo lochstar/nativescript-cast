@@ -21,12 +21,7 @@
 
   <StackLayout>
     <ScrollView>
-      <StackLayout class="p-20">
-        <!--
-        <Label text="{{ mSelectedDeviceName }}" class="t-20 text-center c-black" textWrap="true"/>
-        <Label text="{{ mSelectedDeviceIp }}" class="t-20 text-center c-black" textWrap="true"/>
-        -->
-
+      <StackLayout>
         <Button
           text="Load Media"
           tap="{{ onLoadTap }}"

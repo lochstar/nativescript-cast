@@ -1,4 +1,3 @@
-import * as application from 'tns-core-modules/application';
 import {
   setActivityCallbacks,
   AndroidActivityCallbacks,
@@ -12,7 +11,6 @@ class CastActivity extends android.support.v4.app.FragmentActivity {
     if (!this._callbacks) {
       setActivityCallbacks(this);
     }
-
     this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
   }
 

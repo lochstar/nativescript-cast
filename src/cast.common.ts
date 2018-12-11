@@ -45,7 +45,7 @@ export abstract class CastButtonBase extends View implements CastButton {
         return 1;
       case 'LIVE':
         return 2;
-      default:
+      default:  // NONE
         return 0;
     }
   }
@@ -58,6 +58,40 @@ export abstract class CastButtonBase extends View implements CastButton {
         return 'LIVE';
       default:
         return 'NONE';
+    }
+  }
+
+  public metadataTypeStringToNumber(metadataType: string) {
+    switch (metadataType) {
+      case 'MOVIE':
+        return 1;
+      case 'TV_SHOW':
+        return 2;
+      case 'MUSIC_TRACK':
+        return 3;
+      case 'PHOTO':
+        return 4;
+      case 'USER':
+        return 100;
+      default:  // GENERIC
+        return 0;
+    }
+  }
+
+  public metadataTypeNumberToString(metadataType: number) {
+    switch (metadataType) {
+      case 1:
+        return 'MOVIE';
+      case 2:
+        return 'TV_SHOW';
+      case 3:
+        return 'MUSIC_TRACK';
+      case 4:
+        return 'PHOTO';
+      case 5:
+        return 'USER';
+      default:
+        return 'GENERIC';
     }
   }
 }

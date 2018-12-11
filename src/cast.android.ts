@@ -340,7 +340,9 @@ export class CastButton extends CastButtonBase {
     // Build metadata
     // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaMetadata
     if (mediaInfo.metadata) {
-      metadata = new MediaMetadata(mediaInfo.metadata.metadataType || 0);
+      // Convert metadataType to number value
+      const metadataType = typeof mediaInfo.metadata.metadataType === 'string' ? this.metadataTypeStringToNumber(mediaInfo.metadata.metadataType) : mediaInfo.metadata.metadataType;
+      metadata = new MediaMetadata(metadataType);
 
       // Add each valid metadata field
       Object.keys(mediaInfo.metadata).forEach(key => {
