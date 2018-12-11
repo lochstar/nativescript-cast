@@ -1,6 +1,6 @@
 import { ad } from 'tns-core-modules/utils/utils';
 
-@JavaProxy('com.codelab.CastOptionsProvider')
+@JavaProxy('au.com.codelab.cast.OptionsProvider')
 @Interfaces([com.google.android.gms.cast.framework.OptionsProvider])
 class CastOptionsProvider extends java.lang.Object {
   constructor() {
@@ -14,7 +14,7 @@ class CastOptionsProvider extends java.lang.Object {
     const appId = ad.getApplication().getString(appStringId);
 
     const notificationOptions = new com.google.android.gms.cast.framework.media.NotificationOptions.Builder()
-      .setTargetActivityClassName('com.codelab.cast.CastActivity')
+      .setTargetActivityClassName('au.com.codelab.cast.CastActivity')
       .build();
     const mediaOptions = new com.google.android.gms.cast.framework.media.CastMediaOptions.Builder()
       .setNotificationOptions(notificationOptions)

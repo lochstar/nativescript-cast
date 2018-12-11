@@ -75,8 +75,6 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
       playbackType: route.getPlaybackType(),
       volume: route.getVolume(),
     };
-    console.log(deviceJSON);
-    console.log('-----------------');
 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRouteChanged',
@@ -102,7 +100,6 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteSelected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    //this.owner.mSelectedDevice = CastDevice.getFromBundle(route.getExtras());
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRouteSelected',
       router: router,

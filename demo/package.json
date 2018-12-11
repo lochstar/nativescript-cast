@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "com.codelab.cast",
+    "id": "au.com.codelab.cast",
     "tns-android": {
       "version": "4.2.0"
     },

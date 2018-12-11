@@ -1,29 +1,85 @@
 # nativescript-cast
 
-Add your plugin badges here. See [nativescript-urlhandler](https://github.com/hypery2k/nativescript-urlhandler) for example.
+Chromecast support for Nativescript.
 
-Then describe what's the purpose of your plugin.
+## Requirements
 
-In case you develop UI plugin, this is where you can add some screenshots.
-
-## (Optional) Prerequisites / Requirements
-
-Describe the prerequisites that the user need to have installed before using your plugin. See [nativescript-firebase plugin](https://github.com/eddyverbruggen/nativescript-plugin-firebase) for example.
+You must have a valid Chromecast Application ID. You can obtain one at the [Google Cast Developer Console](https://cast.google.com/publish/).
 
 ## Installation
 
-Describe your plugin installation steps. Ideally it would be something like:
-
-```javascript
+```bash
 tns plugin add nativescript-cast
 ```
 
 ## Usage
 
-Describe any usage specifics for your plugin. Give examples for Android, iOS, Angular if needed. See [nativescript-drop-down](https://www.npmjs.com/package/nativescript-drop-down) for example.
+### Android
 
-```javascript
-Usage code snippets here
+Set your Application ID.
+
+```xml
+<!-- App_Resources/Android/src/main/res/values/strings.xml -->
+<string name="app_id">4F8B3483</string>
+```
+
+Android requires your main activity to extend from [FragmentActivity](https://developer.android.com/reference/android/support/v4/app/FragmentActivity). You can create your own or use CastActivity provided by this plugin. The Cast Options Provider class is included with this plugin and will be merged to your `AndroidManifest.xml`.
+
+```xml
+<!-- App_Resources/Android/src/main/res/AndroidManifest.xml -->
+<activity android:name="au.com.codelab.cast.CastActivity">
+  ...
+</activity>
+```
+
+### iOS
+
+Set your Application ID.
+
+```xml
+<!-- App_Resources/iOS/Info.plist -->
+<key>AppID</key>
+<string>4F8B3483</string>
+```
+
+Add the following before your `application.start()`. This will initialise the `GCKCastContext` with the Application ID from your `Info.plist` file.
+
+```ts
+if (application.ios) {
+
+  class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
+    static ObjCProtocols = [GCKLoggerDelegate];
+
+    static new(): MyLoggerDelegateImpl {
+      return <MyLoggerDelegateImpl>super.new();
+    }
+
+    logMessageFromFunction(message, fromFunction) {
+      console.log(message, fromFunction);
+    }
+  }
+
+  class MyDelegate extends UIResponder implements UIApplicationDelegate {
+    public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
+
+    applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
+      // AppID value from Info.plist
+      const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
+      const appId = mainBundle.infoDictionary.objectForKey('AppID');
+
+      const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
+      GCKCastContext.setSharedInstanceWithOptions(castOptions);
+
+      // Optional logger
+      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new()
+      GCKLogger.sharedInstance().delegate = delegate;
+
+      return true;
+    }
+  }
+
+  application.ios.delegate = MyDelegate;
+}
 ```
 
 ## API
