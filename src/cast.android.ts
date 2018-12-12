@@ -62,6 +62,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+    /*
     const d = this.owner.CastDevice.getFromBundle(route.getExtras());
     const address = d.getIpAddress();
 
@@ -75,11 +76,12 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
       playbackType: route.getPlaybackType(),
       volume: route.getVolume(),
     };
+    */
 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
-      eventName: 'onRouteChanged',
+      eventName: 'onDeviceChanged',
       router: router,
-      route: route
+      route: route,
     });
   }
 

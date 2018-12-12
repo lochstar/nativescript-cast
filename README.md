@@ -144,7 +144,7 @@ cast.loadMedia(mediaInfo);
 
 ### <a name="events"></a>Events
 
-Events follow the Android naming structure. iOS events are passed from `GCKSessionManagerListener`. Android events are passed from both `SessionManagerListener` and `MediaRouter.Callback`.
+Event names follow the Android naming structure. iOS events are passed from `GCKSessionManagerListener`. Android events are passed from both `SessionManagerListener` and `MediaRouter.Callback`.
 
 | NativeScript          | Android               | iOS                    |
 | --------------------- | --------------------- | ---------------------- |
@@ -156,16 +156,8 @@ Events follow the Android naming structure. iOS events are passed from `GCKSessi
 | onSessionStartFailed  | onSessionStartFailed  | didFailToStartSession  |
 | onSessionStarting     | onSessionStarting     | willStartSession       |
 | onSessionSuspended    | onSessionSuspended    | didSuspendSession      |
-
-
-### Events TODO
 | onDeviceVolumeChanged | onRouteVolumeChanged  | didReceiveDeviceVolume |
-
 | onDeviceChanged       | onRouteChanged        | didUpdateDevice        |
-
-didReceiveDeviceStatus
-
-didUpdateDevice
 
 All unlisted events are ignored. See related documentation for futher details.
 
@@ -217,9 +209,12 @@ Valid `metadata.metadataType` values.
 
 ## TODO
 
-- Angular support
-- Vue support
-- Handle `customData`
-- Handle `mediaTracks`
-- Handle `textTrackStyle`
+- NativeScript 5.0 Support
+- Angular support.
+- Vue support.
+- Set Application ID in single location.
+- Handle `customData`.
+- Handle `mediaTracks`.
+- Handle `textTrackStyle`.
+- Normalise all event responses?
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).

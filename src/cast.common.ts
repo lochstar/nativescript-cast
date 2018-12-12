@@ -26,8 +26,6 @@ export abstract class CastButtonBase extends View implements CastButton {
     'locationLongitude',
   ];
 
-  //public static mediaRouterEventEvent = 'mediaRouterEvent';
-  //public static sessionEventEvent = 'sessionEvent';
   public static eventEvent = 'event';
   visibility: Visibility;
 

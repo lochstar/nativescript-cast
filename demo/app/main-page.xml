@@ -12,8 +12,7 @@
       <StackLayout>
         <cast:CastButton
           id="cast"
-          loaded="castLoaded"
-          event="{{ handleEvent }}"
+          event="{{ handleCastEvent }}"
         />
       </StackLayout>
     </ActionItem>
@@ -24,7 +23,7 @@
       <StackLayout>
         <Button
           text="Load Media"
-          tap="{{ onLoadTap }}"
+          tap="{{ handleLoadTap }}"
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
@@ -36,25 +35,25 @@
         >
           <Button
             text="&#xff04b; Play"
-            tap="{{ onPlayTap }}"
+            tap="{{ handlePlayTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="&#xff04c; Pause"
-            tap="{{ onPauseTap }}"
+            tap="{{ handlePauseTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="&#xff04e; Seek"
-            tap="{{ onSeekTap }}"
+            tap="{{ handleSeekTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="&#xff04d; Stop"
-            tap="{{ onStopTap }}"
+            tap="{{ handleStopTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
@@ -62,14 +61,14 @@
 
         <Button
           text="Get Media Info"
-          tap="{{ onGetMediaInfoTap }}"
+          tap="{{ handleGetMediaInfoTap }}"
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
         <TextView
-          text="{{ textData }}"
+          text="{{ mediaInfo }}"
           editable="false"
-          class="text-data"
+          class="media-info"
           isEnabled="{{ canCast }}"
         />
       </StackLayout>

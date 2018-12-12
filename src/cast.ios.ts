@@ -110,10 +110,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
-    console.log('didUpdateDevice');
-    console.log(device);
-    console.log('----------------');
-
+    /*
     const deviceJSON = {
       id: device.uniqueID,
       name: device.friendlyName,
@@ -129,7 +126,12 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
       status: device.status,
       statusText: device.statusText,
     };
-    console.log(deviceJSON);
+    */
+    this.owner.sendEvent(CastButtonBase.eventEvent, {
+      eventName: 'onDeviceChanged',
+      session: session,
+      device: device,
+    });
   }
 
   public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
@@ -145,8 +147,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, statusText: string) {
-    console.log('didReceiveDeviceStatus');
-    console.log(statusText);
+    //console.log('didReceiveDeviceStatus');
   }
 
   public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
@@ -154,7 +155,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
-    console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
+    //console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
   }
 }
 

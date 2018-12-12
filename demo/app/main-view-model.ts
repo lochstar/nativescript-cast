@@ -2,17 +2,12 @@ import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 
 export class MainViewModel extends Observable {
-  public textData: string;
-  //public castVisibility: string;
-
   public cast: any;
   public canCast: boolean;
+  public mediaInfo: string;
 
   constructor() {
     super();
-
-    //this.castVisibility = 'collapsed';
-    //this.castVisibility = 'visible';
 
     this.cast = null;
     this.canCast = false;
@@ -20,6 +15,7 @@ export class MainViewModel extends Observable {
 
   handleCastEvent(event): void {
     console.log('event: ' + event.data.eventName);
+
     if (event.object && !this.cast) {
       this.cast = event.object;
     }
@@ -30,18 +26,22 @@ export class MainViewModel extends Observable {
         this.set('canCast', true);
         break;
       case 'onSessionEnding':
+      case 'onSessionEnded':
         this.set('canCast', false);
+        break;
+      case 'onDeviceVolumeChanged':
+        console.log('volume: ' + event.data.volume);
         break;
       default:
         break;
     }
   }
 
-  onLoadTap(args: EventData) {
+  handleLoadTap(args: EventData) {
     this.cast.loadMedia({
       contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
       contentType: 'video/mp4',
-      streamType: 'BUFFERED',  // LIVE, NONE
+      streamType: 'BUFFERED',
       duration: undefined,
       metadata: {
         metadataType: 'MOVIE',
@@ -59,24 +59,24 @@ export class MainViewModel extends Observable {
     });
   }
 
-  onPlayTap(args: EventData) {
+  handlePlayTap(args: EventData) {
     this.cast.playMedia();
   }
 
-  onPauseTap(args: EventData) {
+  handlePauseTap(args: EventData) {
     this.cast.pauseMedia();
   }
 
-  onSeekTap(args: EventData) {
+  handleSeekTap(args: EventData) {
     this.cast.seekMedia(23);
   }
 
-  onStopTap(args: EventData) {
+  handleStopTap(args: EventData) {
     this.cast.stopMedia();
   }
 
-  onGetMediaInfoTap() {
+  handleGetMediaInfoTap() {
     const mediaInfo = this.cast.getMediaInfo();
-    this.set('textData', JSON.stringify(mediaInfo, null, '  '));
+    this.set('mediaInfo', JSON.stringify(mediaInfo, null, '  '));
   }
 }

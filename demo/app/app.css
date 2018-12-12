@@ -1,18 +1,23 @@
 ﻿@import '~nativescript-theme-core/css/core.light.css';
 
-.controls {
+.page {
   margin: 10 0;
+}
+
+.controls {
+  margin: 10 16;
 }
 
 .controls .btn {
   font-family: 'Font Awesome 5 Free', 'fa-solid-900';
-  font-size: 18;
+  font-size: 16;
   margin: 0;
 }
 
-.text-data {
+.media-info {
   font-family: monospace;
   font-size: 12;
   background-color: #ccc;
   border-color: #111;
+  margin: 10 16;
 }
