@@ -33,7 +33,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onProviderAdded',
       router: router,
-      provider: provider
+      provider: provider,
+      android: this.owner.nativeView
     });
   }
 
@@ -41,7 +42,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onProviderChanged',
       router: router,
-      provider: provider
+      provider: provider,
+      android: this.owner.nativeView
     });
   }
 
@@ -49,7 +51,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onProviderRemoved',
       router: router,
-      provider: provider
+      provider: provider,
+      android: this.owner.nativeView
     });
   }
 
@@ -57,7 +60,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRouteAdded',
       router: router,
-      route: route
+      route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -82,6 +86,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
       eventName: 'onDeviceChanged',
       router: router,
       route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -89,7 +94,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRoutePresentationDisplayChanged',
       router: router,
-      route: route
+      route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -97,7 +103,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRouteRemoved',
       router: router,
-      route: route
+      route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -106,6 +113,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
       eventName: 'onRouteSelected',
       router: router,
       route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -113,7 +121,8 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onRouteUnselected',
       router: router,
-      route: route
+      route: route,
+      android: this.owner.nativeView
     });
   }
 
@@ -123,6 +132,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
       router: router,
       route: route,
       volume: route.getVolume() / 20,  // Android volume is 0-20, change to 0-1
+      android: this.owner.nativeView,
     });
   }
 }
@@ -155,14 +165,16 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionEnded',
         session: session,
-        error: error
+        error: error,
+        android: this.owner.nativeView
       });
     }
 
     onSessionEnding(session: com.google.android.gms.cast.framework.Session): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionEnding',
-        session: session
+        session: session,
+        android: this.owner.nativeView
       });
     }
 
@@ -171,7 +183,8 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionResumeFailed',
         session: session,
-        error: error
+        error: error,
+        android: this.owner.nativeView
       });
       */
     }
@@ -180,7 +193,8 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionResumed',
         session: session,
-        wasSuspended: wasSuspended
+        wasSuspended: wasSuspended,
+        android: this.owner.nativeView
       });
     }
 
@@ -188,7 +202,8 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionResuming',
         session: session,
-        sessionId: sessionId
+        sessionId: sessionId,
+        android: this.owner.nativeView
       });
     }
 
@@ -196,7 +211,8 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionStartFailed',
         session: session,
-        error: error
+        error: error,
+        android: this.owner.nativeView
       });
     }
 
@@ -204,14 +220,16 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionStarted',
         session: session,
-        sessionId: sessionId
+        sessionId: sessionId,
+        android: this.owner.nativeView
       });
     }
 
     onSessionStarting(session: com.google.android.gms.cast.framework.Session): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionStarting',
-        session: session
+        session: session,
+        android: this.owner.nativeView
       });
     }
 
@@ -219,7 +237,8 @@ function initSessionManagerListener(): void {
       this.owner.sendEvent(CastButtonBase.eventEvent, {
         eventName: 'onSessionSuspended',
         session: session,
-        reason: reason
+        reason: reason,
+        android: this.owner.nativeView
       });
     }
   }
@@ -279,6 +298,10 @@ export class CastButton extends CastButtonBase {
     this.CastDevice = com.google.android.gms.cast.CastDevice;
 
     return button;
+  }
+
+  getNativeView(): any {
+    return this.nativeView;
   }
 
   /**

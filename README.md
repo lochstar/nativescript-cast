@@ -216,5 +216,4 @@ Valid `metadata.metadataType` values.
 - Handle `customData`.
 - Handle `mediaTracks`.
 - Handle `textTrackStyle`.
-- Normalise all event responses?
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).

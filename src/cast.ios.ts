@@ -21,14 +21,16 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionStarting',
-      session: session
+      session: session,
+      ios: this.owner.nativeView
     });
   }
 
   public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionStarted',
-      session: session
+      session: session,
+      ios: this.owner.nativeView
     });
   }
 
@@ -43,7 +45,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionEnding',
-      session: session
+      session: session,
+      ios: this.owner.nativeView
     });
   }
 
@@ -51,7 +54,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionEnded',
       session: session,
-      error: error
+      error: error,
+      ios: this.owner.nativeView
     });
   }
 
@@ -67,7 +71,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionStartFailed',
       session: session,
-      error: error
+      error: error,
+      ios: this.owner.nativeView
     });
   }
 
@@ -79,7 +84,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionSuspended',
       session: session,
-      reason: reason
+      reason: reason,
+      ios: this.owner.nativeView
     });
   }
 
@@ -90,14 +96,16 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionResuming',
-      session: session
+      session: session,
+      ios: this.owner.nativeView
     });
   }
 
   public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onSessionResumed',
-      session: session
+      session: session,
+      ios: this.owner.nativeView
     });
   }
 
@@ -131,6 +139,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
       eventName: 'onDeviceChanged',
       session: session,
       device: device,
+      ios: this.owner.nativeView
     });
   }
 
@@ -138,7 +147,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     this.owner.sendEvent(CastButtonBase.eventEvent, {
       eventName: 'onDeviceVolumeChanged',
       session: session,
-      volume: volume
+      volume: volume,
+      ios: this.owner.nativeView
     });
   }
 
@@ -178,6 +188,7 @@ export class CastButton extends CastButtonBase {
   public createNativeView(): Object {
     // Create new instance of GCKUICastButton
     const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
+    //const button = new GCKUICastButton(CGRectMake(0, 0, 24, 24));
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
@@ -190,6 +201,10 @@ export class CastButton extends CastButtonBase {
     this.CastDevice = GCKDevice;
 
     return button;
+  }
+
+  getNativeView(): any {
+    return this.nativeView;
   }
 
   /**
