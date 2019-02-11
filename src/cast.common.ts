@@ -1,6 +1,6 @@
 import { CastButton } from './cast';
 import { View } from 'tns-core-modules/ui/core/view';
-import { Visibility } from "tns-core-modules/ui/styling/style-properties";
+import { Visibility } from 'tns-core-modules/ui/styling/style-properties';
 
 export abstract class CastButtonBase extends View implements CastButton {
   public static validMetadataKeys = [
