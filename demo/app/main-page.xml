@@ -12,7 +12,7 @@
       <StackLayout>
         <cast:CastButton
           id="cast"
-          event="{{ handleCastEvent }}"
+          cast="{{ handleCastEvent }}"
         />
       </StackLayout>
     </ActionItem>

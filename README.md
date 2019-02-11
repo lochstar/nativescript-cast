@@ -45,8 +45,9 @@ Set your Application ID.
 Add the following before your `application.start()`. This will initialise the `GCKCastContext` with the Application ID from your `Info.plist` file.
 
 ```ts
-if (application.ios) {
+import * as application from 'tns-core-modules/application';
 
+if (application.ios) {
   class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
     static ObjCProtocols = [GCKLoggerDelegate];
 
@@ -105,12 +106,12 @@ Place the `CastButton` in to your view.
 </Page>
 ```
 
-Set up an event handler for all cast [events](#events). The cast instance is available on `event.object`.
+Set up an event handler for all cast [events](#events). The cast instance is available on `args.object`.
 
 ```ts
-handleCastEvent(event): void {
-  console.log('cast: ' + event.object);
-  console.log('eventName: ' + event.data.eventName);
+handleCastEvent(args): void {
+  console.log('cast: ' + args.object);
+  console.log('eventName: ' + args.data.eventName);
 }
 ```
 
