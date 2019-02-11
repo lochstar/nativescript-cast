@@ -30,7 +30,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onProviderAdded(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onProviderAdded',
       router: router,
       provider: provider,
@@ -39,7 +39,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onProviderChanged(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onProviderChanged',
       router: router,
       provider: provider,
@@ -48,7 +48,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onProviderRemoved(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onProviderRemoved',
       router: router,
       provider: provider,
@@ -57,7 +57,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteAdded(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onRouteAdded',
       router: router,
       route: route,
@@ -82,7 +82,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     };
     */
 
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onDeviceChanged',
       router: router,
       route: route,
@@ -91,7 +91,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRoutePresentationDisplayChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onRoutePresentationDisplayChanged',
       router: router,
       route: route,
@@ -100,7 +100,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteRemoved(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onRouteRemoved',
       router: router,
       route: route,
@@ -109,7 +109,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteSelected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onRouteSelected',
       router: router,
       route: route,
@@ -118,7 +118,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteUnselected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onRouteUnselected',
       router: router,
       route: route,
@@ -127,7 +127,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
   }
 
   public onRouteVolumeChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onDeviceVolumeChanged',
       router: router,
       route: route,
@@ -162,7 +162,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionEnded(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionEnded',
         session: session,
         error: error,
@@ -171,7 +171,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionEnding(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionEnding',
         session: session,
         android: this.owner.nativeView
@@ -180,7 +180,7 @@ function initSessionManagerListener(): void {
 
     onSessionResumeFailed(session: com.google.android.gms.cast.framework.Session, error: number) {
       /* Ignored due to no iOS equivalent
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionResumeFailed',
         session: session,
         error: error,
@@ -190,7 +190,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionResumed(session: com.google.android.gms.cast.framework.Session, wasSuspended: boolean) {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionResumed',
         session: session,
         wasSuspended: wasSuspended,
@@ -199,7 +199,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionResuming(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionResuming',
         session: session,
         sessionId: sessionId,
@@ -208,7 +208,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionStartFailed(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionStartFailed',
         session: session,
         error: error,
@@ -217,7 +217,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionStarted(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionStarted',
         session: session,
         sessionId: sessionId,
@@ -226,7 +226,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionStarting(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionStarting',
         session: session,
         android: this.owner.nativeView
@@ -234,7 +234,7 @@ function initSessionManagerListener(): void {
     }
 
     onSessionSuspended(session: com.google.android.gms.cast.framework.Session, reason: number) {
-      this.owner.sendEvent(CastButtonBase.eventEvent, {
+      this.owner.sendEvent(CastButtonBase.castEvent, {
         eventName: 'onSessionSuspended',
         session: session,
         reason: reason,

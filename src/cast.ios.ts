@@ -19,7 +19,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionStarting',
       session: session,
       ios: this.owner.nativeView
@@ -27,7 +27,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionStarted',
       session: session,
       ios: this.owner.nativeView
@@ -43,7 +43,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionEnding',
       session: session,
       ios: this.owner.nativeView
@@ -51,7 +51,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionEnded',
       session: session,
       error: error,
@@ -68,7 +68,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionStartFailed',
       session: session,
       error: error,
@@ -81,7 +81,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionSuspended',
       session: session,
       reason: reason,
@@ -94,7 +94,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionResuming',
       session: session,
       ios: this.owner.nativeView
@@ -102,7 +102,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onSessionResumed',
       session: session,
       ios: this.owner.nativeView
@@ -135,7 +135,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
       statusText: device.statusText,
     };
     */
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onDeviceChanged',
       session: session,
       device: device,
@@ -144,7 +144,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
-    this.owner.sendEvent(CastButtonBase.eventEvent, {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: 'onDeviceVolumeChanged',
       session: session,
       volume: volume,

@@ -27,7 +27,7 @@ Android requires your main activity to extend from [FragmentActivity](https://de
 
 ```xml
 <!-- App_Resources/Android/src/main/res/AndroidManifest.xml -->
-<activity android:name="au.com.codelab.cast.CastActivity">
+<activity android:name="org.nativescript.cast.CastActivity">
   <!-- ... -->
 </activity>
 ```

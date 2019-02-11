@@ -13,14 +13,14 @@ export class MainViewModel extends Observable {
     this.canCast = false;
   }
 
-  handleCastEvent(event): void {
-    console.log('event: ' + event.data.eventName);
+  handleCastEvent(args): void {
+    console.log('event: ' + args.data.eventName);
 
-    if (event.object && !this.cast) {
-      this.cast = event.object;
+    if (args.object && !this.cast) {
+      this.cast = args.object;
     }
 
-    switch (event.data.eventName) {
+    switch (args.data.eventName) {
       case 'onSessionStarted':
       case 'onSessionResumed':
         this.set('canCast', true);
@@ -30,7 +30,7 @@ export class MainViewModel extends Observable {
         this.set('canCast', false);
         break;
       case 'onDeviceVolumeChanged':
-        console.log('volume: ' + event.data.volume);
+        console.log('volume: ' + args.data.volume);
         break;
       default:
         break;

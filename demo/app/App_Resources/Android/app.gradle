@@ -8,7 +8,7 @@
 android {
   defaultConfig {
     generatedDensities = []
-    applicationId = "au.com.codelab.cast"
+    applicationId = "org.nativescript.cast"
   }
   aaptOptions {
     additionalParameters "--no-version-vectors"
