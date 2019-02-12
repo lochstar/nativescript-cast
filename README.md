@@ -97,7 +97,7 @@ Place the `CastButton` in to your view.
       <StackLayout>
         <cast:CastButton
           id="cast"
-          event="{{ handleCastEvent }}"
+          cast="{{ handleCastEvent }}"
         />
       </StackLayout>
     </ActionItem>
@@ -127,7 +127,7 @@ const mediaInfo = {
     metadataType: 'MOVIE',
     title: 'Sintel',
     subtitle: 'By Blender Foundation',
-    description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world.\nwww.sintel.org',
+    description: 'Sintel is an independently produced short film, initiated by the Blender Foundation.',
     images: [
       {
         url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
@@ -213,7 +213,6 @@ Valid `metadata.metadataType` values.
 - NativeScript 5.0 Support
 - Angular support.
 - Vue support.
-- Set Application ID in single location.
 - Handle `customData`.
 - Handle `mediaTracks`.
 - Handle `textTrackStyle`.
