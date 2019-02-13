@@ -46,44 +46,23 @@ Add the following before your `application.start()`. This will initialise the `G
 
 ```ts
 import * as application from 'tns-core-modules/application';
+import * as utils from 'tns-core-modules/utils/utils';
 
-if (application.ios) {
-  class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
-    static ObjCProtocols = [GCKLoggerDelegate];
+application.on(application.launchEvent, (args) => {
+  if (args.ios !== undefined) {
+    // AppID value from Info.plist
+    const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
+    const appId = mainBundle.infoDictionary.objectForKey('AppID');
 
-    static new(): MyLoggerDelegateImpl {
-      return <MyLoggerDelegateImpl>super.new();
-    }
-
-    logMessageFromFunction(message, fromFunction) {
-      console.log(message, fromFunction);
-    }
+    const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
+    GCKCastContext.setSharedInstanceWithOptions(castOptions);
   }
-
-  class MyDelegate extends UIResponder implements UIApplicationDelegate {
-    public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
-
-    applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
-      // AppID value from Info.plist
-      const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
-      const appId = mainBundle.infoDictionary.objectForKey('AppID');
-
-      const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
-      GCKCastContext.setSharedInstanceWithOptions(castOptions);
-
-      // Optional logger
-      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new()
-      GCKLogger.sharedInstance().delegate = delegate;
-
-      return true;
-    }
-  }
-
-  application.ios.delegate = MyDelegate;
-}
+});
 ```
 
 Place the `CastButton` in to your view.
+
+#### NativeScript
 
 ```xml
 <Page
@@ -96,7 +75,6 @@ Place the `CastButton` in to your view.
     <ActionItem ios.position="right">
       <StackLayout>
         <cast:CastButton
-          id="cast"
           cast="{{ handleCastEvent }}"
         />
       </StackLayout>
@@ -104,6 +82,22 @@ Place the `CastButton` in to your view.
   </ActionBar>
   <!-- ... -->
 </Page>
+```
+
+#### Vue
+
+Register the element.
+
+```js
+Vue.registerElement('CastButton', () => require('nativescript-cast').CastButton);
+```
+
+Include in your template.
+
+```xml
+<CastButton
+  @cast="handleCastEvent"
+/>
 ```
 
 Set up an event handler for all cast [events](#events). The cast instance is available on `args.object`.
@@ -212,7 +206,6 @@ Valid `metadata.metadataType` values.
 
 - NativeScript 5.0 Support
 - Angular support.
-- Vue support.
 - Handle `customData`.
 - Handle `mediaTracks`.
 - Handle `textTrackStyle`.
