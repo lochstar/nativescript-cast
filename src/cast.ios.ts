@@ -310,7 +310,11 @@ export class CastButton extends CastButtonBase {
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
   getMediaInfo() {
     const camelCase = require('lodash/fp/camelCase');
-    const mediaInfo = this.getRemoteMediaClient().mediaStatus.mediaInformation;
+    const remoteMediaClient = this.getRemoteMediaClient();
+    if (!remoteMediaClient) {
+      return {}
+    }
+    const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
     const metadata = mediaInfo.metadata;
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
     const images = ios.collections.nsArrayToJSArray(metadata.images());

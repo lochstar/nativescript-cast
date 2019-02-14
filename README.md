@@ -32,6 +32,18 @@ Android requires your main activity to extend from [FragmentActivity](https://de
 </activity>
 ```
 
+If you are using Webpack, add `'nativescript-cast/cast-activity'` and `'nativescript-cast/cast-options-provider'` to `appComponents`.
+
+```js
+// webpack.config.js
+const appComponents = [
+  'tns-core-modules/ui/frame',
+  'tns-core-modules/ui/frame/activity',
+  'nativescript-cast/cast-activity',
+  'nativescript-cast/cast-options-provider',
+];
+```
+
 ### iOS
 
 Set your Application ID.
