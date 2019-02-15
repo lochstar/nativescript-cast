@@ -1,4 +1,5 @@
 import { ios } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
 import { CastButtonBase } from './cast.common';
 
 declare let GCKUICastButton: any;
@@ -368,5 +369,10 @@ export class CastButton extends CastButtonBase {
 
   stopMedia(customData?: any) {
     this.getRemoteMediaClient().stopWithCustomData(customData);
+  }
+
+  setTintColor(color: string) {
+    const mRouteButton = this.getNativeView();
+    mRouteButton.tintColor = new Color(color).ios;
   }
 }

@@ -1,4 +1,5 @@
 import { ad } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
 import { CastButtonBase } from './cast.common';
 
 const {
@@ -468,5 +469,22 @@ export class CastButton extends CastButtonBase {
   // @ts-ignore
   stopMedia(customData?: java.lang.Object.JSONObject) {
     this.getRemoteMediaClient().stop(customData);
+  }
+
+  setTintColor(color: string) {
+    const mRouteButton = this.getNativeView();
+    const appContext = ad.getApplicationContext();
+    // @ts-ignore
+    const castContext = new android.view.ContextThemeWrapper(appContext, android.support.v7.mediarouter.R.style.Theme_MediaRouter);
+    const tintColor = new Color(color).android;
+    // @ts-ignore
+    const a = castContext.obtainStyledAttributes(null, android.support.v7.mediarouter.R.styleable.MediaRouteButton, android.support.v7.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+    // @ts-ignore
+    const drawable = a.getDrawable(android.support.v7.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+    a.recycle();
+
+    // @ts-ignore
+    android.support.v4.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
+    mRouteButton.setRemoteIndicatorDrawable(drawable);
   }
 }
