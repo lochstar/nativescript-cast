@@ -46,6 +46,10 @@
   "homepage": "https://github.com/lochstar/nativescript-cast",
   "readmeFilename": "README.md",
   "devDependencies": {
+    "@angular/core": "~7.2.0",
+    "@angular/compiler": "~7.2.0",
+    "@angular/compiler-cli": "~7.2.0",
+    "nativescript-angular": "~7.2.0",
     "tns-core-modules": "^5.3.0",
     "tns-platform-declarations": "^5.3.0",
     "typescript": "~2.8.2",
