@@ -5,21 +5,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:mediarouter-v7:25.3.0'
-    compile 'com.android.support:recyclerview-v7:25.3.0'
-    compile 'com.google.android.gms:play-services-cast-framework:10.2.1'
-    compile 'com.googlecode.android-query:android-query:0.25.9'
-}
-
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        def requested = details.requested
-        if (requested.group == 'com.android.support') {
-            // Skip multidex because it follows a different versioning pattern.
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion '25.3.0'
-            }
-        }
-    }
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:mediarouter-v7:27.1.1'
+    implementation 'com.google.android.gms:play-services-cast-framework:15.0.0'
 }
