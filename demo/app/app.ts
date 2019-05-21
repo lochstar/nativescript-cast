@@ -41,4 +41,4 @@ if (application.ios) {
   application.ios.delegate = MyDelegate;
 }
 
-application.start({ moduleName: 'main-page' });
+application.run({ moduleName: 'app-root' });

@@ -1,13 +1,13 @@
 {
   "name": "nativescript-cast",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "NativeScript Chromecast Plugin.",
   "main": "cast",
   "typings": "cast.d.ts",
   "nativescript": {
     "platforms": {
-      "android": "4.0.0",
-      "ios": "4.0.0"
+      "android": "5.3.1",
+      "ios": "5.3.1"
     }
   },
   "scripts": {
@@ -46,8 +46,8 @@
   "homepage": "https://github.com/lochstar/nativescript-cast",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "tns-core-modules": "^4.2.0",
-    "tns-platform-declarations": "^4.2.0",
+    "tns-core-modules": "^5.3.1",
+    "tns-platform-declarations": "^5.3.1",
     "typescript": "~2.8.2",
     "lodash": "^4.17.11",
     "prompt": "^1.0.0",
