@@ -7,6 +7,8 @@ declare let GCKDevice: any;
 declare let GCKSessionManagerListener: any;
 declare let CGRectMake: any;
 declare let GCKCastContext: any;
+declare let GCKMediaTrackTypeText: any;
+declare let GCKMediaTextTrackSubtypeSubtitles: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -283,9 +285,19 @@ export class CastButton extends CastButtonBase {
     // Build media info
 
     // TODO: handle these fields
-    const mediaTracks = null;
+
     const textTrackStyle = null;
     const customData = null;
+
+    let mediaTracks = null;
+
+    if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
+      mediaTracks = NSMutableArray.arrayWithCapacity(mediaInfo.textTracks.length);
+      mediaInfo.textTracks.forEach((track, index) => {
+          mediaTracks.addObject(GCKMediaTrack.alloc().initWithIdentifierContentIdentifierContentTypeTypeTextSubtypeNameLanguageCodeCustomData(
+            index + 1, track.src, track.contentType, GCKMediaTrackTypeText, GCKMediaTextTrackSubtypeSubtitles, track.name, track.language, null));
+      });
+    }
 
     // Convert streamType to number value
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
@@ -316,9 +328,11 @@ export class CastButton extends CastButtonBase {
       return {}
     }
     const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
+    const mediaStatus = remoteMediaClient.mediaStatus;
     const metadata = mediaInfo.metadata;
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
     const images = ios.collections.nsArrayToJSArray(metadata.images());
+    const activeTracks = []; //ios.collections.nsArrayToJSArray(remoteMediaClient.mediaStatus.activeTrackIDs);
 
     let jsonMetadata = {
       metadataType: metadata.metadataType,
@@ -347,6 +361,7 @@ export class CastButton extends CastButtonBase {
       contentType: mediaInfo.contentType,
       metadata: jsonMetadata,
       duration: mediaInfo.streamDuration,
+      activeTracks: activeTracks,
     };
 
     return jsonData;
@@ -369,6 +384,10 @@ export class CastButton extends CastButtonBase {
 
   stopMedia(customData?: any) {
     this.getRemoteMediaClient().stopWithCustomData(customData);
+  }
+
+  setActiveTrackIds(trackIds: number[]) {
+      this.getRemoteMediaClient().setActiveTrackIDs(trackIds);
   }
 
   setTintColor(color: string) {

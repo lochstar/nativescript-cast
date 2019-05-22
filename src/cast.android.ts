@@ -18,6 +18,10 @@ const MediaInfo = com.google.android.gms.cast.MediaInfo;
 const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
 // @ts-ignore
 const WebImage = com.google.android.gms.common.images.WebImage;
+// @ts-ignore
+const MediaTrack = com.google.android.gms.cast.MediaTrack;
+// @ts-ignore
+const ArrayList = java.util.ArrayList;
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -405,6 +409,22 @@ export class CastButton extends CastButtonBase {
       builtMediaInfo.setStreamDuration(mediaInfo.duration)
     }
 
+    if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
+        const tracks = new ArrayList();
+        mediaInfo.textTracks.forEach((item, index) => {
+          const track = new MediaTrack.Builder(index + 1, MediaTrack.TYPE_TEXT)
+              .setContentId(item.src)
+              .setContentType(item.contentType)
+              .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
+              .setName(item.name)
+              .setLanguage(item.language)
+              .build();
+          tracks.add(track);
+        });
+
+        builtMediaInfo.setMediaTracks(tracks);
+    }
+
     // Load media in to remote client
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
@@ -469,6 +489,10 @@ export class CastButton extends CastButtonBase {
   // @ts-ignore
   stopMedia(customData?: java.lang.Object.JSONObject) {
     this.getRemoteMediaClient().stop(customData);
+  }
+
+  setActiveTrackIds(trackIds: number[]) {
+      this.getRemoteMediaClient().setActiveMediaTracks(trackIds);
   }
 
   setTintColor(color: string) {
