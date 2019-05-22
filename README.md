@@ -54,7 +54,7 @@ Set your Application ID.
 <string>4F8B3483</string>
 ```
 
-Add the following before your `application.start()`. This will initialise the `GCKCastContext` with the Application ID from your `Info.plist` file.
+Add the following before your `application.run()`. This will initialise the `GCKCastContext` with the Application ID from your `Info.plist` file.
 
 ```ts
 import * as application from 'tns-core-modules/application';
@@ -216,7 +216,6 @@ Valid `metadata.metadataType` values.
 
 ## TODO
 
-- NativeScript 5.0 Support
 - Angular support.
 - Handle `customData`.
 - Handle `mediaTracks`.
