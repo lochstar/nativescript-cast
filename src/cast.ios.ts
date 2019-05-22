@@ -286,6 +286,9 @@ export class CastButton extends CastButtonBase {
     const mediaTracks = null;
     const textTrackStyle = null;
 
+    // if customData is provided in the mediaInfo, otherwise null
+    const customData = mediaInfo.customData ? mediaInfo.customData : null;
+
     // Convert streamType to number value
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
 
@@ -297,7 +300,7 @@ export class CastButton extends CastButtonBase {
       mediaInfo.streamDuration,
       mediaTracks,
       textTrackStyle,
-      mediaInfo.customData
+      customData
     );
 
     const options = GCKMediaLoadOptions.alloc().init();
