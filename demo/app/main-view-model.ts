@@ -1,5 +1,6 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
+import {CastEventName} from "nativescript-cast/cast.common";
 
 export class MainViewModel extends Observable {
   public cast: any;
@@ -21,17 +22,20 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
-      case 'onSessionStarted':
-      case 'onSessionResumed':
+      case CastEventName.onSessionStarted:
+        case CastEventName.onSessionResumed:
         this.set('canCast', true);
         break;
-      case 'onSessionEnding':
-      case 'onSessionEnded':
+      case CastEventName.onSessionEnding:
+      case CastEventName.onSessionEnded:
         this.set('canCast', false);
         break;
-      case 'onDeviceVolumeChanged':
+      case CastEventName.onDeviceVolumeChanged:
         console.log('volume: ' + args.data.volume);
         break;
+      case CastEventName.onMediaStatusChanged:
+          console.log('status' + args.data.status);
+          break;
       default:
         break;
     }
@@ -39,10 +43,11 @@ export class MainViewModel extends Observable {
 
   handleLoadTap(args: EventData) {
 
-    // multi-audio, subtitles not matching audio...
+    // multi-audio, subtitles not matching audio:
+    // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
 
     this.cast.loadMedia({
-      contentId: 'https://amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest',
+      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
       streamType: 'BUFFERED',
       duration: undefined,

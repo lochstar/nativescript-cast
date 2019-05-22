@@ -1,6 +1,6 @@
-import { ios } from 'tns-core-modules/utils/utils';
-import { Color } from 'tns-core-modules/color';
-import { CastButtonBase } from './cast.common';
+import {ios} from 'tns-core-modules/utils/utils';
+import {Color} from 'tns-core-modules/color';
+import {CastButtonBase, CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.common';
 
 declare let GCKUICastButton: any;
 declare let GCKDevice: any;
@@ -9,6 +9,12 @@ declare let CGRectMake: any;
 declare let GCKCastContext: any;
 declare let GCKMediaTrackTypeText: any;
 declare let GCKMediaTextTrackSubtypeSubtitles: any;
+declare let GCKRemoteMediaClientListener: any;
+declare let GCKMediaPlayerStateIdle: any;
+declare let GCKMediaPlayerStatePlaying: any;
+declare let GCKMediaPlayerStatePaused: any;
+declare let GCKMediaPlayerStateBuffering: any;
+declare let GCKMediaPlayerStateLoading: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -23,7 +29,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionStarting',
+      eventName: CastEventName.onSessionStarting,
       session: session,
       ios: this.owner.nativeView
     });
@@ -31,7 +37,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionStarted',
+      eventName: CastEventName.onSessionStarted,
       session: session,
       ios: this.owner.nativeView
     });
@@ -47,7 +53,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionEnding',
+      eventName: CastEventName.onSessionEnding,
       session: session,
       ios: this.owner.nativeView
     });
@@ -55,7 +61,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionEnded',
+      eventName: CastEventName.onSessionEnded,
       session: session,
       error: error,
       ios: this.owner.nativeView
@@ -72,7 +78,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionStartFailed',
+      eventName: CastEventName.onSessionStartFailed,
       session: session,
       error: error,
       ios: this.owner.nativeView
@@ -85,7 +91,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionSuspended',
+      eventName: CastEventName.onSessionSuspended,
       session: session,
       reason: reason,
       ios: this.owner.nativeView
@@ -98,7 +104,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionResuming',
+      eventName: CastEventName.onSessionResuming,
       session: session,
       ios: this.owner.nativeView
     });
@@ -106,7 +112,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onSessionResumed',
+      eventName: CastEventName.onSessionResumed,
       session: session,
       ios: this.owner.nativeView
     });
@@ -138,8 +144,9 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
       statusText: device.statusText,
     };
     */
+
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onDeviceChanged',
+      eventName: CastEventName.onDeviceChanged,
       session: session,
       device: device,
       ios: this.owner.nativeView
@@ -148,7 +155,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: 'onDeviceVolumeChanged',
+      eventName: CastEventName.onDeviceVolumeChanged,
       session: session,
       volume: volume,
       ios: this.owner.nativeView
@@ -172,6 +179,84 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 }
 
+class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
+    public static ObjCProtocols = [GCKRemoteMediaClientListener];
+    public owner: CastButton;
+
+    constructor() {
+        super();
+
+        // necessary when extending TypeScript constructors
+        return global.__native(this);
+    }
+
+    public remoteMediaClientDidStartMediaSessionWithID(client: GCKRemoteMediaClient, sessionId: number) {
+      console.log("didStartMediaSessionWithID " + sessionId);
+    }
+
+    public remoteMediaClientDidUpdateMediaStatus(client: GCKRemoteMediaClient, mediaStatus: GCKMediaStatus) {
+        console.log("updated mediaStatus");
+
+        if (mediaStatus) {
+            this.owner.sendEvent(CastButtonBase.castEvent, {
+                eventName: CastEventName.onMediaStatusChanged,
+                status: this.toCastMediaStatus(mediaStatus),
+                ios: this.owner.nativeView
+            });
+        }
+    }
+
+    public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata) {
+        console.log("didUpdateMediaMetadata");
+    }
+
+    public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
+        console.log("remoteMediaClientDidUpdateQueue");
+    }
+
+    public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
+        console.log("remoteMediaClientDidUpdatePreloadStatus");
+    }
+
+    public didReceiveQueueItemIDs(queueItems: number[]) {}
+    public didInsertQueueItemsWithIDs(queueItems: number[]) {}
+    public didUpdateQueueItemsWithIDs(queueItems: number[]) {}
+    public didRemoveQueueItemsWithIDs(queueItems: number[]) {}
+    public didReceiveQueueItems(items: GCKMediaQueueItem[]) {}
+
+    protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
+      let playerState: PlayerState = PlayerState.UNKNOWN;
+      switch (mediaStatus.playerState) {
+          case GCKMediaPlayerStateIdle:
+            playerState = PlayerState.IDLE;
+            break;
+          case GCKMediaPlayerStatePlaying:
+              playerState = PlayerState.PLAYING;
+              break;
+          case GCKMediaPlayerStatePaused:
+              playerState = PlayerState.PAUSED;
+              break;
+          case GCKMediaPlayerStateBuffering:
+              playerState = PlayerState.BUFFERING;
+              break;
+          case GCKMediaPlayerStateLoading:
+              playerState = PlayerState.LOADING;
+              break;
+      }
+
+      const activeTrackIds = mediaStatus.activeTrackIDs
+          ? ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
+          : [];
+
+      return {
+        activeTrackIds,
+        playerState,
+        position: mediaStatus.streamPosition,
+      };
+    }
+}
+
+
 export class CastButton extends CastButtonBase {
   nativeView: GCKUICastButton;
 
@@ -180,6 +265,7 @@ export class CastButton extends CastButtonBase {
   public mCastContext: any;
   public mSessionManager: any;
   public mSessionManagerListener: any;
+  public mRemoteMediaClientListener: any;
 
   constructor() {
     super();
@@ -198,6 +284,8 @@ export class CastButton extends CastButtonBase {
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl;
     this.mSessionManagerListener.owner = this;
+    this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl;
+    this.mRemoteMediaClientListener.owner = this;
 
     this.addSessionManagerListener();
 
@@ -252,7 +340,7 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.currentCastSession.remoteMediaClient;
   }
 
-  loadMedia(mediaInfo: any, autoplay = true, position?: number) {
+  loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
     const upperFirst = require('lodash/fp/upperFirst');
     const metadataPrefix = 'kGCKMetadataKey';
     let metadata;
@@ -307,7 +395,7 @@ export class CastButton extends CastButtonBase {
       streamType,
       mediaInfo.contentType,
       metadata,
-      mediaInfo.streamDuration,
+      mediaInfo.duration,
       mediaTracks,
       textTrackStyle,
       customData
@@ -317,6 +405,9 @@ export class CastButton extends CastButtonBase {
     options.autoplay = autoplay;
     options.playPosition = position;
     const remoteMediaClient = this.getRemoteMediaClient();
+    // @TODO only add once:
+    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
+
     remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
   }
 
@@ -333,6 +424,8 @@ export class CastButton extends CastButtonBase {
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
     const images = ios.collections.nsArrayToJSArray(metadata.images());
     const activeTracks = []; //ios.collections.nsArrayToJSArray(remoteMediaClient.mediaStatus.activeTrackIDs);
+
+
 
     let jsonMetadata = {
       metadataType: metadata.metadataType,
