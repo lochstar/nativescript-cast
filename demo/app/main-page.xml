@@ -66,12 +66,6 @@
           isEnabled="{{ canCast }}"
         />
 
-        <Button
-          text="Get Media Info"
-          tap="{{ handleGetMediaInfoTap }}"
-          class="btn btn-primary"
-          isEnabled="{{ canCast }}"
-        />
         <TextView
           text="{{ mediaInfo }}"
           editable="false"

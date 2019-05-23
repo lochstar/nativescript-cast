@@ -34,7 +34,7 @@ export class MainViewModel extends Observable {
         console.log('volume: ' + args.data.volume);
         break;
       case CastEventName.onMediaStatusChanged:
-          console.log('status' + args.data.status);
+          this.set('mediaInfo', JSON.stringify(args.data.status, null, '  '));
           break;
       default:
         break;
@@ -93,11 +93,6 @@ export class MainViewModel extends Observable {
 
   handleStopTap(args: EventData) {
     this.cast.stopMedia();
-  }
-
-  handleGetMediaInfoTap() {
-    const mediaInfo = this.cast.getMediaInfo();
-    this.set('mediaInfo', JSON.stringify(mediaInfo, null, '  '));
   }
 
   handleTest() {

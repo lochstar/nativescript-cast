@@ -1,6 +1,6 @@
 import { ad } from 'tns-core-modules/utils/utils';
 import { Color } from 'tns-core-modules/color';
-import { CastButtonBase, CastMediaInfo, CastEventName } from './cast.common';
+import {CastButtonBase, CastMediaInfo, CastEventName, CastMediaStatus, PlayerState} from './cast.common';
 
 const {
   MediaRouter,
@@ -22,6 +22,8 @@ const WebImage = com.google.android.gms.common.images.WebImage;
 const MediaTrack = com.google.android.gms.cast.MediaTrack;
 // @ts-ignore
 const ArrayList = java.util.ArrayList;
+// @ts-ignore
+const MediaStatus = com.google.android.gms.cast.MediaStatus;
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -251,6 +253,43 @@ function initSessionManagerListener(): void {
   SessionManagerListener = SessionManagerListenerImpl;
 }
 
+interface RemoteMediaClientListener {
+    new(owner): com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
+}
+
+let RemoteMediaClientListener: RemoteMediaClientListener;
+
+function initRemoteMediaClientListener(): void {
+    if (RemoteMediaClientListener) {
+        return;
+    }
+
+    @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener])
+    class RemoteMediaClientListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener {
+        public owner: CastButton;
+
+        constructor(owner) {
+            super();
+
+            this.owner = owner;
+
+            // necessary when extending TypeScript constructors
+            return global.__native(this);
+        }
+
+        public onStatusUpdated() {
+          this.owner.onMediaStatusUpdate();
+        }
+        public onMetadataUpdated() {}
+        public onQueueStatusUpdated() {}
+        public onPreloadStatusUpdated() {}
+        public onSendingRemoteMediaRequest() {}
+        public onAdBreakStatusUpdated() {}
+    }
+
+    RemoteMediaClientListener = RemoteMediaClientListenerImpl;
+}
+
 export class CastButton extends CastButtonBase {
   public nativeView: android.support.v7.app.MediaRouteButton;
 
@@ -260,6 +299,7 @@ export class CastButton extends CastButtonBase {
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
+  public mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
 
   public mMediaRouter: android.support.v7.media.MediaRouter;
   public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
@@ -276,6 +316,7 @@ export class CastButton extends CastButtonBase {
     const appContext = ad.getApplicationContext();
 
     initSessionManagerListener();
+    initRemoteMediaClientListener();
 
     // Create new instance of MediaRouteButton
     const button = new android.support.v7.app.MediaRouteButton(this._context);
@@ -295,6 +336,7 @@ export class CastButton extends CastButtonBase {
     this.mCastContext = CastContext.getSharedInstance(appContext);
     this.mSessionManager = this.mCastContext.getSessionManager();
     this.mSessionManagerListener = new SessionManagerListener(this);
+    this.mRemoteMediaClientListener = new RemoteMediaClientListener(this);
 
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
@@ -427,6 +469,7 @@ export class CastButton extends CastButtonBase {
 
     // Load media in to remote client
     const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
   }
 
@@ -510,5 +553,44 @@ export class CastButton extends CastButtonBase {
     // @ts-ignore
     android.support.v4.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
     mRouteButton.setRemoteIndicatorDrawable(drawable);
+  }
+
+  onMediaStatusUpdate() {
+      const mediaStatus = this.getRemoteMediaClient().getMediaStatus();
+      if (mediaStatus) {
+          let playerState: PlayerState = PlayerState.UNKNOWN;
+          const trackIds = mediaStatus.getActiveTrackIds();
+          const activeTrackIds = [];
+          if (trackIds) {
+              for (let i = 0; i < trackIds.length; i++) {
+                  activeTrackIds.push(trackIds[i]);
+              }
+          }
+          switch (mediaStatus.getPlayerState()) {
+              case MediaStatus.PLAYER_STATE_IDLE:
+                  playerState = PlayerState.IDLE;
+                  break;
+              case MediaStatus.PLAYER_STATE_PLAYING:
+                  playerState = PlayerState.PLAYING;
+                  break;
+              case MediaStatus.PLAYER_STATE_PAUSED:
+                  playerState = PlayerState.PAUSED;
+                  break;
+              case MediaStatus.PLAYER_STATE_BUFFERING:
+                  playerState = PlayerState.BUFFERING;
+                  break;
+          }
+          
+          const status: CastMediaStatus = {
+              playerState,
+              activeTrackIds,
+              position: mediaStatus.getStreamPosition()
+          };
+          this.sendEvent(CastButtonBase.castEvent, {
+              eventName: CastEventName.onMediaStatusChanged,
+              status,
+              android: this.nativeView
+          });
+      }
   }
 }

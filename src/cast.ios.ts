@@ -48,7 +48,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    //console.log('didStartCastSession');
+    console.log('didStartCastSession');
   }
 
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
@@ -73,7 +73,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
-    //console.log('didEndCastSession');
+    console.log('didEndCastSession');
   }
 
   public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
@@ -116,6 +116,8 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
       session: session,
       ios: this.owner.nativeView
     });
+
+
   }
 
   public sessionManagerWillResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
@@ -404,10 +406,9 @@ export class CastButton extends CastButtonBase {
     const options = GCKMediaLoadOptions.alloc().init();
     options.autoplay = autoplay;
     options.playPosition = position;
-    const remoteMediaClient = this.getRemoteMediaClient();
-    // @TODO only add once:
-    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
 
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
   }
 
