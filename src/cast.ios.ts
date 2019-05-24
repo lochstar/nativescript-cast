@@ -2,6 +2,8 @@ import {ios} from 'tns-core-modules/utils/utils';
 import {Color} from 'tns-core-modules/color';
 import {CastButtonBase, CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.common';
 
+const camelCase = require('lodash/fp/camelCase');
+
 declare let GCKUICastButton: any;
 declare let GCKDevice: any;
 declare let GCKSessionManagerListener: any;
@@ -16,7 +18,7 @@ declare let GCKMediaPlayerStatePaused: any;
 declare let GCKMediaPlayerStateBuffering: any;
 declare let GCKMediaPlayerStateLoading: any;
 
-class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
+class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
   public owner: CastButton;
 
@@ -182,80 +184,97 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 }
 
 class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
-    public static ObjCProtocols = [GCKRemoteMediaClientListener];
-    public owner: CastButton;
+  public static ObjCProtocols = [GCKRemoteMediaClientListener];
+  public owner: CastButton;
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        // necessary when extending TypeScript constructors
-        return global.__native(this);
-    }
+    // necessary when extending TypeScript constructors
+    return global.__native(this);
+  }
 
-    public remoteMediaClientDidStartMediaSessionWithID(client: GCKRemoteMediaClient, sessionId: number) {
-      console.log("didStartMediaSessionWithID " + sessionId);
-    }
+  public remoteMediaClientDidStartMediaSessionWithID(client: GCKRemoteMediaClient, sessionId: number) {
+    console.log("didStartMediaSessionWithID " + sessionId);
+  }
 
-    public remoteMediaClientDidUpdateMediaStatus(client: GCKRemoteMediaClient, mediaStatus: GCKMediaStatus) {
-        console.log("updated mediaStatus");
+  public remoteMediaClientDidUpdateMediaStatus(client: GCKRemoteMediaClient, mediaStatus: GCKMediaStatus) {
+    console.log("updated mediaStatus");
+    let info = null;
+    let status = null;
 
-        if (mediaStatus) {
-            this.owner.sendEvent(CastButtonBase.castEvent, {
-                eventName: CastEventName.onMediaStatusChanged,
-                status: this.toCastMediaStatus(mediaStatus),
-                ios: this.owner.nativeView
-            });
-        }
-    }
-
-    public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata) {
-        console.log("didUpdateMediaMetadata");
-    }
-
-    public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
-        console.log("remoteMediaClientDidUpdateQueue");
-    }
-
-    public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
-        console.log("remoteMediaClientDidUpdatePreloadStatus");
-    }
-
-    public didReceiveQueueItemIDs(queueItems: number[]) {}
-    public didInsertQueueItemsWithIDs(queueItems: number[]) {}
-    public didUpdateQueueItemsWithIDs(queueItems: number[]) {}
-    public didRemoveQueueItemsWithIDs(queueItems: number[]) {}
-    public didReceiveQueueItems(items: GCKMediaQueueItem[]) {}
-
-    protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
-      let playerState: PlayerState = PlayerState.UNKNOWN;
-      switch (mediaStatus.playerState) {
-          case GCKMediaPlayerStateIdle:
-            playerState = PlayerState.IDLE;
-            break;
-          case GCKMediaPlayerStatePlaying:
-              playerState = PlayerState.PLAYING;
-              break;
-          case GCKMediaPlayerStatePaused:
-              playerState = PlayerState.PAUSED;
-              break;
-          case GCKMediaPlayerStateBuffering:
-              playerState = PlayerState.BUFFERING;
-              break;
-          case GCKMediaPlayerStateLoading:
-              playerState = PlayerState.LOADING;
-              break;
+    if (mediaStatus) {
+      status = this.toCastMediaStatus(mediaStatus)
+      const mediaInfo = mediaStatus.mediaInformation;
+      if (mediaInfo) {
+        info = this.owner.mediaInfoToJson(mediaInfo);
       }
-
-      const activeTrackIds = mediaStatus.activeTrackIDs
-          ? ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
-          : [];
-
-      return {
-        activeTrackIds,
-        playerState,
-        position: mediaStatus.streamPosition,
-      };
     }
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEventName.onMediaStatusChanged,
+      status,
+      info,
+      ios: this.owner.nativeView
+    });
+  }
+
+  public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata) {
+    console.log("didUpdateMediaMetadata");
+  }
+
+  public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
+    console.log("remoteMediaClientDidUpdateQueue");
+  }
+
+  public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
+    console.log("remoteMediaClientDidUpdatePreloadStatus");
+  }
+
+  public didReceiveQueueItemIDs(queueItems: number[]) {
+  }
+
+  public didInsertQueueItemsWithIDs(queueItems: number[]) {
+  }
+
+  public didUpdateQueueItemsWithIDs(queueItems: number[]) {
+  }
+
+  public didRemoveQueueItemsWithIDs(queueItems: number[]) {
+  }
+
+  public didReceiveQueueItems(items: GCKMediaQueueItem[]) {
+  }
+
+  protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
+    let playerState: PlayerState = PlayerState.UNKNOWN;
+    switch (mediaStatus.playerState) {
+      case GCKMediaPlayerStateIdle:
+        playerState = PlayerState.IDLE;
+        break;
+      case GCKMediaPlayerStatePlaying:
+        playerState = PlayerState.PLAYING;
+        break;
+      case GCKMediaPlayerStatePaused:
+        playerState = PlayerState.PAUSED;
+        break;
+      case GCKMediaPlayerStateBuffering:
+        playerState = PlayerState.BUFFERING;
+        break;
+      case GCKMediaPlayerStateLoading:
+        playerState = PlayerState.LOADING;
+        break;
+    }
+
+    const activeTrackIds = mediaStatus.activeTrackIDs
+      ? ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
+      : [];
+
+    return {
+      activeTrackIds,
+      playerState,
+      position: mediaStatus.streamPosition,
+    };
+  }
 }
 
 
@@ -384,8 +403,8 @@ export class CastButton extends CastButtonBase {
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
       mediaTracks = NSMutableArray.arrayWithCapacity(mediaInfo.textTracks.length);
       mediaInfo.textTracks.forEach((track, index) => {
-          mediaTracks.addObject(GCKMediaTrack.alloc().initWithIdentifierContentIdentifierContentTypeTypeTextSubtypeNameLanguageCodeCustomData(
-            index + 1, track.src, track.contentType, GCKMediaTrackTypeText, GCKMediaTextTrackSubtypeSubtitles, track.name, track.language, null));
+        mediaTracks.addObject(GCKMediaTrack.alloc().initWithIdentifierContentIdentifierContentTypeTypeTextSubtypeNameLanguageCodeCustomData(
+          index + 1, track.src, track.contentType, GCKMediaTrackTypeText, GCKMediaTextTrackSubtypeSubtitles, track.name, track.language, null));
       });
     }
 
@@ -414,19 +433,50 @@ export class CastButton extends CastButtonBase {
 
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
   getMediaInfo() {
-    const camelCase = require('lodash/fp/camelCase');
+
     const remoteMediaClient = this.getRemoteMediaClient();
     if (!remoteMediaClient) {
       return {}
     }
     const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
-    const mediaStatus = remoteMediaClient.mediaStatus;
+    return this.mediaInfoToJson(mediaInfo);
+  }
+
+  pauseMedia(customData?: any) {
+    this.getRemoteMediaClient().pauseWithCustomData(customData);
+  }
+
+  playMedia(customData?: any) {
+    this.getRemoteMediaClient().playWithCustomData(customData);
+  }
+
+  seekMedia(position: number, resumeState = 0, customData?: any) {
+    // GCKMediaControlChannelResumeStateUnchanged: 0
+    // GCKMediaControlChannelResumeStatePlay: 1
+    // GCKMediaControlChannelResumeStatePause: 2
+    this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeState, customData);
+  }
+
+  stopMedia(customData?: any) {
+    this.getRemoteMediaClient().stopWithCustomData(customData);
+  }
+
+  setActiveTrackIds(trackIds: number[]) {
+    this.getRemoteMediaClient().setActiveTrackIDs(trackIds);
+  }
+
+  setTintColor(color: string) {
+    const mRouteButton = this.getNativeView();
+    mRouteButton.tintColor = new Color(color).ios;
+  }
+
+  mediaInfoToJson(mediaInfo) {
+    if (!mediaInfo) {
+      return {};
+    }
     const metadata = mediaInfo.metadata;
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
     const images = ios.collections.nsArrayToJSArray(metadata.images());
-    const activeTracks = []; //ios.collections.nsArrayToJSArray(remoteMediaClient.mediaStatus.activeTrackIDs);
-
-
 
     let jsonMetadata = {
       metadataType: metadata.metadataType,
@@ -455,37 +505,8 @@ export class CastButton extends CastButtonBase {
       contentType: mediaInfo.contentType,
       metadata: jsonMetadata,
       duration: mediaInfo.streamDuration,
-      activeTracks: activeTracks,
     };
 
     return jsonData;
-  }
-
-  pauseMedia(customData?: any) {
-    this.getRemoteMediaClient().pauseWithCustomData(customData);
-  }
-
-  playMedia(customData?: any) {
-    this.getRemoteMediaClient().playWithCustomData(customData);
-  }
-
-  seekMedia(position: number, resumeState = 0, customData?: any) {
-    // GCKMediaControlChannelResumeStateUnchanged: 0
-    // GCKMediaControlChannelResumeStatePlay: 1
-    // GCKMediaControlChannelResumeStatePause: 2
-    this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeState, customData);
-  }
-
-  stopMedia(customData?: any) {
-    this.getRemoteMediaClient().stopWithCustomData(customData);
-  }
-
-  setActiveTrackIds(trackIds: number[]) {
-      this.getRemoteMediaClient().setActiveTrackIDs(trackIds);
-  }
-
-  setTintColor(color: string) {
-    const mRouteButton = this.getNativeView();
-    mRouteButton.tintColor = new Color(color).ios;
   }
 }

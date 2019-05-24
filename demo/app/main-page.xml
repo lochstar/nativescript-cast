@@ -70,7 +70,11 @@
           text="{{ mediaInfo }}"
           editable="false"
           class="media-info"
-          isEnabled="{{ canCast }}"
+        />
+        <TextView
+          text="{{ mediaStatus }}"
+          editable="false"
+          class="media-info"
         />
       </StackLayout>
     </ScrollView>

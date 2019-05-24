@@ -1,6 +1,8 @@
-import { ad } from 'tns-core-modules/utils/utils';
-import { Color } from 'tns-core-modules/color';
-import {CastButtonBase, CastMediaInfo, CastEventName, CastMediaStatus, PlayerState} from './cast.common';
+import {ad} from 'tns-core-modules/utils/utils';
+import {Color} from 'tns-core-modules/color';
+import {CastButtonBase, CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.common';
+
+const camelCase = require('lodash/fp/camelCase');
 
 const {
   MediaRouter,
@@ -254,40 +256,50 @@ function initSessionManagerListener(): void {
 }
 
 interface RemoteMediaClientListener {
-    new(owner): com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
+  new(owner): com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
 }
 
 let RemoteMediaClientListener: RemoteMediaClientListener;
 
 function initRemoteMediaClientListener(): void {
-    if (RemoteMediaClientListener) {
-        return;
+  if (RemoteMediaClientListener) {
+    return;
+  }
+
+  @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener])
+  class RemoteMediaClientListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener {
+    public owner: CastButton;
+
+    constructor(owner) {
+      super();
+
+      this.owner = owner;
+
+      // necessary when extending TypeScript constructors
+      return global.__native(this);
     }
 
-    @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener])
-    class RemoteMediaClientListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener {
-        public owner: CastButton;
-
-        constructor(owner) {
-            super();
-
-            this.owner = owner;
-
-            // necessary when extending TypeScript constructors
-            return global.__native(this);
-        }
-
-        public onStatusUpdated() {
-          this.owner.onMediaStatusUpdate();
-        }
-        public onMetadataUpdated() {}
-        public onQueueStatusUpdated() {}
-        public onPreloadStatusUpdated() {}
-        public onSendingRemoteMediaRequest() {}
-        public onAdBreakStatusUpdated() {}
+    public onStatusUpdated() {
+      this.owner.onMediaStatusUpdate();
     }
 
-    RemoteMediaClientListener = RemoteMediaClientListenerImpl;
+    public onMetadataUpdated() {
+    }
+
+    public onQueueStatusUpdated() {
+    }
+
+    public onPreloadStatusUpdated() {
+    }
+
+    public onSendingRemoteMediaRequest() {
+    }
+
+    public onAdBreakStatusUpdated() {
+    }
+  }
+
+  RemoteMediaClientListener = RemoteMediaClientListenerImpl;
 }
 
 export class CastButton extends CastButtonBase {
@@ -452,19 +464,19 @@ export class CastButton extends CastButtonBase {
     }
 
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
-        const tracks = new ArrayList();
-        mediaInfo.textTracks.forEach((item, index) => {
-          const track = new MediaTrack.Builder(index + 1, MediaTrack.TYPE_TEXT)
-              .setContentId(item.src)
-              .setContentType(item.contentType)
-              .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
-              .setName(item.name)
-              .setLanguage(item.language)
-              .build();
-          tracks.add(track);
-        });
+      const tracks = new ArrayList();
+      mediaInfo.textTracks.forEach((item, index) => {
+        const track = new MediaTrack.Builder(index + 1, MediaTrack.TYPE_TEXT)
+          .setContentId(item.src)
+          .setContentType(item.contentType)
+          .setSubtype(MediaTrack.SUBTYPE_SUBTITLES)
+          .setName(item.name)
+          .setLanguage(item.language)
+          .build();
+        tracks.add(track);
+      });
 
-        builtMediaInfo.setMediaTracks(tracks);
+      builtMediaInfo.setMediaTracks(tracks);
     }
 
     // Load media in to remote client
@@ -475,40 +487,9 @@ export class CastButton extends CastButtonBase {
 
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
   getMediaInfo() {
-    const camelCase = require('lodash/fp/camelCase');
     const mediaInfo = this.getRemoteMediaClient().getMediaInfo();
-    const metadata = mediaInfo.getMetadata();
-    const metaDataKeys = ad.collections.stringSetToStringArray(metadata.keySet());
-    const images = metadata.getImages();
 
-    let jsonMetadata = {
-      metadataType: metadata.getMediaType(),
-      images: [],
-    }
-
-    metaDataKeys.forEach(key => {
-      const fixedKey = camelCase(key.replace('com.google.android.gms.cast.metadata.', ''));
-      jsonMetadata[fixedKey] = metadata.getString(key);
-    });
-
-    for (let index = 0; index < images.size(); index++) {
-      const img = images.get(index);
-      jsonMetadata.images.push({
-        url: img.getUrl().toString(),
-        width: img.getWidth(),
-        height: img.getHeight()
-      });
-    }
-
-    const jsonData = {
-      contentId: mediaInfo.getContentId(),
-      streamType: this.streamTypeNumberToString(mediaInfo.getStreamType()),
-      contentType: mediaInfo.getContentType(),
-      metadata: jsonMetadata,
-      duration: mediaInfo.getStreamDuration() / 1000,
-    };
-
-    return jsonData;
+    return this.mediaInfoToJson(mediaInfo);
   }
 
   // @ts-ignore
@@ -535,7 +516,7 @@ export class CastButton extends CastButtonBase {
   }
 
   setActiveTrackIds(trackIds: number[]) {
-      this.getRemoteMediaClient().setActiveMediaTracks(trackIds);
+    this.getRemoteMediaClient().setActiveMediaTracks(trackIds);
   }
 
   setTintColor(color: string) {
@@ -556,41 +537,86 @@ export class CastButton extends CastButtonBase {
   }
 
   onMediaStatusUpdate() {
-      const mediaStatus = this.getRemoteMediaClient().getMediaStatus();
-      if (mediaStatus) {
-          let playerState: PlayerState = PlayerState.UNKNOWN;
-          const trackIds = mediaStatus.getActiveTrackIds();
-          const activeTrackIds = [];
-          if (trackIds) {
-              for (let i = 0; i < trackIds.length; i++) {
-                  activeTrackIds.push(trackIds[i]);
-              }
-          }
-          switch (mediaStatus.getPlayerState()) {
-              case MediaStatus.PLAYER_STATE_IDLE:
-                  playerState = PlayerState.IDLE;
-                  break;
-              case MediaStatus.PLAYER_STATE_PLAYING:
-                  playerState = PlayerState.PLAYING;
-                  break;
-              case MediaStatus.PLAYER_STATE_PAUSED:
-                  playerState = PlayerState.PAUSED;
-                  break;
-              case MediaStatus.PLAYER_STATE_BUFFERING:
-                  playerState = PlayerState.BUFFERING;
-                  break;
-          }
-          
-          const status: CastMediaStatus = {
-              playerState,
-              activeTrackIds,
-              position: mediaStatus.getStreamPosition()
-          };
-          this.sendEvent(CastButtonBase.castEvent, {
-              eventName: CastEventName.onMediaStatusChanged,
-              status,
-              android: this.nativeView
-          });
+    const mediaStatus = this.getRemoteMediaClient().getMediaStatus();
+    let info = null;
+    let status: CastMediaStatus = null;
+    if (mediaStatus) {
+      const mediaInfo = mediaStatus.getMediaInfo();
+      if (mediaInfo) {
+        info = this.mediaInfoToJson(mediaInfo);
       }
+      let playerState: PlayerState = PlayerState.UNKNOWN;
+      const trackIds = mediaStatus.getActiveTrackIds();
+      const activeTrackIds = [];
+      if (trackIds) {
+        for (let i = 0; i < trackIds.length; i++) {
+          activeTrackIds.push(trackIds[i]);
+        }
+      }
+      switch (mediaStatus.getPlayerState()) {
+        case MediaStatus.PLAYER_STATE_IDLE:
+          playerState = PlayerState.IDLE;
+          break;
+        case MediaStatus.PLAYER_STATE_PLAYING:
+          playerState = PlayerState.PLAYING;
+          break;
+        case MediaStatus.PLAYER_STATE_PAUSED:
+          playerState = PlayerState.PAUSED;
+          break;
+        case MediaStatus.PLAYER_STATE_BUFFERING:
+          playerState = PlayerState.BUFFERING;
+          break;
+      }
+
+      status = {
+        playerState,
+        activeTrackIds,
+        position: mediaStatus.getStreamPosition()
+      };
+    }
+    this.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEventName.onMediaStatusChanged,
+      status,
+      info,
+      android: this.nativeView
+    });
+  }
+
+  mediaInfoToJson(mediaInfo: com.google.android.gms.cast.MediaInfo) {
+    if (!mediaInfo) {
+      return {};
+    }
+    const metadata = mediaInfo.getMetadata();
+    const metaDataKeys = ad.collections.stringSetToStringArray(metadata.keySet());
+    const images = metadata.getImages();
+
+    let jsonMetadata = {
+      metadataType: metadata.getMediaType(),
+      images: [],
+    };
+
+    metaDataKeys.forEach(key => {
+      const fixedKey = camelCase(key.replace('com.google.android.gms.cast.metadata.', ''));
+      jsonMetadata[fixedKey] = metadata.getString(key);
+    });
+
+    for (let index = 0; index < images.size(); index++) {
+      const img = images.get(index);
+      jsonMetadata.images.push({
+        url: img.getUrl().toString(),
+        width: img.getWidth(),
+        height: img.getHeight()
+      });
+    }
+
+    const jsonData = {
+      contentId: mediaInfo.getContentId(),
+      streamType: this.streamTypeNumberToString(mediaInfo.getStreamType()),
+      contentType: mediaInfo.getContentType(),
+      metadata: jsonMetadata,
+      duration: mediaInfo.getStreamDuration() / 1000,
+    };
+
+    return jsonData;
   }
 }

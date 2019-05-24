@@ -6,6 +6,7 @@ export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
   public mediaInfo: string;
+  public mediaStatus: string;
 
   constructor() {
     super();
@@ -35,6 +36,7 @@ export class MainViewModel extends Observable {
         break;
       case CastEventName.onMediaStatusChanged:
           this.set('mediaInfo', JSON.stringify(args.data.status, null, '  '));
+          this.set('mediaStatus', JSON.stringify(args.data.info, null, '  '));
           break;
       default:
         break;
