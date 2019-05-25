@@ -1,6 +1,6 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import {CastEventName} from "nativescript-cast/cast.common";
+import {CastEventName, CastMediaInfo} from "nativescript-cast/cast.types";
 
 export class MainViewModel extends Observable {
   public cast: any;
@@ -48,16 +48,16 @@ export class MainViewModel extends Observable {
     // multi-audio, subtitles not matching audio:
     // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
 
-    this.cast.loadMedia({
+    const media: CastMediaInfo = {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
       streamType: 'BUFFERED',
       duration: undefined,
       metadata: {
         metadataType: 'MOVIE',
-        title: 'TearsOfSteel',
+        title: 'Tears of Steel',
         subtitle: 'By Blender Foundation',
-        description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world.\nwww.sintel.org',
+        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
             url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
@@ -66,19 +66,20 @@ export class MainViewModel extends Observable {
           }
         ]
       },
-        textTracks: [{
-          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
-            contentType: 'text/vtt',
-            name: 'english',
-            language: 'en'
-        },{
-            src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
-            contentType: 'text/vtt',
-            name: 'spanish',
-            language: 'es'
-        }
-        ]
-    });
+      textTracks: [{
+        src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+        contentType: 'text/vtt',
+        name: 'english',
+        language: 'en'
+      },{
+        src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+        contentType: 'text/vtt',
+        name: 'spanish',
+        language: 'es'
+      }]
+    };
+
+    this.cast.loadMedia(media);
   }
 
   handlePlayTap(args: EventData) {

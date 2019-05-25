@@ -1,6 +1,7 @@
 import {ios} from 'tns-core-modules/utils/utils';
 import {Color} from 'tns-core-modules/color';
-import {CastButtonBase, CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.common';
+import {CastButtonBase} from './cast.common';
+import {CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
@@ -378,7 +379,7 @@ export class CastButton extends CastButtonBase {
         if (CastButtonBase.validMetadataKeys.indexOf(key) > -1) {
           const fixedKey = metadataPrefix + upperFirst(key);
           const value = mediaInfo.metadata[key];
-          metadata.setStringForKey(value, eval(fixedKey));
+          metadata.setStringForKey(value, fixedKey);
         }
       });
 

@@ -1,60 +1,6 @@
-import { View } from 'tns-core-modules/ui/core/view';
-import { Visibility } from 'tns-core-modules/ui/styling/style-properties';
+import {View} from 'tns-core-modules/ui/core/view';
+import {Visibility} from 'tns-core-modules/ui/styling/style-properties';
 
-export interface CastMediaInfo {
-  contentId: string;
-  contentType: string;
-  streamType: string;
-  metadata: any;
-  textTracks?: CastTextTrack[];
-  duration?: number;
-  customData?: any;
-}
-
-export interface CastMediaStatus {
-  activeTrackIds: number[] | null;
-  playerState: PlayerState;
-  position: number;
-}
-
-export interface CastTextTrack {
-  id: number;
-  src: string;
-  contentType: string;
-  name: string;
-  language: string;
-}
-
-export enum PlayerState {
-  UNKNOWN = "UNKNOWN",
-  IDLE = "IDLE",
-  PLAYING = "PLAYING",
-  PAUSED = "PAUSED",
-  BUFFERING = "BUFFERING",
-  LOADING = "LOADING"
-}
-
-export enum CastEventName {
-  onProviderAdded = "onProviderAdded",
-  onProviderChanged = "onProviderChanged",
-  onProviderRemoved = "onProviderRemoved",
-  onRouteAdded = "onRouteAdded",
-  onRoutePresentationDisplayChanged = "onRoutePresentationDisplayChanged",
-  onRouteRemoved = "onRouteRemoved",
-  onRouteSelected = "onRouteSelected",
-  onRouteUnselected = "onRouteUnselected",
-  onSessionEnded = "onSessionEnded",
-  onSessionEnding = "onSessionEnding",
-  onSessionResumed = "onSessionResumed",
-  onSessionResuming = "onSessionResuming",
-  onSessionStarted = "onSessionStarted",
-  onSessionStartFailed = "onSessionStartFailed",
-  onSessionStarting = "onSessionStarting",
-  onSessionSuspended = "onSessionSuspended",
-  onDeviceVolumeChanged = "onDeviceVolumeChanged",
-  onDeviceChanged = "onDeviceChanged",
-  onMediaStatusChanged = "onMediaStatusChanged",
-}
 
 export abstract class CastButtonBase extends View {
   public static validMetadataKeys = [
@@ -83,7 +29,7 @@ export abstract class CastButtonBase extends View {
   public static castEvent = 'cast';
 
 
-    visibility: Visibility;
+  visibility: Visibility;
 
   public sendEvent(eventName: string, data?: any) {
     this.notify({
