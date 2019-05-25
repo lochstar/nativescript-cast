@@ -11,7 +11,6 @@ export interface CastMediaInfo {
 export interface CastMediaStatus {
   activeTrackIds: number[] | null;
   playerState: PlayerState;
-  position: number;
 }
 
 export interface CastTextTrack {
@@ -23,7 +22,7 @@ export interface CastTextTrack {
 }
 
 export interface CastMetadata {
-  metadataType: 'MOVIE' | 'TV_SHOW' | 'MUSIC_TRACK' | 'PHOTO' | 'USER';
+  metadataType: 'MOVIE' | 'TV_SHOW' | 'MUSIC_TRACK' | 'PHOTO' | 'USER' | 'GENERIC';
   images?: {url: string, width: number, height: number}[];
   creationDate?: string;
   releaseDate?: string;

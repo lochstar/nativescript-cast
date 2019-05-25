@@ -1,7 +1,7 @@
 import {ad} from 'tns-core-modules/utils/utils';
 import {Color} from 'tns-core-modules/color';
 import {CastButtonBase} from './cast.common';
-import {CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.types';
+import {CastEventName, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack} from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
@@ -489,8 +489,7 @@ export class CastButton extends CastButtonBase {
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
   getMediaInfo() {
     const mediaInfo = this.getRemoteMediaClient().getMediaInfo();
-
-    return this.mediaInfoToJson(mediaInfo);
+    return this.convertMediaInfo(mediaInfo);
   }
 
   // @ts-ignore
@@ -544,7 +543,7 @@ export class CastButton extends CastButtonBase {
     if (mediaStatus) {
       const mediaInfo = mediaStatus.getMediaInfo();
       if (mediaInfo) {
-        info = this.mediaInfoToJson(mediaInfo);
+        info = this.convertMediaInfo(mediaInfo);
       }
       let playerState: PlayerState = PlayerState.UNKNOWN;
       const trackIds = mediaStatus.getActiveTrackIds();
@@ -572,7 +571,6 @@ export class CastButton extends CastButtonBase {
       status = {
         playerState,
         activeTrackIds,
-        position: mediaStatus.getStreamPosition()
       };
     }
     this.sendEvent(CastButtonBase.castEvent, {
@@ -583,41 +581,55 @@ export class CastButton extends CastButtonBase {
     });
   }
 
-  mediaInfoToJson(mediaInfo: com.google.android.gms.cast.MediaInfo) {
+  convertMediaInfo(mediaInfo: com.google.android.gms.cast.MediaInfo): CastMediaInfo {
     if (!mediaInfo) {
-      return {};
+      return null;
     }
     const metadata = mediaInfo.getMetadata();
     const metaDataKeys = ad.collections.stringSetToStringArray(metadata.keySet());
     const images = metadata.getImages();
+    const tracks = mediaInfo.getMediaTracks();
+    const textTracks: CastTextTrack[] = [];
 
-    let jsonMetadata = {
-      metadataType: metadata.getMediaType(),
+    for (let i = 0; i < tracks.size(); i++) {
+      const track = tracks.get(i);
+      if (track.getType() === MediaTrack.TYPE_TEXT) {
+        textTracks.push({
+          id: track.getId(),
+          src: track.getContentId(),
+          contentType: track.getContentType(),
+          name: track.getName(),
+          language: track.getLanguage(),
+        });
+      }
+    }
+
+    const castMetadata: CastMetadata = {
+      metadataType: this.metadataTypeNumberToString(metadata.getMediaType()),
       images: [],
     };
 
     metaDataKeys.forEach(key => {
       const fixedKey = camelCase(key.replace('com.google.android.gms.cast.metadata.', ''));
-      jsonMetadata[fixedKey] = metadata.getString(key);
+      castMetadata[fixedKey] = metadata.getString(key);
     });
 
     for (let index = 0; index < images.size(); index++) {
       const img = images.get(index);
-      jsonMetadata.images.push({
+      castMetadata.images.push({
         url: img.getUrl().toString(),
         width: img.getWidth(),
         height: img.getHeight()
       });
     }
 
-    const jsonData = {
+    return {
       contentId: mediaInfo.getContentId(),
       streamType: this.streamTypeNumberToString(mediaInfo.getStreamType()),
       contentType: mediaInfo.getContentType(),
-      metadata: jsonMetadata,
+      metadata: castMetadata,
       duration: mediaInfo.getStreamDuration() / 1000,
+      textTracks
     };
-
-    return jsonData;
   }
 }

@@ -1,23 +1,24 @@
 import {ios} from 'tns-core-modules/utils/utils';
 import {Color} from 'tns-core-modules/color';
 import {CastButtonBase} from './cast.common';
-import {CastEventName, CastMediaInfo, CastMediaStatus, PlayerState} from './cast.types';
+import {CastEventName, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState} from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
-declare let GCKUICastButton: any;
-declare let GCKDevice: any;
-declare let GCKSessionManagerListener: any;
-declare let CGRectMake: any;
-declare let GCKCastContext: any;
-declare let GCKMediaTrackTypeText: any;
-declare let GCKMediaTextTrackSubtypeSubtitles: any;
-declare let GCKRemoteMediaClientListener: any;
-declare let GCKMediaPlayerStateIdle: any;
-declare let GCKMediaPlayerStatePlaying: any;
-declare let GCKMediaPlayerStatePaused: any;
-declare let GCKMediaPlayerStateBuffering: any;
-declare let GCKMediaPlayerStateLoading: any;
+declare const GCKUICastButton: any;
+declare const GCKDevice: any;
+declare const GCKSessionManagerListener: any;
+declare const CGRectMake: any;
+declare const GCKCastContext: any;
+declare const GCKMediaTrackTypeText: any;
+declare const GCKMediaTrackTypeAudio: any;
+declare const GCKMediaTextTrackSubtypeSubtitles: any;
+declare const GCKRemoteMediaClientListener: any;
+declare const GCKMediaPlayerStateIdle: any;
+declare const GCKMediaPlayerStatePlaying: any;
+declare const GCKMediaPlayerStatePaused: any;
+declare const GCKMediaPlayerStateBuffering: any;
+declare const GCKMediaPlayerStateLoading: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -208,7 +209,7 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
       status = this.toCastMediaStatus(mediaStatus)
       const mediaInfo = mediaStatus.mediaInformation;
       if (mediaInfo) {
-        info = this.owner.mediaInfoToJson(mediaInfo);
+        info = this.owner.convertMediaInfo(mediaInfo);
       }
     }
     this.owner.sendEvent(CastButtonBase.castEvent, {
@@ -273,7 +274,6 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
     return {
       activeTrackIds,
       playerState,
-      position: mediaStatus.streamPosition,
     };
   }
 }
@@ -434,13 +434,12 @@ export class CastButton extends CastButtonBase {
 
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
   getMediaInfo() {
-
     const remoteMediaClient = this.getRemoteMediaClient();
     if (!remoteMediaClient) {
       return {}
     }
     const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
-    return this.mediaInfoToJson(mediaInfo);
+    return this.convertMediaInfo(mediaInfo);
   }
 
   pauseMedia(customData?: any) {
@@ -471,43 +470,51 @@ export class CastButton extends CastButtonBase {
     mRouteButton.tintColor = new Color(color).ios;
   }
 
-  mediaInfoToJson(mediaInfo) {
+  convertMediaInfo(mediaInfo): CastMediaInfo {
     if (!mediaInfo) {
-      return {};
+      return null;
     }
     const metadata = mediaInfo.metadata;
     const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
-    const images = ios.collections.nsArrayToJSArray(metadata.images());
+    const images = <any[]>ios.collections.nsArrayToJSArray(metadata.images());
+    const tracks = <any[]>ios.collections.nsArrayToJSArray(mediaInfo.mediaTracks);
+    const textTracks: CastTextTrack[] = tracks
+      .filter((track: any) => track.type === GCKMediaTrackTypeText)
+      .map((track) => {
+        return {
+          id: track.identifier,
+          src: track.contentIdentifier,
+          contentType: track.contentType,
+          name: track.name,
+          language: track.languageCode,
+        };
+      });
 
-    let jsonMetadata = {
+    const castMetadata:CastMetadata = {
       metadataType: metadata.metadataType,
       images: [],
     };
 
     metaDataKeys.forEach(key => {
       const fixedKey = camelCase(key.replace('com.google.cast.metadata.', ''));
-      jsonMetadata[fixedKey] = metadata.objectForKey(key);
+      castMetadata[fixedKey] = metadata.objectForKey(key);
     });
 
     images.forEach(img => {
-      jsonMetadata.images.push({
-        // @ts-ignore
+      castMetadata.images.push({
         url: img.URL.absoluteString,
-        // @ts-ignore
         width: img.width,
-        // @ts-ignore
         height: img.height
       });
     });
 
-    const jsonData = {
+    return {
       contentId: mediaInfo.contentID,
       streamType: this.streamTypeNumberToString(mediaInfo.streamType),
       contentType: mediaInfo.contentType,
-      metadata: jsonMetadata,
+      metadata: castMetadata,
       duration: mediaInfo.streamDuration,
+      textTracks
     };
-
-    return jsonData;
   }
 }
