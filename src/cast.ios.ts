@@ -285,7 +285,9 @@ export class CastButton extends CastButtonBase {
     // TODO: handle these fields
     const mediaTracks = null;
     const textTrackStyle = null;
-    const customData = null;
+
+    // if customData is provided in the mediaInfo, otherwise null
+    const customData = mediaInfo.customData ? mediaInfo.customData : null;
 
     // Convert streamType to number value
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
