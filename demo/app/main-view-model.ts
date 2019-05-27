@@ -60,7 +60,12 @@ export class MainViewModel extends Observable {
   }
 
   handlePlayTap(args: EventData) {
-    this.cast.playMedia();
+    //this.cast.playMedia();
+
+    const customChannel = this.cast.addChannel('urn:x-cast:com.smashedcrab.cast.radio', (message) => {
+      console.log('didReceiveTextMessage');
+      console.log(message);
+    });
   }
 
   handlePauseTap(args: EventData) {

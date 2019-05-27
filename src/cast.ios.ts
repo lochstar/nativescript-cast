@@ -7,6 +7,7 @@ declare let GCKDevice: any;
 declare let GCKSessionManagerListener: any;
 declare let CGRectMake: any;
 declare let GCKCastContext: any;
+declare let GCKCastChannel: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener  {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -376,5 +377,21 @@ export class CastButton extends CastButtonBase {
   setTintColor(color: string) {
     const mRouteButton = this.getNativeView();
     mRouteButton.tintColor = new Color(color).ios;
+  }
+
+  addChannel(namespace: string, didReceiveTextMessage: Function) {
+    const HGCTextChannel = GCKCastChannel.extend({
+      didReceiveTextMessage: didReceiveTextMessage,
+    });
+
+    const textChannel = HGCTextChannel.alloc().initWithNamespace(namespace);
+    this.mSessionManager.currentCastSession.addChannel(textChannel);
+
+    const message = {
+      cmd: 'changeBg'
+    };
+    textChannel.sendTextMessageError(JSON.stringify(message), null);
+
+    return textChannel;
   }
 }
