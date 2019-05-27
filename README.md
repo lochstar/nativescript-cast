@@ -121,6 +121,42 @@ handleCastEvent(args): void {
 }
 ```
 
+#### Angular
+
+Add the `NativeScriptModule` in your app module's `imports` 
+
+Typically in `app.module.ts`
+```ts
+import { NativeScriptModule } from "nativescript-angular/nativescript.module";
+
+@NgModule({
+    imports: [NativeScriptModule]
+```
+
+Page template with the ActionBar containing the cast button:
+
+```html
+<ActionBar [title]="title" >
+    <ActionItem ios.position="right">
+        <StackLayout>
+            <CastButton id="cast" (cast)="handleCastEvent($event)"></CastButton>
+        </StackLayout>
+    </ActionItem>
+</ActionBar>
+```
+
+Page component:
+
+```ts
+handleCastEvent(args): void {
+  console.log('cast: ' + args.object);
+  console.log('eventName: ' + args.data.eventName);
+}
+```
+
+
+#### Casting
+
 When the Cast receiver is ready, you can load your media.
 
 ```ts
