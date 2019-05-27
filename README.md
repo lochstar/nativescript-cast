@@ -127,7 +127,7 @@ Add the `NativeScriptModule` in your app module's `imports`
 
 Typically in `app.module.ts`
 ```ts
-import { NativeScriptModule } from "nativescript-angular/nativescript.module";
+import {NativescriptCastModule} from 'nativescript-cast/angular';
 
 @NgModule({
     imports: [NativeScriptModule]
