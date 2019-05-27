@@ -464,6 +464,12 @@ export class CastButton extends CastButtonBase {
       builtMediaInfo.setStreamDuration(mediaInfo.duration)
     }
 
+    if (mediaInfo.customData) {
+        // build a JSONObject to pass to setCustomData
+        const customData = new org.json.JSONObject(JSON.stringify(mediaInfo.customData));
+        builtMediaInfo.setCustomData(customData);
+    }
+
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
       const tracks = new ArrayList();
       mediaInfo.textTracks.forEach((item, index) => {

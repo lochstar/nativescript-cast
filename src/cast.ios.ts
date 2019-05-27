@@ -397,7 +397,9 @@ export class CastButton extends CastButtonBase {
     // TODO: handle these fields
 
     const textTrackStyle = null;
-    const customData = null;
+
+    // if customData is provided in the mediaInfo, otherwise null
+    const customData = mediaInfo.customData ? mediaInfo.customData : null;
 
     let mediaTracks = null;
 
