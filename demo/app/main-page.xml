@@ -60,19 +60,19 @@
         </FlexboxLayout>
 
         <Button
-          text="test"
-          tap="{{ handleTest }}"
+          text="Switch Text Track"
+          tap="{{ handleSwitchTextTrackTap }}"
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
 
         <TextView
-          text="{{ mediaInfo }}"
+          text="{{ mediaStatusString }}"
           editable="false"
           class="media-info"
         />
         <TextView
-          text="{{ mediaStatus }}"
+          text="{{ mediaInfoString }}"
           editable="false"
           class="media-info"
         />

@@ -1,12 +1,16 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import {CastEventName, CastMediaInfo} from "nativescript-cast/cast.types";
+import { CastEventName, CastMediaInfo } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
-  public mediaInfo: string;
-  public mediaStatus: string;
+
+  public mediaInfo: CastMediaInfo;
+  public mediaStatus: CastMediaStatus;
+
+  public mediaInfoString: string;
+  public mediaStatusString: string;
 
   constructor() {
     super();
@@ -35,16 +39,17 @@ export class MainViewModel extends Observable {
         console.log('volume: ' + args.data.volume);
         break;
       case CastEventName.onMediaStatusChanged:
-          this.set('mediaInfo', JSON.stringify(args.data.status, null, '  '));
-          this.set('mediaStatus', JSON.stringify(args.data.info, null, '  '));
-          break;
+        this.set('mediaInfo', args.data.info);
+        this.set('mediaStatus', args.data.status);
+        this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
+        this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
+        break;
       default:
         break;
     }
   }
 
   handleLoadTap(args: EventData) {
-
     // multi-audio, subtitles not matching audio:
     // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
 
@@ -66,17 +71,20 @@ export class MainViewModel extends Observable {
           }
         ]
       },
-      textTracks: [{
-        src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
-        contentType: 'text/vtt',
-        name: 'english',
-        language: 'en'
-      },{
-        src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
-        contentType: 'text/vtt',
-        name: 'spanish',
-        language: 'es'
-      }]
+      textTracks: [
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+          contentType: 'text/vtt',
+          name: 'english',
+          language: 'en'
+        },
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+          contentType: 'text/vtt',
+          name: 'spanish',
+          language: 'es'
+        }
+      ]
     };
 
     this.cast.loadMedia(media);
@@ -98,7 +106,13 @@ export class MainViewModel extends Observable {
     this.cast.stopMedia();
   }
 
-  handleTest() {
-    this.cast.setActiveTrackIds([2]);
+  handleSwitchTextTrackTap() {
+    if (!this.mediaStatus.activeTrackIds.length) {
+      this.cast.setActiveTrackIds([1]);
+    } else if (this.mediaStatus.activeTrackIds[0] === 1) {
+      this.cast.setActiveTrackIds([2]);
+    } else {
+      this.cast.setActiveTrackIds([]);
+    }
   }
 }
