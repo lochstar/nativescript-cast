@@ -1,7 +1,7 @@
 import {ios} from 'tns-core-modules/utils/utils';
 import {Color} from 'tns-core-modules/color';
 import {CastButtonBase} from './cast.common';
-import {CastEventName, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState} from './cast.types';
+import {CastEvent, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState} from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
@@ -33,7 +33,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionStarting,
+      eventName: CastEvent.onSessionStarting,
       session: session,
       ios: this.owner.nativeView
     });
@@ -41,7 +41,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionStarted,
+      eventName: CastEvent.onSessionStarted,
       session: session,
       ios: this.owner.nativeView
     });
@@ -57,7 +57,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionEnding,
+      eventName: CastEvent.onSessionEnding,
       session: session,
       ios: this.owner.nativeView
     });
@@ -65,7 +65,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionEnded,
+      eventName: CastEvent.onSessionEnded,
       session: session,
       error: error,
       ios: this.owner.nativeView
@@ -82,7 +82,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionStartFailed,
+      eventName: CastEvent.onSessionStartFailed,
       session: session,
       error: error,
       ios: this.owner.nativeView
@@ -95,7 +95,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionSuspended,
+      eventName: CastEvent.onSessionSuspended,
       session: session,
       reason: reason,
       ios: this.owner.nativeView
@@ -108,7 +108,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionResuming,
+      eventName: CastEvent.onSessionResuming,
       session: session,
       ios: this.owner.nativeView
     });
@@ -116,7 +116,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onSessionResumed,
+      eventName: CastEvent.onSessionResumed,
       session: session,
       ios: this.owner.nativeView
     });
@@ -152,7 +152,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
     */
 
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onDeviceChanged,
+      eventName: CastEvent.onDeviceChanged,
       session: session,
       device: device,
       ios: this.owner.nativeView
@@ -161,7 +161,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
 
   public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onDeviceVolumeChanged,
+      eventName: CastEvent.onDeviceVolumeChanged,
       session: session,
       volume: volume,
       ios: this.owner.nativeView
@@ -213,7 +213,7 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
       }
     }
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEventName.onMediaStatusChanged,
+      eventName: CastEvent.onMediaStatusChanged,
       status,
       info,
       ios: this.owner.nativeView

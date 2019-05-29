@@ -1,6 +1,5 @@
-import {View} from 'tns-core-modules/ui/core/view';
-import {Visibility} from 'tns-core-modules/ui/styling/style-properties';
-
+import { View } from 'tns-core-modules/ui/core/view';
+import { Visibility } from 'tns-core-modules/ui/styling/style-properties';
 
 export abstract class CastButtonBase extends View {
   public static validMetadataKeys = [
@@ -27,7 +26,6 @@ export abstract class CastButtonBase extends View {
   ];
 
   public static castEvent = 'cast';
-
 
   visibility: Visibility;
 

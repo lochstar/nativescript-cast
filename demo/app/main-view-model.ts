@@ -1,6 +1,6 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEventName, CastMediaInfo } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
@@ -27,18 +27,18 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
-      case CastEventName.onSessionStarted:
-        case CastEventName.onSessionResumed:
+      case CastEvent.onSessionStarted:
+        case CastEvent.onSessionResumed:
         this.set('canCast', true);
         break;
-      case CastEventName.onSessionEnding:
-      case CastEventName.onSessionEnded:
+      case CastEvent.onSessionEnding:
+      case CastEvent.onSessionEnded:
         this.set('canCast', false);
         break;
-      case CastEventName.onDeviceVolumeChanged:
+      case CastEvent.onDeviceVolumeChanged:
         console.log('volume: ' + args.data.volume);
         break;
-      case CastEventName.onMediaStatusChanged:
+      case CastEvent.onMediaStatusChanged:
         this.set('mediaInfo', args.data.info);
         this.set('mediaStatus', args.data.status);
         this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));

@@ -48,32 +48,32 @@ export interface CastMetadata {
 }
 
 export enum PlayerState {
-  UNKNOWN = "UNKNOWN",
-  IDLE = "IDLE",
-  PLAYING = "PLAYING",
-  PAUSED = "PAUSED",
-  BUFFERING = "BUFFERING",
-  LOADING = "LOADING"
+  UNKNOWN = 'UNKNOWN',
+  IDLE = 'IDLE',
+  PLAYING = 'PLAYING',
+  PAUSED = 'PAUSED',
+  BUFFERING = 'BUFFERING',
+  LOADING = 'LOADING'
 }
 
-export enum CastEventName {
-  onProviderAdded = "onProviderAdded",
-  onProviderChanged = "onProviderChanged",
-  onProviderRemoved = "onProviderRemoved",
-  onRouteAdded = "onRouteAdded",
-  onRoutePresentationDisplayChanged = "onRoutePresentationDisplayChanged",
-  onRouteRemoved = "onRouteRemoved",
-  onRouteSelected = "onRouteSelected",
-  onRouteUnselected = "onRouteUnselected",
-  onSessionEnded = "onSessionEnded",
-  onSessionEnding = "onSessionEnding",
-  onSessionResumed = "onSessionResumed",
-  onSessionResuming = "onSessionResuming",
-  onSessionStarted = "onSessionStarted",
-  onSessionStartFailed = "onSessionStartFailed",
-  onSessionStarting = "onSessionStarting",
-  onSessionSuspended = "onSessionSuspended",
-  onDeviceVolumeChanged = "onDeviceVolumeChanged",
-  onDeviceChanged = "onDeviceChanged",
-  onMediaStatusChanged = "onMediaStatusChanged",
+export enum CastEvent {
+  onProviderAdded = 'onProviderAdded',
+  onProviderChanged = 'onProviderChanged',
+  onProviderRemoved = 'onProviderRemoved',
+  onRouteAdded = 'onRouteAdded',
+  onRoutePresentationDisplayChanged = 'onRoutePresentationDisplayChanged',
+  onRouteRemoved = 'onRouteRemoved',
+  onRouteSelected = 'onRouteSelected',
+  onRouteUnselected = 'onRouteUnselected',
+  onSessionEnded = 'onSessionEnded',
+  onSessionEnding = 'onSessionEnding',
+  onSessionResumed = 'onSessionResumed',
+  onSessionResuming = 'onSessionResuming',
+  onSessionStarted = 'onSessionStarted',
+  onSessionStartFailed = 'onSessionStartFailed',
+  onSessionStarting = 'onSessionStarting',
+  onSessionSuspended = 'onSessionSuspended',
+  onDeviceVolumeChanged = 'onDeviceVolumeChanged',
+  onDeviceChanged = 'onDeviceChanged',
+  onMediaStatusChanged = 'onMediaStatusChanged',
 }
