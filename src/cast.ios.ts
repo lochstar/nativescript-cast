@@ -19,7 +19,7 @@ declare const GCKSessionManagerListener: any;
 declare const CGRectMake: any;
 declare const GCKCastContext: any;
 declare const GCKMediaTrackTypeText: any;
-declare const GCKMediaTrackTypeAudio: any;
+// declare const GCKMediaTrackTypeAudio: any;
 declare const GCKMediaTextTrackSubtypeSubtitles: any;
 declare const GCKRemoteMediaClientListener: any;
 declare const GCKMediaPlayerStateIdle: any;
@@ -27,6 +27,7 @@ declare const GCKMediaPlayerStatePlaying: any;
 declare const GCKMediaPlayerStatePaused: any;
 declare const GCKMediaPlayerStateBuffering: any;
 declare const GCKMediaPlayerStateLoading: any;
+declare const GCKCastChannel: any;
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -480,7 +481,7 @@ export class CastButton extends CastButtonBase {
     mRouteButton.tintColor = new Color(color).ios;
   }
 
-  addChannel(channel): CastChannel {
+  addChannel(channel: CastChannel) {
     const HGCTextChannel = GCKCastChannel.extend({
       didConnect: channel.didConnect,
       didDisconnect: channel.didDisconnect,
@@ -492,20 +493,15 @@ export class CastButton extends CastButtonBase {
 
     console.log('channelAdded: ' + channelAdded);
 
-    console.log(this.mSessionManager.currentCastSession)
-
-    /*
-    const message = {
-      cmd: 'changeBg'
-    };
-    textChannel.sendTextMessageError(JSON.stringify(message), null);
-    */
-
-    return textChannel;
+    if (channelAdded) {
+      return textChannel;
+    }
+    return false;
   }
 
-  sendMessage(channel: GCKCastChannel, message: Object) {
-    channel.sendTextMessageError(JSON.stringify(message), null);
+  sendMessage(channel: GCKCastChannel, message: string | object) {
+    const textMessage = typeof message !== 'string' ? JSON.stringify(message) : message;
+    return channel.sendTextMessageError(textMessage, null);
   }
 
   convertMediaInfo(mediaInfo): CastMediaInfo {
