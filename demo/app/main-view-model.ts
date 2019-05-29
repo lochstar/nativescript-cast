@@ -90,6 +90,10 @@ export class MainViewModel extends Observable {
     this.cast.loadMedia(media);
   }
 
+  handleShowControllerTap() {
+    this.cast.showController();
+  }
+
   handlePlayTap(args: EventData) {
     this.cast.playMedia();
   }

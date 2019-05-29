@@ -28,6 +28,8 @@ const ArrayList = java.util.ArrayList;
 // @ts-ignore
 const MediaStatus = com.google.android.gms.cast.MediaStatus;
 
+declare const ExpandedControlsActivity: any;
+
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
 
@@ -490,6 +492,11 @@ export class CastButton extends CastButtonBase {
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
+  }
+
+  showController() {
+    const intent = new android.content.Intent(this._context, (org.nativescript as any).cast.ExpandedControlsActivity.class);
+    this._context.startActivity(intent);
   }
 
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo

@@ -26,7 +26,6 @@
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
-
         <FlexboxLayout
           orientation="horizontal"
           justifyContent="space-between"
@@ -56,8 +55,14 @@
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
-
         </FlexboxLayout>
+
+        <Button
+          text="Show controller"
+          tap="{{ handleShowControllerTap }}"
+          class="btn btn-primary"
+          isEnabled="{{ canCast }}"
+        />
 
         <Button
           text="Switch Text Track"
