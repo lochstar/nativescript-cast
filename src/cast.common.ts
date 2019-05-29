@@ -26,6 +26,7 @@ export abstract class CastButtonBase extends View {
   ];
 
   public static castEvent = 'cast';
+
   visibility: Visibility;
 
   public sendEvent(eventName: string, data?: any) {
