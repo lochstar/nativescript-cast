@@ -48,11 +48,11 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    //console.log('willStartCastSession');
+    // console.log('willStartCastSession');
   }
 
   public sessionManagerDidStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    console.log('didStartCastSession');
+    // console.log('didStartCastSession');
   }
 
   public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
@@ -73,7 +73,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillEndCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    //console.log('willEndCastSession');
+    // console.log('willEndCastSession');
   }
 
   public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
@@ -90,7 +90,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidFailToStartCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
-    //console.log('didFailToStartCastSession');
+    // console.log('didFailToStartCastSession');
   }
 
   public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
@@ -103,7 +103,7 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerDidSuspendCastSessionWithReason(sessionManager: GCKSessionManager, session: GCKCastSession, reason: GCKConnectionSuspendReason) {
-    //console.log('didSuspendCastSession');
+    // console.log('didSuspendCastSession');
   }
 
   public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
@@ -125,11 +125,11 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerWillResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    //console.log('willResumeCastSession');
+    // console.log('willResumeCastSession');
   }
 
   public sessionManagerDidResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    //console.log('didResumeCastSession');
+    // console.log('didResumeCastSession');
   }
 
   public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
@@ -169,19 +169,19 @@ class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerLi
   }
 
   public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, volume: number) {
-    //console.log('castSession: didReceiveDeviceVolume');
+    // console.log('castSession: didReceiveDeviceVolume');
   }
 
   public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, statusText: string) {
-    //console.log('didReceiveDeviceStatus');
+    // console.log('didReceiveDeviceStatus');
   }
 
   public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
-    //console.log('castSession: didReceiveDeviceStatus');
+    // console.log('castSession: didReceiveDeviceStatus');
   }
 
   public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
-    //console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
+    // console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
   }
 }
 
@@ -197,16 +197,16 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
   }
 
   public remoteMediaClientDidStartMediaSessionWithID(client: GCKRemoteMediaClient, sessionId: number) {
-    console.log("didStartMediaSessionWithID " + sessionId);
+    // console.log('didStartMediaSessionWithID ' + sessionId);
   }
 
   public remoteMediaClientDidUpdateMediaStatus(client: GCKRemoteMediaClient, mediaStatus: GCKMediaStatus) {
-    console.log("updated mediaStatus");
+    // console.log('updated mediaStatus');
     let info = null;
     let status = null;
 
     if (mediaStatus) {
-      status = this.toCastMediaStatus(mediaStatus)
+      status = this.toCastMediaStatus(mediaStatus);
       const mediaInfo = mediaStatus.mediaInformation;
       if (mediaInfo) {
         info = this.owner.convertMediaInfo(mediaInfo);
@@ -221,15 +221,15 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
   }
 
   public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata) {
-    console.log("didUpdateMediaMetadata");
+    // console.log('didUpdateMediaMetadata');
   }
 
   public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
-    console.log("remoteMediaClientDidUpdateQueue");
+    // console.log('remoteMediaClientDidUpdateQueue');
   }
 
   public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
-    console.log("remoteMediaClientDidUpdatePreloadStatus");
+    // console.log('remoteMediaClientDidUpdatePreloadStatus');
   }
 
   public didReceiveQueueItemIDs(queueItems: number[]) {
@@ -299,7 +299,7 @@ export class CastButton extends CastButtonBase {
   public createNativeView(): Object {
     // Create new instance of GCKUICastButton
     const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
-    //const button = new GCKUICastButton(CGRectMake(0, 0, 24, 24));
+    // const button = new GCKUICastButton(CGRectMake(0, 0, 24, 24));
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
@@ -386,7 +386,7 @@ export class CastButton extends CastButtonBase {
       // Images
       if (mediaInfo.metadata.images && mediaInfo.metadata.images.length) {
         mediaInfo.metadata.images.forEach(img => {
-          const uri = NSURL.URLWithString(img.url)
+          const uri = NSURL.URLWithString(img.url);
           metadata.addImage(GCKImage.alloc().initWithURLWidthHeight(uri, img.width, img.height));
         });
       }
@@ -438,7 +438,7 @@ export class CastButton extends CastButtonBase {
   getMediaInfo() {
     const remoteMediaClient = this.getRemoteMediaClient();
     if (!remoteMediaClient) {
-      return {}
+      return {};
     }
     const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
     return this.convertMediaInfo(mediaInfo);
@@ -492,7 +492,7 @@ export class CastButton extends CastButtonBase {
         };
       });
 
-    const castMetadata:CastMetadata = {
+    const castMetadata: CastMetadata = {
       metadataType: metadata.metadataType,
       images: [],
     };

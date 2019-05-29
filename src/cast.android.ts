@@ -465,9 +465,9 @@ export class CastButton extends CastButtonBase {
     }
 
     if (mediaInfo.customData) {
-        // build a JSONObject to pass to setCustomData
-        const customData = new org.json.JSONObject(JSON.stringify(mediaInfo.customData));
-        builtMediaInfo.setCustomData(customData);
+      // build a JSONObject to pass to setCustomData
+      const customData = new org.json.JSONObject(JSON.stringify(mediaInfo.customData));
+      builtMediaInfo.setCustomData(customData);
     }
 
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
