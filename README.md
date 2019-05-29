@@ -215,7 +215,7 @@ All unlisted events are ignored. See related documentation for futher details.
 
   Returns the loaded media info.
 
-- `setActiveTrackIds(trackIds): void`
+- `setActiveTrackIds([trackIds]): void`
 
   Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
 
