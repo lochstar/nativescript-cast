@@ -56,19 +56,25 @@
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
+
         </FlexboxLayout>
 
         <Button
-          text="Get Media Info"
-          tap="{{ handleGetMediaInfoTap }}"
+          text="Switch Text Track"
+          tap="{{ handleSwitchTextTrackTap }}"
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
+
         <TextView
-          text="{{ mediaInfo }}"
+          text="{{ mediaStatusString }}"
           editable="false"
           class="media-info"
-          isEnabled="{{ canCast }}"
+        />
+        <TextView
+          text="{{ mediaInfoString }}"
+          editable="false"
+          class="media-info"
         />
       </StackLayout>
     </ScrollView>

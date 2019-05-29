@@ -167,7 +167,7 @@ const mediaInfo = {
   duration: undefined,
   metadata: {
     metadataType: 'MOVIE',
-    title: 'Sintel',
+    title: 'Tears of Steel',
     subtitle: 'By Blender Foundation',
     description: 'Sintel is an independently produced short film, initiated by the Blender Foundation.',
     images: [
@@ -177,6 +177,23 @@ const mediaInfo = {
         height: 300,
       }
     ]
+  },
+  textTracks: [
+    {
+      src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+      contentType: 'text/vtt',
+      name: 'english',
+      language: 'en'
+    },
+    {
+      src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+      contentType: 'text/vtt',
+      name: 'spanish',
+      language: 'es'
+    }
+  ],
+  customData: {
+    anything: 'you like'
   }
 };
 
@@ -187,25 +204,26 @@ cast.loadMedia(mediaInfo);
 
 ### <a name="events"></a>Events
 
-Event names follow the Android naming structure. iOS events are passed from `GCKSessionManagerListener`. Android events are passed from both `SessionManagerListener` and `MediaRouter.Callback`.
+Event names follow the Android naming structure. iOS events are passed from `GCKSessionManagerListener` and `GCKRemoteMediaClientListener`. Android events are passed from `SessionManagerListener` and `MediaRouter.Callback`.
 
-| NativeScript          | Android               | iOS                    |
-| --------------------- | --------------------- | ---------------------- |
-| onSessionEnded        | onSessionEnded        | didEndSession          |
-| onSessionEnding       | onSessionEnding       | willEndSession         |
-| onSessionResumed      | onSessionResumed      | didResumeSession       |
-| onSessionResuming     | onSessionResuming     | willResumeSession      |
-| onSessionStarted      | onSessionStarted      | didStartSession        |
-| onSessionStartFailed  | onSessionStartFailed  | didFailToStartSession  |
-| onSessionStarting     | onSessionStarting     | willStartSession       |
-| onSessionSuspended    | onSessionSuspended    | didSuspendSession      |
-| onDeviceVolumeChanged | onRouteVolumeChanged  | didReceiveDeviceVolume |
-| onDeviceChanged       | onRouteChanged        | didUpdateDevice        |
+| NativeScript          | Android               | iOS                                          |
+| --------------------- | --------------------- | -------------------------------------------- |
+| onSessionEnded        | onSessionEnded        | didEndSession                                |
+| onSessionEnding       | onSessionEnding       | willEndSession                               |
+| onSessionResumed      | onSessionResumed      | didResumeSession                             |
+| onSessionResuming     | onSessionResuming     | willResumeSession                            |
+| onSessionStarted      | onSessionStarted      | didStartSession                              |
+| onSessionStartFailed  | onSessionStartFailed  | didFailToStartSession                        |
+| onSessionStarting     | onSessionStarting     | willStartSession                             |
+| onSessionSuspended    | onSessionSuspended    | didSuspendSession                            |
+| onDeviceVolumeChanged | onRouteVolumeChanged  | didReceiveDeviceVolume                       |
+| onDeviceChanged       | onRouteChanged        | didUpdateDevice                              |
+| onMediaStatusChanged  | onStatusUpdated       | remoteMediaClientDidUpdateMediaStatus        |
 
 All unlisted events are ignored. See related documentation for futher details.
 
  - Android: [SessionManagerListener](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManagerListener) & [MediaRouter.Callback](https://developer.android.com/reference/android/support/v7/media/MediaRouter.Callback)
- - iOS: [GCKSessionManagerListener](https://developers.google.com/cast/v3/reference/ios/protocol_g_c_k_session_manager_listener-p)
+ - iOS: [GCKSessionManagerListener](https://developers.google.com/cast/v3/reference/ios/protocol_g_c_k_session_manager_listener-p) & [GCKRemoteMediaClientListener](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_remote_media_client_listener-p)
 
 ### Methods
 
@@ -213,11 +231,11 @@ All unlisted events are ignored. See related documentation for futher details.
 
   Loads the specified media.
 
-- `playMedia(): void`
+- `playMedia(customData): void`
 
   Plays the loaded media.
 
-- `pauseMedia(): void`
+- `pauseMedia(customData): void`
 
   Pauses the loaded media.
 
@@ -225,13 +243,17 @@ All unlisted events are ignored. See related documentation for futher details.
 
   Seeks the loaded media to position (seconds).
 
-- `stopMedia(): void`
+- `stopMedia(customData): void`
 
   Stops the loaded media.
 
 - `getMediaInfo(): void`
 
   Returns the loaded media info.
+
+- `setActiveTrackIds([trackIds]): void`
+
+  Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
 
 ### mediaInfo
 
@@ -253,7 +275,6 @@ Valid `metadata.metadataType` values.
 ## TODO
 
 - Angular support.
-- Handle `customData`.
 - Handle `mediaTracks`.
 - Handle `textTrackStyle`.
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).
