@@ -1,10 +1,16 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
+import { CastEvent, CastMediaInfo, CastMediaStatus } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
-  public mediaInfo: string;
+
+  public mediaInfo: CastMediaInfo;
+  public mediaStatus: CastMediaStatus;
+
+  public mediaInfoString: string;
+  public mediaStatusString: string;
 
   constructor() {
     super();
@@ -21,16 +27,22 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
-      case 'onSessionStarted':
-      case 'onSessionResumed':
+      case CastEvent.onSessionStarted:
+        case CastEvent.onSessionResumed:
         this.set('canCast', true);
         break;
-      case 'onSessionEnding':
-      case 'onSessionEnded':
+      case CastEvent.onSessionEnding:
+      case CastEvent.onSessionEnded:
         this.set('canCast', false);
         break;
-      case 'onDeviceVolumeChanged':
+      case CastEvent.onDeviceVolumeChanged:
         console.log('volume: ' + args.data.volume);
+        break;
+      case CastEvent.onMediaStatusChanged:
+        this.set('mediaInfo', args.data.info);
+        this.set('mediaStatus', args.data.status);
+        this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
+        this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
         break;
       default:
         break;
@@ -38,16 +50,19 @@ export class MainViewModel extends Observable {
   }
 
   handleLoadTap(args: EventData) {
-    this.cast.loadMedia({
-      contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-      contentType: 'video/mp4',
+    // multi-audio, subtitles not matching audio:
+    // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
+
+    const media: CastMediaInfo = {
+      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
+      contentType: 'application/vnd.ms-sstr+xml',
       streamType: 'BUFFERED',
       duration: undefined,
       metadata: {
         metadataType: 'MOVIE',
-        title: 'Sintel',
+        title: 'Tears of Steel',
         subtitle: 'By Blender Foundation',
-        description: 'Sintel is an independently produced short film, initiated by the Blender Foundation as a means to further improve and validate the free/open source 3D creation suite Blender. With initial funding provided by 1000s of donations via the internet community, it has again proven to be a viable development model for both open 3D technology as for independent animation film.\nThis 15 minute film has been realized in the studio of the Amsterdam Blender Institute, by an international team of artists and developers. In addition to that, several crucial technical and creative targets have been realized online, by developers and artists and teams all over the world.\nwww.sintel.org',
+        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
             url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
@@ -55,17 +70,51 @@ export class MainViewModel extends Observable {
             height: 300,
           }
         ]
-      }
-    });
+      },
+      textTracks: [
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+          contentType: 'text/vtt',
+          name: 'english',
+          language: 'en'
+        },
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+          contentType: 'text/vtt',
+          name: 'spanish',
+          language: 'es'
+        }
+      ]
+    };
+
+    this.cast.loadMedia(media);
   }
 
   handlePlayTap(args: EventData) {
-    //this.cast.playMedia();
+    // this.cast.playMedia();
 
-    const customChannel = this.cast.addChannel('urn:x-cast:com.smashedcrab.cast.radio', (message) => {
-      console.log('didReceiveTextMessage');
-      console.log(message);
-    });
+    const channelArgs = {
+      namespace: 'urn:x-cast:com.smashedcrab.cast.radio',
+      didConnect: () => {
+        console.log('channel didConnect');
+
+        this.cast.sendMessage({
+          channel: customChannel,
+          cmd: 'changeBg'
+        });
+      },
+      didDisconnect: () => {
+        console.log('channel didDisconnect');
+      },
+      didReceiveTextMessage: (message) => {
+        console.log('didReceiveTextMessage');
+        console.log(message);
+      },
+    };
+
+    const customChannel = this.cast.addChannel(channelArgs);
+    console.log('customChannel');
+    console.log(customChannel);
   }
 
   handlePauseTap(args: EventData) {
@@ -80,8 +129,13 @@ export class MainViewModel extends Observable {
     this.cast.stopMedia();
   }
 
-  handleGetMediaInfoTap() {
-    const mediaInfo = this.cast.getMediaInfo();
-    this.set('mediaInfo', JSON.stringify(mediaInfo, null, '  '));
+  handleSwitchTextTrackTap() {
+    if (!this.mediaStatus.activeTrackIds.length) {
+      this.cast.setActiveTrackIds([1]);
+    } else if (this.mediaStatus.activeTrackIds[0] === 1) {
+      this.cast.setActiveTrackIds([2]);
+    } else {
+      this.cast.setActiveTrackIds([]);
+    }
   }
 }
