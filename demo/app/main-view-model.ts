@@ -1,13 +1,15 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus, CastChannel } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+  public channelConnected: boolean;
 
   public mediaInfo: CastMediaInfo;
   public mediaStatus: CastMediaStatus;
+  public customChannel: CastChannel;
 
   public mediaInfoString: string;
   public mediaStatusString: string;
@@ -17,6 +19,7 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
+    this.channelConnected = false;
   }
 
   handleCastEvent(args): void {
@@ -91,30 +94,7 @@ export class MainViewModel extends Observable {
   }
 
   handlePlayTap(args: EventData) {
-    // this.cast.playMedia();
-
-    const channelArgs = {
-      namespace: 'urn:x-cast:com.smashedcrab.cast.radio',
-      didConnect: () => {
-        console.log('channel didConnect');
-
-        this.cast.sendMessage({
-          channel: customChannel,
-          cmd: 'changeBg'
-        });
-      },
-      didDisconnect: () => {
-        console.log('channel didDisconnect');
-      },
-      didReceiveTextMessage: (message) => {
-        console.log('didReceiveTextMessage');
-        console.log(message);
-      },
-    };
-
-    const customChannel = this.cast.addChannel(channelArgs);
-    console.log('customChannel');
-    console.log(customChannel);
+    this.cast.playMedia();
   }
 
   handlePauseTap(args: EventData) {
@@ -137,5 +117,43 @@ export class MainViewModel extends Observable {
     } else {
       this.cast.setActiveTrackIds([]);
     }
+  }
+
+  handleAddChannelTap() {
+    if (!this.customChannel) {
+      const channelArgs = {
+        namespace: 'urn:x-cast:com.smashedcrab.cast.radio',
+        didConnect: () => {
+          console.log('channel didConnect');
+        },
+        didDisconnect: () => {
+          console.log('channel didDisconnect');
+        },
+        didReceiveTextMessage: (message) => {
+          console.log('channel didReceiveTextMessage');
+          console.log(message);
+        },
+      };
+      this.customChannel = this.cast.addChannel(channelArgs);
+      console.log('customChannel');
+      console.log(this.customChannel);
+      if (this.customChannel) {
+        this.set('channelConnected', true);
+      }
+    }
+  }
+
+  handleRemoveChannelTap() {
+    const removed = this.cast.removeChannel(this.customChannel);
+    if (removed) {
+      this.set('channelConnected', false);
+      this.customChannel = null;
+    }
+  }
+
+  handleSendMessageTap() {
+    this.cast.sendMessage(this.customChannel, {
+      cmd: 'changeBg'
+    });
   }
 }

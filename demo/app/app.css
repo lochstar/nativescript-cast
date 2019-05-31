@@ -4,13 +4,17 @@
   margin: 10 0;
 }
 
-.controls {
+.controls, .channel {
   margin: 10 16;
 }
 
 .controls .btn {
   font-family: 'Font Awesome 5 Free', 'fa-solid-900';
   font-size: 16;
+  margin: 0;
+}
+
+.channel .btn {
   margin: 0;
 }
 

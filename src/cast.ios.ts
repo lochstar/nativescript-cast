@@ -499,6 +499,12 @@ export class CastButton extends CastButtonBase {
     return false;
   }
 
+  removeChannel(channel: GCKCastChannel) {
+    const channelRemoved = this.mSessionManager.currentCastSession.removeChannel(channel);
+    console.log('channelRemoved: ' + channelRemoved);
+    return channelRemoved;
+  }
+
   sendMessage(channel: GCKCastChannel, message: string | object) {
     const textMessage = typeof message !== 'string' ? JSON.stringify(message) : message;
     return channel.sendTextMessageError(textMessage, null);

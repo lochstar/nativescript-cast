@@ -56,7 +56,6 @@
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
-
         </FlexboxLayout>
 
         <Button
@@ -64,6 +63,32 @@
           tap="{{ handleSwitchTextTrackTap }}"
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
+        />
+
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="channel"
+        >
+          <Button
+            text="Add Channel"
+            tap="{{ handleAddChannelTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="Remove Channel"
+            tap="{{ handleRemoveChannelTap }}"
+            class="btn btn-primary"
+            isEnabled="{{ channelConnected }}"
+          />
+        </FlexboxLayout>
+
+        <Button
+          text="Send Message"
+          tap="{{ handleSendMessageTap }}"
+          class="btn btn-primary"
+          isEnabled="{{ channelConnected }}"
         />
 
         <TextView
