@@ -4,6 +4,7 @@ import { CastButtonBase } from './cast.common';
 import { CastEvent, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
+const upperFirst = require('lodash/fp/upperFirst');
 
 declare const GCKUICastButton: any;
 declare const GCKDevice: any;
@@ -364,7 +365,6 @@ export class CastButton extends CastButtonBase {
   }
 
   loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const upperFirst = require('lodash/fp/upperFirst');
     const metadataPrefix = 'kGCKMetadataKey';
     let metadata;
 

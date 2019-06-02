@@ -4,6 +4,7 @@ import { CastButtonBase } from './cast.common';
 import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
+const snakeCase = require('lodash/fp/snakeCase');
 
 const {
   MediaRouter,
@@ -27,8 +28,6 @@ const MediaTrack = com.google.android.gms.cast.MediaTrack;
 const ArrayList = java.util.ArrayList;
 // @ts-ignore
 const MediaStatus = com.google.android.gms.cast.MediaStatus;
-
-declare const ExpandedControlsActivity: any;
 
 class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -420,7 +419,6 @@ export class CastButton extends CastButtonBase {
   }
 
   loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const snakeCase = require('lodash/fp/snakeCase');
     const metadataPrefix = 'KEY_';
     let metadata;
 
