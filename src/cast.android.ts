@@ -1,7 +1,7 @@
-import {ad} from 'tns-core-modules/utils/utils';
-import {Color} from 'tns-core-modules/color';
-import {CastButtonBase} from './cast.common';
-import {CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack} from './cast.types';
+import { ad } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
+import { CastButtonBase } from './cast.common';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
@@ -495,7 +495,7 @@ export class CastButton extends CastButtonBase {
   }
 
   showController() {
-    const intent = new android.content.Intent(this._context, (org.nativescript as any).cast.ExpandedControlsActivity.class);
+    const intent = new android.content.Intent(this._context, com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity.class);
     this._context.startActivity(intent);
   }
 

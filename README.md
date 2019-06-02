@@ -32,15 +32,7 @@ Android requires your main activity to extend from [FragmentActivity](https://de
 </activity>
 ```
 
-The expanded controls also need to be added to the Android Manifest, take this from the demo example and adjust as needed
-
-```xml
-<activity android:name="org.nativescript.cast.ExpandedControlsActivity">
-  <!-- use as minimum what is in the demo, and adjust to needs -->
-</activity>
-```
-
-If you are using Webpack, add `'nativescript-cast/cast-activity'`, `'nativescript-cast/cast-options-provider'` and `'nativescript-cast/extended-controller-activity'` to `appComponents`.
+If you are using Webpack, add `'nativescript-cast/cast-activity'` and `'nativescript-cast/cast-options-provider'` to `appComponents`.
 
 ```js
 // webpack.config.js
@@ -48,8 +40,7 @@ const appComponents = [
   'tns-core-modules/ui/frame',
   'tns-core-modules/ui/frame/activity',
   'nativescript-cast/cast-activity',
-  'nativescript-cast/cast-options-provider',
-  'nativescript-cast/extended-controller-activity'
+  'nativescript-cast/cast-options-provider'
 ];
 ```
 

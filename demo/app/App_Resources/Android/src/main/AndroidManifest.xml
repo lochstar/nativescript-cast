@@ -40,13 +40,16 @@
 
 		</activity>
     <activity
-      android:name="org.nativescript.cast.ExpandedControlsActivity"
+      android:name="com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity"
       android:label="@string/app_name"
       android:launchMode="singleTask"
       android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
       </intent-filter>
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="org.nativescript.cast.CastActivity"/>
     </activity>
 		<activity android:name="com.tns.ErrorReportActivity"/>
 	</application>

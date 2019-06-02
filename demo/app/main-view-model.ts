@@ -1,6 +1,6 @@
-import {Observable} from 'tns-core-modules/data/observable';
-import {EventData} from 'tns-core-modules/ui/core/view';
-import {CastEvent, CastMediaInfo, CastMediaStatus, PlayerState} from 'nativescript-cast/cast.types';
+import { Observable } from 'tns-core-modules/data/observable';
+import { EventData } from 'tns-core-modules/ui/core/view';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;

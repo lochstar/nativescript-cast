@@ -1,7 +1,7 @@
-import {ios} from 'tns-core-modules/utils/utils';
-import {Color} from 'tns-core-modules/color';
-import {CastButtonBase} from './cast.common';
-import {CastEvent, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState} from './cast.types';
+import { ios } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
+import { CastButtonBase } from './cast.common';
+import { CastEvent, CastMediaInfo, CastMediaStatus, CastMetadata, CastTextTrack, PlayerState } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
