@@ -1,0 +1,10 @@
+<ActionBar [title]="title" >
+    <ActionItem ios.position="right">
+        <StackLayout>
+            <CastButton id="cast" (cast)="handleCastEvent($event)"></CastButton>
+        </StackLayout>
+    </ActionItem>
+</ActionBar>
+<StackLayout class="p-20">
+    <Button class="btn btn-primary btn-active" id="button" text="{{ canCast ? 'Cast' : 'Play'}}" (onTap)="onTap()" pageTransition="slide" ></Button>
+</StackLayout>

@@ -127,10 +127,10 @@ Add the `NativeScriptModule` in your app module's `imports`
 
 Typically in `app.module.ts`
 ```ts
-import {NativescriptCastModule} from 'nativescript-cast/angular';
+import { NativescriptCastModule } from 'nativescript-cast/angular';
 
 @NgModule({
-    imports: [NativeScriptModule]
+    imports: [NativescriptCastModule]
 ```
 
 Page template with the ActionBar containing the cast button:
