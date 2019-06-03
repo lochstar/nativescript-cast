@@ -18,6 +18,7 @@ class CastOptionsProvider extends java.lang.Object {
       .build();
     const mediaOptions = new com.google.android.gms.cast.framework.media.CastMediaOptions.Builder()
       .setNotificationOptions(notificationOptions)
+      .setExpandedControllerActivityClassName('org.nativescript.cast.ExpandedControlsActivity')
       .build();
 
     return new com.google.android.gms.cast.framework.CastOptions.Builder()

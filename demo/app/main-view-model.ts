@@ -1,10 +1,11 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+  public hasControl: boolean;
 
   public mediaInfo: CastMediaInfo;
   public mediaStatus: CastMediaStatus;
@@ -17,6 +18,7 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
+    this.hasControl = false;
   }
 
   handleCastEvent(args): void {
@@ -43,6 +45,9 @@ export class MainViewModel extends Observable {
         this.set('mediaStatus', args.data.status);
         this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
         this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
+        const status = args.data.status as CastMediaStatus;
+
+        this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
       default:
         break;
@@ -65,9 +70,9 @@ export class MainViewModel extends Observable {
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
-            url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
-            width: 300,
-            height: 300,
+            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tos-poster.png/220px-Tos-poster.png',
+            width: 220,
+            height: 326,
           }
         ]
       },
@@ -75,19 +80,23 @@ export class MainViewModel extends Observable {
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
           contentType: 'text/vtt',
-          name: 'english',
+          name: 'English',
           language: 'en'
         },
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
           contentType: 'text/vtt',
-          name: 'spanish',
+          name: 'Spanish',
           language: 'es'
         }
       ]
     };
 
     this.cast.loadMedia(media);
+  }
+
+  handleShowControllerTap() {
+    this.cast.showController();
   }
 
   handlePlayTap(args: EventData) {
