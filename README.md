@@ -151,9 +151,9 @@ const mediaInfo = {
     description: 'Sintel is an independently produced short film, initiated by the Blender Foundation.',
     images: [
       {
-        url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tos-poster.png/220px-Tos-poster.png',
-        width: 220,
-        height: 326,
+        url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+        width: 480,
+        height: 270,
       }
     ]
   },
