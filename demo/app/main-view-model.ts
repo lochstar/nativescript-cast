@@ -70,9 +70,9 @@ export class MainViewModel extends Observable {
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
-            url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
-            width: 300,
-            height: 300,
+            url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tos-poster.png/220px-Tos-poster.png',
+            width: 220,
+            height: 326,
           }
         ]
       },
@@ -80,13 +80,13 @@ export class MainViewModel extends Observable {
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
           contentType: 'text/vtt',
-          name: 'english',
+          name: 'English',
           language: 'en'
         },
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
           contentType: 'text/vtt',
-          name: 'spanish',
+          name: 'Spanish',
           language: 'es'
         }
       ]

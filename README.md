@@ -25,10 +25,25 @@ Set your Application ID.
 
 Android requires your main activity to extend from [FragmentActivity](https://developer.android.com/reference/android/support/v4/app/FragmentActivity). You can create your own or use CastActivity provided by this plugin. The Cast Options Provider class is included with this plugin and will be merged to your `AndroidManifest.xml`.
 
+The Google Cast design checklist requires a sender app to provide an expanded controller. Include `ExpandedControllerActivity` in your `AndroidManifest.xml`.
+
 ```xml
 <!-- App_Resources/Android/src/main/res/AndroidManifest.xml -->
 <activity android:name="org.nativescript.cast.CastActivity">
   <!-- ... -->
+</activity>
+
+<activity
+  android:name="com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity"
+  android:label="@string/app_name"
+  android:launchMode="singleTask"
+  android:screenOrientation="portrait">
+  <intent-filter>
+    <action android:name="android.intent.action.MAIN"/>
+  </intent-filter>
+  <meta-data
+    android:name="android.support.PARENT_ACTIVITY"
+    android:value="org.nativescript.cast.CastActivity"/>
 </activity>
 ```
 
@@ -136,9 +151,9 @@ const mediaInfo = {
     description: 'Sintel is an independently produced short film, initiated by the Blender Foundation.',
     images: [
       {
-        url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
-        width: 300,
-        height: 300,
+        url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Tos-poster.png/220px-Tos-poster.png',
+        width: 220,
+        height: 326,
       }
     ]
   },
@@ -146,13 +161,13 @@ const mediaInfo = {
     {
       src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
       contentType: 'text/vtt',
-      name: 'english',
+      name: 'English',
       language: 'en'
     },
     {
       src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
       contentType: 'text/vtt',
-      name: 'spanish',
+      name: 'Spanish',
       language: 'es'
     }
   ],
@@ -218,6 +233,10 @@ All unlisted events are ignored. See related documentation for futher details.
 - `setActiveTrackIds([trackIds]): void`
 
   Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
+
+- `showController(): void`
+
+  Show the expanded controller.
 
 ### mediaInfo
 
