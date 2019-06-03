@@ -80,7 +80,5 @@ export enum CastEvent {
 
 export interface CastChannel {
   namespace: string;
-  didConnect: Function;
-  didDisconnect: Function;
-  didReceiveTextMessage: Function;
+  didReceiveTextMessage?: Function;
 }

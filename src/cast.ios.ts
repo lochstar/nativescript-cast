@@ -2,13 +2,13 @@ import { ios } from 'tns-core-modules/utils/utils';
 import { Color } from 'tns-core-modules/color';
 import { CastButtonBase } from './cast.common';
 import {
+  CastChannel,
   CastEvent,
   CastMediaInfo,
   CastMediaStatus,
   CastMetadata,
   CastTextTrack,
   PlayerState,
-  CastChannel,
 } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
@@ -287,9 +287,8 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
   }
 }
 
-
 export class CastButton extends CastButtonBase {
-  nativeView: GCKUICastButton;
+  public nativeView: GCKUICastButton;
 
   public CastDevice: any;
 
@@ -297,6 +296,8 @@ export class CastButton extends CastButtonBase {
   public mSessionManager: any;
   public mSessionManagerListener: any;
   public mRemoteMediaClientListener: any;
+
+  public channels: object;
 
   constructor() {
     super();
@@ -482,32 +483,42 @@ export class CastButton extends CastButtonBase {
   }
 
   addChannel(channel: CastChannel) {
+    if (channel.namespace.indexOf('urn:x-cast:') !== 0) {
+      console.log('Namespaces must begin with the prefix "urn:x-cast:"');
+      return false;
+    }
     const HGCTextChannel = GCKCastChannel.extend({
-      didConnect: channel.didConnect,
-      didDisconnect: channel.didDisconnect,
       didReceiveTextMessage: channel.didReceiveTextMessage,
     });
 
     const textChannel = HGCTextChannel.alloc().initWithNamespace(channel.namespace);
     const channelAdded = this.mSessionManager.currentCastSession.addChannel(textChannel);
 
-    console.log('channelAdded: ' + channelAdded);
-
     if (channelAdded) {
-      return textChannel;
+      this.channels[channel.namespace] = textChannel;
     }
-    return false;
+    return channelAdded;
   }
 
-  removeChannel(channel: GCKCastChannel) {
-    const channelRemoved = this.mSessionManager.currentCastSession.removeChannel(channel);
-    console.log('channelRemoved: ' + channelRemoved);
+  removeChannel(namespace: string) {
+    if (!this.channels[namespace]) {
+      console.log(`Channel with namespace ${namespace} does not exist`);
+      return false;
+    }
+    const channelRemoved = this.mSessionManager.currentCastSession.removeChannel(this.channels[namespace]);
+    if (channelRemoved) {
+      this.channels[namespace] = null;
+    }
     return channelRemoved;
   }
 
-  sendMessage(channel: GCKCastChannel, message: string | object) {
+  sendMessage(namespace: string, message: string | object) {
+    if (!this.channels[namespace]) {
+      console.log(`Channel with namespace ${namespace} does not exist`);
+      return false;
+    }
     const textMessage = typeof message !== 'string' ? JSON.stringify(message) : message;
-    return channel.sendTextMessageError(textMessage, null);
+    return this.channels[namespace].sendTextMessageError(textMessage, null);
   }
 
   convertMediaInfo(mediaInfo): CastMediaInfo {

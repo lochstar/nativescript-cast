@@ -20,7 +20,8 @@ if (application.ios) {
     applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
       //console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions)
       const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
-      const appId = mainBundle.infoDictionary.objectForKey('AppID');
+      //const appId = mainBundle.infoDictionary.objectForKey('AppID');
+      const appId = '4E0FE981';
       const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
       GCKCastContext.setSharedInstanceWithOptions(castOptions);
 

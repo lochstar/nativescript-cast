@@ -5,6 +5,8 @@ import { CastEvent, CastMediaInfo, CastMediaStatus, CastChannel } from 'nativesc
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+
+  public channelNamespace: string;
   public channelConnected: boolean;
 
   public mediaInfo: CastMediaInfo;
@@ -19,6 +21,8 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
+
+    this.channelNamespace = 'urn:x-cast:com.smashedcrab.cast.radio';
     this.channelConnected = false;
   }
 
@@ -121,33 +125,18 @@ export class MainViewModel extends Observable {
 
   handleAddChannelTap() {
     if (!this.customChannel) {
-      const channelArgs = {
-        namespace: 'urn:x-cast:com.smashedcrab.cast.radio',
-        didConnect: () => {
-          console.log('channel didConnect');
-        },
-        didDisconnect: () => {
-          console.log('channel didDisconnect');
-        },
-        didReceiveTextMessage: (message) => {
-          console.log('channel didReceiveTextMessage');
-          console.log(message);
-        },
-      };
-      this.customChannel = this.cast.addChannel(channelArgs);
-      console.log('customChannel');
-      console.log(this.customChannel);
-      if (this.customChannel) {
-        this.set('channelConnected', true);
-      }
+      this.cast.addChannel(this.channelNamespace, (message) => {
+        console.log('channel didReceiveTextMessage');
+        console.log(message);
+      });
+      this.set('channelConnected', true);
     }
   }
 
   handleRemoveChannelTap() {
-    const removed = this.cast.removeChannel(this.customChannel);
+    const removed = this.cast.removeChannel(this.channelNamespace);
     if (removed) {
       this.set('channelConnected', false);
-      this.customChannel = null;
     }
   }
 

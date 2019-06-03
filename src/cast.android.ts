@@ -1,7 +1,15 @@
-import {ad} from 'tns-core-modules/utils/utils';
-import {Color} from 'tns-core-modules/color';
-import {CastButtonBase} from './cast.common';
-import {CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack} from './cast.types';
+import { ad } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
+import { CastButtonBase } from './cast.common';
+import {
+  CastChannel,
+  CastEvent,
+  CastMediaInfo,
+  CastMediaStatus,
+  CastMetadata,
+  CastTextTrack,
+  PlayerState,
+} from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 
@@ -303,10 +311,56 @@ function initRemoteMediaClientListener(): void {
   RemoteMediaClientListener = RemoteMediaClientListenerImpl;
 }
 
+/*
+interface MessageReceivedCallback {
+  new(): com.google.android.gms.cast.Cast.MessageReceivedCallback;
+}
+
+let MessageReceivedCallback: MessageReceivedCallback;
+
+function initMessageReceivedCallback(): void {
+  if (MessageReceivedCallback) {
+    return;
+  }
+
+  @Interfaces([com.google.android.gms.cast.Cast.MessageReceivedCallback])
+  class MessageReceivedCallbackImpl extends java.lang.Object implements com.google.android.gms.cast.Cast.MessageReceivedCallback {
+    constructor() {
+      super();
+
+      // necessary when extending TypeScript constructors
+      return global.__native(this);
+    }
+
+    public onMessageReceived(): void {
+      console.log('onMessageReceived');
+    }
+  }
+
+  MessageReceivedCallback = MessageReceivedCallbackImpl;
+}
+*/
+/*
+class MessageReceivedCallback extends com.google.android.gms.cast.Cast.MessageReceivedCallback {
+  constructor() {
+    super();
+    return global.__native(this);
+  }
+
+  public getNamespace(): string {
+    return 'urn:x-cast:com.smashedcrab.cast.radio';
+  }
+
+  public onMessageReceived() {
+    console.log('onMessageReceived');
+    // didReceiveTextMessage(args);
+  }
+}
+*/
+
 export class CastButton extends CastButtonBase {
   public nativeView: android.support.v7.app.MediaRouteButton;
 
-  // @ts-ignore
   public CastDevice: com.google.android.gms.cast.CastDevice;
 
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
@@ -318,8 +372,12 @@ export class CastButton extends CastButtonBase {
   public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
   public mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
 
+  public channels: object;
+
   constructor() {
     super();
+
+    this.channels = {};
   }
 
   /**
@@ -540,6 +598,62 @@ export class CastButton extends CastButtonBase {
     // @ts-ignore
     android.support.v4.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
     mRouteButton.setRemoteIndicatorDrawable(drawable);
+  }
+
+  addChannel(namespace: string, didReceiveTextMessage: any) {
+    console.log('addChannel');
+    if (namespace.indexOf('urn:x-cast:') !== 0) {
+      console.log('Namespaces must begin with the prefix "urn:x-cast:"');
+      return false;
+    }
+
+    const castSession = this.mSessionManager.getCurrentCastSession();
+
+    castSession.setMessageReceivedCallbacks(namespace, new com.google.android.gms.cast.Cast.MessageReceivedCallback({
+      onMessageReceived(param0: com.google.android.gms.cast.CastDevice, param1: string, param2: string): void {
+        console.log('onMessageReceived');
+        // didReceiveTextMessage(args);
+      }
+    }));
+
+    /*
+    castSession.setMessageReceivedCallbacks(namespace, new com.google.android.gms.cast.Cast.MessageReceivedCallback({
+      onMessageReceived: () => {
+        console.log('onMessageReceived');
+        // didReceiveTextMessage(message);
+      }
+    }));
+    */
+
+    console.log('addChannel2');
+
+    this.channels[namespace] = true;
+
+    return true;
+  }
+
+  removeChannel(namespace) {
+    if (!this.channels[namespace]) {
+      console.log(`Channel with namespace ${namespace} does not exist`);
+      return false;
+    }
+
+    const castSession = this.mSessionManager.getCurrentCastSession();
+    castSession.removeMessageReceivedCallbacks(namespace);
+
+    this.channels[namespace] = null;
+
+    return true;
+  }
+
+  sendMessage(namespace: string, message: string) {
+    if (!this.channels[namespace]) {
+      console.log(`Channel with namespace ${namespace} does not exist`);
+      return false;
+    }
+    const castSession = this.mSessionManager.getCurrentCastSession();
+    castSession.sendMessage(namespace, message);
+    return true;
   }
 
   onMediaStatusUpdate() {
