@@ -1,10 +1,11 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+  public hasControl: boolean;
 
   public mediaInfo: CastMediaInfo;
   public mediaStatus: CastMediaStatus;
@@ -17,6 +18,7 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
+    this.hasControl = false;
   }
 
   handleCastEvent(args): void {
@@ -43,6 +45,9 @@ export class MainViewModel extends Observable {
         this.set('mediaStatus', args.data.status);
         this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
         this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
+        const status = args.data.status as CastMediaStatus;
+
+        this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
       default:
         break;
@@ -88,6 +93,10 @@ export class MainViewModel extends Observable {
     };
 
     this.cast.loadMedia(media);
+  }
+
+  handleShowControllerTap() {
+    this.cast.showController();
   }
 
   handlePlayTap(args: EventData) {

@@ -40,7 +40,7 @@ const appComponents = [
   'tns-core-modules/ui/frame',
   'tns-core-modules/ui/frame/activity',
   'nativescript-cast/cast-activity',
-  'nativescript-cast/cast-options-provider',
+  'nativescript-cast/cast-options-provider'
 ];
 ```
 

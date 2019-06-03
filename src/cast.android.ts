@@ -1,9 +1,10 @@
-import {ad} from 'tns-core-modules/utils/utils';
-import {Color} from 'tns-core-modules/color';
-import {CastButtonBase} from './cast.common';
-import {CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack} from './cast.types';
+import { ad } from 'tns-core-modules/utils/utils';
+import { Color } from 'tns-core-modules/color';
+import { CastButtonBase } from './cast.common';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastMetadata, CastTextTrack } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
+const snakeCase = require('lodash/fp/snakeCase');
 
 const {
   MediaRouter,
@@ -418,7 +419,6 @@ export class CastButton extends CastButtonBase {
   }
 
   loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const snakeCase = require('lodash/fp/snakeCase');
     const metadataPrefix = 'KEY_';
     let metadata;
 
@@ -490,6 +490,11 @@ export class CastButton extends CastButtonBase {
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
+  }
+
+  showController() {
+    const intent = new android.content.Intent(this._context, com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity.class);
+    this._context.startActivity(intent);
   }
 
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
