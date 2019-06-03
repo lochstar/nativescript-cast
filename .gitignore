@@ -9,6 +9,8 @@
 src/*.d.ts
 !src/index.d.ts
 !src/references.d.ts
+!src/android.d.ts
+!src/android-declarations.d.ts
 !src/scripts/*.js
 !seed-tests/*.js
 seed-tests/seed-copy/**/*.*
