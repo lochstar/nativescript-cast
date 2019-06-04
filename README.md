@@ -290,7 +290,6 @@ Valid `metadata.metadataType` values.
 
 ## TODO
 
-- Angular support.
 - Handle `mediaTracks`.
 - Handle `textTrackStyle`.
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).
