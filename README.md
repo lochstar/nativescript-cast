@@ -101,9 +101,7 @@ Place the `CastButton` in to your view.
   <ActionBar title="App Name">
     <ActionItem ios.position="right">
       <StackLayout>
-        <cast:CastButton
-          cast="{{ handleCastEvent }}"
-        />
+        <cast:CastButton cast="{{ handleCastEvent }}" />
       </StackLayout>
     </ActionItem>
   </ActionBar>
@@ -111,9 +109,35 @@ Place the `CastButton` in to your view.
 </Page>
 ```
 
+#### Angular
+
+Add `NativescriptCastModule` in your app's module `imports`, typically in `app.module.ts`.
+
+```ts
+import { NativescriptCastModule } from 'nativescript-cast/angular';
+
+@NgModule({
+  imports: [
+    NativescriptCastModule
+  ]
+});
+```
+
+Include in your template.
+
+```html
+<ActionBar [title]="App Name" >
+  <ActionItem ios.position="right">
+    <StackLayout>
+      <CastButton (cast)="handleCastEvent($event)"></CastButton>
+    </StackLayout>
+  </ActionItem>
+</ActionBar>
+```
+
 #### Vue
 
-Register the element.
+Register the element in your app's main entry point, typically `main.ts`.
 
 ```js
 Vue.registerElement('CastButton', () => require('nativescript-cast').CastButton);
@@ -122,10 +146,17 @@ Vue.registerElement('CastButton', () => require('nativescript-cast').CastButton)
 Include in your template.
 
 ```xml
-<CastButton
-  @cast="handleCastEvent"
-/>
+<ActionBar title="App Name">
+  <ActionItem ios.position="right">
+    <StackLayout>
+      <CastButton @cast="handleCastEvent" />
+    </StackLayout>
+  </ActionItem>
+</ActionBar>
+
 ```
+
+#### Event handler
 
 Set up an event handler for all cast [events](#events). The cast instance is available on `args.object`.
 
@@ -135,40 +166,6 @@ handleCastEvent(args): void {
   console.log('eventName: ' + args.data.eventName);
 }
 ```
-
-#### Angular
-
-Add the `NativeScriptModule` in your app module's `imports` 
-
-Typically in `app.module.ts`
-```ts
-import { NativescriptCastModule } from 'nativescript-cast/angular';
-
-@NgModule({
-    imports: [NativescriptCastModule]
-```
-
-Page template with the ActionBar containing the cast button:
-
-```html
-<ActionBar [title]="title" >
-    <ActionItem ios.position="right">
-        <StackLayout>
-            <CastButton id="cast" (cast)="handleCastEvent($event)"></CastButton>
-        </StackLayout>
-    </ActionItem>
-</ActionBar>
-```
-
-Page component:
-
-```ts
-handleCastEvent(args): void {
-  console.log('cast: ' + args.object);
-  console.log('eventName: ' + args.data.eventName);
-}
-```
-
 
 #### Casting
 

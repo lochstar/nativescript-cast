@@ -1,6 +1,6 @@
 {
   "nativescript": {
-    "id": "org.nativescript.angulardemo",
+    "id": "org.nativescript.cast",
     "tns-ios": {
       "version": "5.3.1"
     },
@@ -8,9 +8,6 @@
       "version": "5.3.1"
     }
   },
-  "description": "NativeScript Application",
-  "license": "SEE LICENSE IN <your-license-filename>",
-  "repository": "<fill-your-repository-here>",
   "dependencies": {
     "@angular/animations": "~7.2.0",
     "@angular/common": "~7.2.0",
@@ -36,8 +33,11 @@
     "@ngtools/webpack": "~7.2.0",
     "nativescript-dev-typescript": "~0.9.0",
     "nativescript-dev-webpack": "^0.22.0",
-    "uglifyjs-webpack-plugin": "^2.1.3"
+    "tslint": "~5.16.0",
+    "typescript": "~3.1.1"
   },
-  "gitHead": "803cec054c44c99eaa59cdc267993e6346f6cb3a",
-  "readme": "NativeScript Application"
+  "scripts": {
+    "build.plugin": "cd ../src && npm run build",
+    "ci.tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
+  }
 }
