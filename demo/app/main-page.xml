@@ -26,56 +26,62 @@
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
-
-        <FlexboxLayout
-          orientation="horizontal"
-          justifyContent="space-between"
-          class="controls"
-        >
+        <StackLayout visibility="{{ canCast && hasControl ? 'visible' : 'collapsed'}}">
+          <FlexboxLayout
+            orientation="horizontal"
+            justifyContent="space-between"
+            class="controls"
+          >
+            <Button
+              text="&#xff04b; Play"
+              tap="{{ handlePlayTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ canCast }}"
+            />
+            <Button
+              text="&#xff04c; Pause"
+              tap="{{ handlePauseTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ canCast }}"
+            />
+            <Button
+              text="&#xff04e; Seek"
+              tap="{{ handleSeekTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ canCast }}"
+            />
+            <Button
+              text="&#xff04d; Stop"
+              tap="{{ handleStopTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ canCast }}"
+            />
+          </FlexboxLayout>
           <Button
-            text="&#xff04b; Play"
-            tap="{{ handlePlayTap }}"
+            text="Show controller"
+            tap="{{ handleShowControllerTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
+
           <Button
-            text="&#xff04c; Pause"
-            tap="{{ handlePauseTap }}"
-            class="btn btn-primary"
-            isEnabled="{{ canCast }}"
-          />
-          <Button
-            text="&#xff04e; Seek"
-            tap="{{ handleSeekTap }}"
-            class="btn btn-primary"
-            isEnabled="{{ canCast }}"
-          />
-          <Button
-            text="&#xff04d; Stop"
-            tap="{{ handleStopTap }}"
+            text="Switch Text Track"
+            tap="{{ handleSwitchTextTrackTap }}"
             class="btn btn-primary"
             isEnabled="{{ canCast }}"
           />
 
-        </FlexboxLayout>
-
-        <Button
-          text="Switch Text Track"
-          tap="{{ handleSwitchTextTrackTap }}"
-          class="btn btn-primary"
-          isEnabled="{{ canCast }}"
-        />
-
-        <TextView
-          text="{{ mediaStatusString }}"
-          editable="false"
-          class="media-info"
-        />
-        <TextView
-          text="{{ mediaInfoString }}"
-          editable="false"
-          class="media-info"
-        />
+          <TextView
+            text="{{ mediaStatusString }}"
+            editable="false"
+            class="media-info"
+          />
+          <TextView
+            text="{{ mediaInfoString }}"
+            editable="false"
+            class="media-info"
+          />
+        </StackLayout>
       </StackLayout>
     </ScrollView>
   </StackLayout>
