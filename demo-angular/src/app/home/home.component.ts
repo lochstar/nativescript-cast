@@ -1,21 +1,25 @@
-import { Observable } from 'tns-core-modules/data/observable';
+import { Component } from '@angular/core';
 import { EventData } from 'tns-core-modules/ui/core/view';
 import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
 
-export class MainViewModel extends Observable {
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css'],
+})
+export class HomeComponent {
   public cast: any;
   public canCast: boolean;
   public hasControl: boolean;
 
-  public mediaInfo: CastMediaInfo;
   public mediaStatus: CastMediaStatus;
 
   public mediaInfoString: string;
   public mediaStatusString: string;
 
-  constructor() {
-    super();
+  public title = 'Cast Demo Angular';
 
+  constructor() {
     this.cast = null;
     this.canCast = false;
     this.hasControl = false;
@@ -29,35 +33,31 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
-      case CastEvent.onSessionStarted:
-        case CastEvent.onSessionResumed:
-        this.set('canCast', true);
-        break;
-      case CastEvent.onSessionEnding:
-      case CastEvent.onSessionEnded:
-        this.set('canCast', false);
-        break;
-      case CastEvent.onDeviceVolumeChanged:
-        console.log('volume: ' + args.data.volume);
-        break;
+      case 'onSessionStarted':
+      case 'onSessionResumed':
+      this.canCast = true;
+      break;
+      case 'onSessionEnding':
+      case 'onSessionEnded':
+      this.canCast = false;
+      break;
+      case 'onDeviceVolumeChanged':
+      console.log('volume: ' + args.data.volume);
+      break;
       case CastEvent.onMediaStatusChanged:
-        this.set('mediaInfo', args.data.info);
-        this.set('mediaStatus', args.data.status);
-        this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
-        this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
-        const status = args.data.status as CastMediaStatus;
+      this.mediaStatus = args.data.status;
+      this.mediaInfoString = JSON.stringify(args.data.info, null, '  ');
+      this.mediaStatusString = JSON.stringify(args.data.status, null, '  ');
+      const status = args.data.status as CastMediaStatus;
 
-        this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
-        break;
+      this.hasControl = status && status.playerState !== PlayerState.IDLE;
+      break;
       default:
-        break;
+      break;
     }
   }
 
-  handleLoadTap(args: EventData) {
-    // multi-audio, subtitles not matching audio:
-    // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
-
+  handleLoadTap() {
     const media: CastMediaInfo = {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
@@ -128,5 +128,9 @@ export class MainViewModel extends Observable {
     } else {
       this.cast.setActiveTrackIds([]);
     }
+  }
+
+  handleGetMediaInfoTap() {
+    this.mediaInfoString = JSON.stringify(this.cast.getMediaInfo(), null, '  ');
   }
 }
