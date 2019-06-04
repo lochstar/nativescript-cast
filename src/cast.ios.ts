@@ -12,6 +12,7 @@ import {
 } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
+const upperFirst = require('lodash/fp/upperFirst');
 
 declare const GCKUICastButton: any;
 declare const GCKDevice: any;
@@ -313,6 +314,7 @@ export class CastButton extends CastButtonBase {
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
+    this.mCastContext.useDefaultExpandedMediaControls = true;
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl;
     this.mSessionManagerListener.owner = this;
@@ -373,7 +375,6 @@ export class CastButton extends CastButtonBase {
   }
 
   loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const upperFirst = require('lodash/fp/upperFirst');
     const metadataPrefix = 'kGCKMetadataKey';
     let metadata;
 
@@ -442,6 +443,10 @@ export class CastButton extends CastButtonBase {
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
+  }
+
+  showController() {
+    this.mCastContext.presentDefaultExpandedMediaControls();
   }
 
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information

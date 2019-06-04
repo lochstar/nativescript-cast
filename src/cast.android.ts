@@ -12,6 +12,7 @@ import {
 } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
+const snakeCase = require('lodash/fp/snakeCase');
 
 const {
   MediaRouter,
@@ -476,7 +477,6 @@ export class CastButton extends CastButtonBase {
   }
 
   loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const snakeCase = require('lodash/fp/snakeCase');
     const metadataPrefix = 'KEY_';
     let metadata;
 
@@ -550,6 +550,11 @@ export class CastButton extends CastButtonBase {
     remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
   }
 
+  showController() {
+    const intent = new android.content.Intent(this._context, com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity.class);
+    this._context.startActivity(intent);
+  }
+
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
   getMediaInfo() {
     const mediaInfo = this.getRemoteMediaClient().getMediaInfo();
@@ -601,7 +606,6 @@ export class CastButton extends CastButtonBase {
   }
 
   addChannel(namespace: string, didReceiveTextMessage: any) {
-    console.log('addChannel');
     if (namespace.indexOf('urn:x-cast:') !== 0) {
       console.log('Namespaces must begin with the prefix "urn:x-cast:"');
       return false;
@@ -609,23 +613,13 @@ export class CastButton extends CastButtonBase {
 
     const castSession = this.mSessionManager.getCurrentCastSession();
 
+    // Immediately crashes with no error ?
     castSession.setMessageReceivedCallbacks(namespace, new com.google.android.gms.cast.Cast.MessageReceivedCallback({
       onMessageReceived(param0: com.google.android.gms.cast.CastDevice, param1: string, param2: string): void {
         console.log('onMessageReceived');
         // didReceiveTextMessage(args);
       }
     }));
-
-    /*
-    castSession.setMessageReceivedCallbacks(namespace, new com.google.android.gms.cast.Cast.MessageReceivedCallback({
-      onMessageReceived: () => {
-        console.log('onMessageReceived');
-        // didReceiveTextMessage(message);
-      }
-    }));
-    */
-
-    console.log('addChannel2');
 
     this.channels[namespace] = true;
 

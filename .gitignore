@@ -9,6 +9,8 @@
 src/*.d.ts
 !src/index.d.ts
 !src/references.d.ts
+!src/android.d.ts
+!src/android-declarations.d.ts
 !src/scripts/*.js
 !seed-tests/*.js
 seed-tests/seed-copy/**/*.*
@@ -17,6 +19,7 @@ seed-tests/seed-copy-new-git-repo/**/*.*
 !demo/app/tests/*.js
 demo/*.d.ts
 !demo/references.d.ts
+!demo/webpack.config.js
 demo/lib
 demo/platforms
 node_modules

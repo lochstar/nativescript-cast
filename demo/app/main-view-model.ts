@@ -1,10 +1,11 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus, CastChannel } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, CastChannel } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+  public hasControl: boolean;
 
   public channelNamespace: string;
   public channelConnected: boolean;
@@ -24,6 +25,7 @@ export class MainViewModel extends Observable {
 
     this.channelNamespace = 'urn:x-cast:com.smashedcrab.cast.radio';
     this.channelConnected = false;
+    this.hasControl = false;
   }
 
   handleCastEvent(args): void {
@@ -50,6 +52,9 @@ export class MainViewModel extends Observable {
         this.set('mediaStatus', args.data.status);
         this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
         this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
+        const status = args.data.status as CastMediaStatus;
+
+        this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
       default:
         break;
@@ -64,7 +69,7 @@ export class MainViewModel extends Observable {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
       streamType: 'BUFFERED',
-      duration: undefined,
+      duration: 734,
       metadata: {
         metadataType: 'MOVIE',
         title: 'Tears of Steel',
@@ -72,9 +77,14 @@ export class MainViewModel extends Observable {
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
-            url: 'https://d1u5p3l4wpay3k.cloudfront.net/lolesports_gamepedia_en/2/24/Space_eSportslogo_square.png?version=1352e7508b7e001da75af441b9221997',
-            width: 300,
-            height: 300,
+            url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+            width: 480,
+            height: 270,
+          },
+          {
+            url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
+            width: 780,
+            height: 1200,
           }
         ]
       },
@@ -82,19 +92,23 @@ export class MainViewModel extends Observable {
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
           contentType: 'text/vtt',
-          name: 'english',
+          name: 'English',
           language: 'en'
         },
         {
           src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
           contentType: 'text/vtt',
-          name: 'spanish',
+          name: 'Spanish',
           language: 'es'
         }
       ]
     };
 
     this.cast.loadMedia(media);
+  }
+
+  handleShowControllerTap() {
+    this.cast.showController();
   }
 
   handlePlayTap(args: EventData) {
