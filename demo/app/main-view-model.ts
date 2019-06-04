@@ -70,12 +70,12 @@ export class MainViewModel extends Observable {
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
         images: [
           {
-            url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
             width: 480,
             height: 270,
           },
           {
-            url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
             width: 780,
             height: 1200,
           }
