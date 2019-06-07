@@ -705,16 +705,18 @@ export class CastButton extends CastButtonBase {
     const tracks = mediaInfo.getMediaTracks();
     const textTracks: CastTextTrack[] = [];
 
-    for (let i = 0; i < tracks.size(); i++) {
-      const track = tracks.get(i);
-      if (track.getType() === MediaTrack.TYPE_TEXT) {
-        textTracks.push({
-          id: track.getId(),
-          src: track.getContentId(),
-          contentType: track.getContentType(),
-          name: track.getName(),
-          language: track.getLanguage(),
-        });
+    if (tracks) {
+      for (let i = 0; i < tracks.size(); i++) {
+        const track = tracks.get(i);
+        if (track.getType() === MediaTrack.TYPE_TEXT) {
+          textTracks.push({
+            id: track.getId(),
+            src: track.getContentId(),
+            contentType: track.getContentType(),
+            name: track.getName(),
+            language: track.getLanguage(),
+          });
+        }
       }
     }
 
@@ -728,13 +730,15 @@ export class CastButton extends CastButtonBase {
       castMetadata[fixedKey] = metadata.getString(key);
     });
 
-    for (let index = 0; index < images.size(); index++) {
-      const img = images.get(index);
-      castMetadata.images.push({
-        url: img.getUrl().toString(),
-        width: img.getWidth(),
-        height: img.getHeight()
-      });
+    if (images) {
+      for (let index = 0; index < images.size(); index++) {
+        const img = images.get(index);
+        castMetadata.images.push({
+          url: img.getUrl().toString(),
+          width: img.getWidth(),
+          height: img.getHeight()
+        });
+      }
     }
 
     return {
