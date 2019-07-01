@@ -26,7 +26,7 @@
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
-        <StackLayout visibility="{{ canCast && hasControl ? 'visible' : 'collapsed'}}">
+        <StackLayout visibility="{{ canCast ? 'visible' : 'collapsed'}}">
           <FlexboxLayout
             orientation="horizontal"
             justifyContent="space-between"
