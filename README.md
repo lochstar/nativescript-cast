@@ -59,6 +59,8 @@ const appComponents = [
 ];
 ```
 
+---
+
 ### iOS
 
 Set your Application ID.
@@ -87,7 +89,15 @@ application.on(application.launchEvent, (args) => {
 });
 ```
 
-Place the `CastButton` in to your view.
+#### ⚠️ Note: Xcode 10 & iOS 12+ ⚠️
+
+If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, the "Access WiFi Information" capability is required in order to discover and connect to Cast devices.
+
+See [iOS sender setup](https://developers.google.com/cast/docs/ios_sender/) for more info.
+
+---
+
+### Place `CastButton` in to your view.
 
 #### NativeScript
 
