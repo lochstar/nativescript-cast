@@ -92,6 +92,7 @@ application.on(application.launchEvent, (args) => {
 #### ⚠️ Note: Xcode 10 & iOS 12+ ⚠️
 
 If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, the "Access WiFi Information" capability is required in order to discover and connect to Cast devices.
+The plugin comes with an `app.entitlements` which will add this capability to the workspace, however, you must also `Add the Access WiFi information feature to your App ID` . 
 
 See [iOS sender setup](https://developers.google.com/cast/docs/ios_sender/) for more info.
 
