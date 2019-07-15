@@ -5,15 +5,15 @@
       "version": "5.4.0"
     },
     "tns-ios": {
-      "version": "5.4.0"
+      "version": "5.4.2"
     }
   },
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.14",
     "nativescript-cast": "file:../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "^0.3.4",
-    "tns-core-modules": "^5.3.0"
+    "tns-core-modules": "^5.4.3"
   },
   "devDependencies": {
     "jasmine-core": "^3.3.0",
@@ -21,9 +21,9 @@
     "karma-jasmine": "^2.0.1",
     "karma-nativescript-launcher": "^0.4.0",
     "nativescript-css-loader": "~0.26.1",
-    "nativescript-dev-typescript": "~0.9.0",
-    "nativescript-dev-webpack": "^0.22.0",
-    "tns-platform-declarations": "^5.3.0",
+    "nativescript-dev-typescript": "~0.10.0",
+    "nativescript-dev-webpack": "^0.24.1",
+    "tns-platform-declarations": "^5.4.3",
     "tslint": "~5.16.0",
     "typescript": "~3.4.5"
   },
