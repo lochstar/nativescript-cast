@@ -3,5 +3,9 @@
 <plist version="1.0">
 <dict>
 	<!--Describe the permissions, features or other configurations required by your plugin for iOS.-->
+	<key>NSMicrophoneUsageDescription</key>
+    <string>This app uses the microphone for Chromecast guest mode</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>This app uses bluetooth for Chromecast</string>
 </dict>
 </plist>

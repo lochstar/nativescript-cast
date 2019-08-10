@@ -4,14 +4,14 @@ import {
 } from 'tns-core-modules/ui/frame';
 
 @JavaProxy('org.nativescript.cast.CastActivity')
-class CastActivity extends android.support.v4.app.FragmentActivity {
+class CastActivity extends androidx.fragment.app.FragmentActivity {
   private _callbacks: AndroidActivityCallbacks;
 
   public onCreate(savedInstanceState: android.os.Bundle): void {
     if (!this._callbacks) {
       setActivityCallbacks(this);
     }
-    this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
+    this._callbacks.onCreate(this, savedInstanceState, null, super.onCreate);
   }
 
   public onSaveInstanceState(outState: android.os.Bundle): void {
