@@ -6,6 +6,8 @@ Chromecast support for NativeScript.
 
 You must have a valid Chromecast Application ID. You can obtain one at the [Google Cast Developer Console](https://cast.google.com/publish/).
 
+Nativescript 6 or higher. For lower versions, you can use an older version of this plugin <<@version>>.
+
 ## Installation
 
 ```bash
