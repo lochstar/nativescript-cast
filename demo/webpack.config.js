@@ -16,6 +16,7 @@ module.exports = env => {
     const appComponents = [
         "tns-core-modules/ui/frame",
         "tns-core-modules/ui/frame/activity",
+        "nativescript-cast/cast-options-provider",
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
@@ -183,7 +184,7 @@ module.exports = env => {
                         },
                     ].filter(loader => !!loader)
                 },
-                
+
                 {
                     test: /\.(ts|css|scss|html|xml)$/,
                     use: "nativescript-dev-webpack/hmr/hot-loader"

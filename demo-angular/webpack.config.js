@@ -20,6 +20,7 @@ module.exports = env => {
     const appComponents = [
         "tns-core-modules/ui/frame",
         "tns-core-modules/ui/frame/activity",
+        "nativescript-cast/cast-options-provider",
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
