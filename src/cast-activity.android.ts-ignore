@@ -4,14 +4,19 @@ import {
 } from 'tns-core-modules/ui/frame';
 
 @JavaProxy('org.nativescript.cast.CastActivity')
-class CastActivity extends android.support.v4.app.FragmentActivity {
+class CastActivity extends androidx.fragment.app.FragmentActivity {
+  public isNativeScriptActivity;
+
   private _callbacks: AndroidActivityCallbacks;
 
   public onCreate(savedInstanceState: android.os.Bundle): void {
+    // Set the isNativeScriptActivity in onCreate (as done in the original NativeScript activity code)
+    // The JS constructor might not be called because the activity is created from Android.
+    this.isNativeScriptActivity = true;
     if (!this._callbacks) {
-      setActivityCallbacks(this);
+        setActivityCallbacks(this);
     }
-    this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
+    this._callbacks.onCreate(this, savedInstanceState, this.getIntent(), super.onCreate);
   }
 
   public onSaveInstanceState(outState: android.os.Bundle): void {

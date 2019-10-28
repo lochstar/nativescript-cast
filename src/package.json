@@ -6,8 +6,8 @@
   "typings": "cast.d.ts",
   "nativescript": {
     "platforms": {
-      "android": "5.4.0",
-      "ios": "5.4.1"
+      "android": "6.0.0",
+      "ios": "6.0.1"
     }
   },
   "scripts": {
@@ -19,10 +19,10 @@
     "test.ios": "npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch",
     "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
     "plugin.tscwatch": "npm run tsc -- -w",
-    "demo.android": "npm run tsc && cd ../demo && tns run android --syncAllFiles",
-    "demo.ios": "npm run tsc && cd ../demo && tns run ios --syncAllFiles",
-    "demo-angular.android": "npm run tsc && cd ../demo-angular && tns run android --syncAllFiles",
-    "demo-angular.ios": "npm run tsc && cd ../demo-angular && tns run ios --syncAllFiles",
+    "demo.android": "npm run tsc && cd ../demo && tns run android",
+    "demo.ios": "npm run tsc && cd ../demo && tns run ios",
+    "demo-angular.android": "npm run tsc && cd ../demo-angular && tns run android",
+    "demo-angular.ios": "npm run tsc && cd ../demo-angular && tns run ios",
     "demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
     "demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
     "plugin.prepare": "npm run build && cd ../demo && tns plugin remove nativescript-cast && tns plugin add ../src && cd ../demo-angular && tns plugin remove nativescript-cast && tns plugin add ../src",
@@ -53,8 +53,8 @@
     "@angular/compiler": "~7.2.0",
     "@angular/compiler-cli": "~7.2.0",
     "nativescript-angular": "~7.2.0",
-    "tns-core-modules": "^5.4.2",
-    "tns-platform-declarations": "^5.4.2",
+    "tns-core-modules": "^6.0.1",
+    "tns-platform-declarations": "^6.0.1",
     "typescript": "~3.4.5",
     "lodash": "^4.17.11",
     "prompt": "^1.0.0",

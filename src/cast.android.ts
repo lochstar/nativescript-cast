@@ -18,7 +18,7 @@ const {
   MediaRouter,
   MediaRouteSelector,
   MediaControlIntent
-} = android.support.v7.media;
+} = androidx.mediarouter.media;
 const {
   CastButtonFactory,
   CastContext,
@@ -37,7 +37,7 @@ const ArrayList = java.util.ArrayList;
 // @ts-ignore
 const MediaStatus = com.google.android.gms.cast.MediaStatus;
 
-class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback {
+class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
   public owner: CastButton;
 
   constructor(owner) {
@@ -48,7 +48,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     return global.__native(this);
   }
 
-  public onProviderAdded(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
+  public onProviderAdded(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onProviderAdded,
       router: router,
@@ -57,7 +57,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onProviderChanged(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
+  public onProviderChanged(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onProviderChanged,
       router: router,
@@ -66,7 +66,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onProviderRemoved(router: android.support.v7.media.MediaRouter, provider: android.support.v7.media.MediaRouter.ProviderInfo): void {
+  public onProviderRemoved(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onProviderRemoved,
       router: router,
@@ -75,7 +75,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteAdded(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteAdded(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onRouteAdded,
       router: router,
@@ -84,7 +84,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     /*
     const d = this.owner.CastDevice.getFromBundle(route.getExtras());
     const address = d.getIpAddress();
@@ -109,7 +109,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRoutePresentationDisplayChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRoutePresentationDisplayChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onRoutePresentationDisplayChanged,
       router: router,
@@ -118,7 +118,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteRemoved(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteRemoved(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onRouteRemoved,
       router: router,
@@ -127,7 +127,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteSelected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteSelected(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onRouteSelected,
       router: router,
@@ -136,7 +136,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteUnselected(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteUnselected(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onRouteUnselected,
       router: router,
@@ -145,7 +145,7 @@ class MediaRouterCallback extends android.support.v7.media.MediaRouter.Callback 
     });
   }
 
-  public onRouteVolumeChanged(router: android.support.v7.media.MediaRouter, route: android.support.v7.media.MediaRouter.RouteInfo): void {
+  public onRouteVolumeChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onDeviceVolumeChanged,
       router: router,
@@ -360,7 +360,7 @@ class MessageReceivedCallback extends com.google.android.gms.cast.Cast.MessageRe
 */
 
 export class CastButton extends CastButtonBase {
-  public nativeView: android.support.v7.app.MediaRouteButton;
+  public nativeView: androidx.mediarouter.app.MediaRouteButton;
 
   public CastDevice: com.google.android.gms.cast.CastDevice;
 
@@ -369,9 +369,9 @@ export class CastButton extends CastButtonBase {
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
   public mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
 
-  public mMediaRouter: android.support.v7.media.MediaRouter;
-  public mMediaRouterCallback: android.support.v7.media.MediaRouter.Callback;
-  public mMediaRouteSelector: android.support.v7.media.MediaRouteSelector;
+  public mMediaRouter: androidx.mediarouter.media.MediaRouter;
+  public mMediaRouterCallback: androidx.mediarouter.media.MediaRouter.Callback;
+  public mMediaRouteSelector: androidx.mediarouter.media.MediaRouteSelector;
 
   public channels: object;
 
@@ -391,7 +391,7 @@ export class CastButton extends CastButtonBase {
     initRemoteMediaClientListener();
 
     // Create new instance of MediaRouteButton
-    const button = new android.support.v7.app.MediaRouteButton(this._context);
+    const button = new androidx.mediarouter.app.MediaRouteButton(this._context);
 
     // Wire up the MediaRouteButton to the Cast framework
     CastButtonFactory.setUpMediaRouteButton(appContext, button);
@@ -592,16 +592,16 @@ export class CastButton extends CastButtonBase {
     const mRouteButton = this.getNativeView();
     const appContext = ad.getApplicationContext();
     // @ts-ignore
-    const castContext = new android.view.ContextThemeWrapper(appContext, android.support.v7.mediarouter.R.style.Theme_MediaRouter);
+    const castContext = new android.view.ContextThemeWrapper(appContext, androidx.mediarouter.R.style.Theme_MediaRouter);
     const tintColor = new Color(color).android;
     // @ts-ignore
-    const a = castContext.obtainStyledAttributes(null, android.support.v7.mediarouter.R.styleable.MediaRouteButton, android.support.v7.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+    const a = castContext.obtainStyledAttributes(null, androidx.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.R.attr.mediaRouteButtonStyle, 0);
     // @ts-ignore
-    const drawable = a.getDrawable(android.support.v7.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+    const drawable = a.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
     a.recycle();
 
     // @ts-ignore
-    android.support.v4.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
+    androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
     mRouteButton.setRemoteIndicatorDrawable(drawable);
   }
 
