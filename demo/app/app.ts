@@ -1,5 +1,4 @@
 import * as application from 'tns-core-modules/application';
-import * as utils from 'tns-core-modules/utils/utils';
 
 if (application.ios) {
   class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
@@ -18,14 +17,12 @@ if (application.ios) {
     public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
 
     applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
-      //console.log('applicationWillFinishLaunchingWithOptions: ' + launchOptions)
-      const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
-      const appId = mainBundle.infoDictionary.objectForKey('AppID');
+      const appId = NSBundle.mainBundle.objectForInfoDictionaryKey('AppID');
       const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
       GCKCastContext.setSharedInstanceWithOptions(castOptions);
 
       // Optional logger
-      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new()
+      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new();
       GCKLogger.sharedInstance().delegate = delegate;
 
       return true;

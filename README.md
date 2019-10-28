@@ -1,10 +1,12 @@
 # nativescript-cast
 
-Chromecast support for NativeScript.
+Chromecast support for NativeScript 6.
 
 ## Requirements
 
 You must have a valid Chromecast Application ID. You can obtain one at the [Google Cast Developer Console](https://cast.google.com/publish/).
+
+NativeScript 6 or higher. For lower versions, you can use an older version of this plugin `0.1.2`.
 
 ## Installation
 
@@ -23,16 +25,10 @@ Set your Application ID.
 <string name="app_id">4F8B3483</string>
 ```
 
-Android requires your main activity to extend from [FragmentActivity](https://developer.android.com/reference/android/support/v4/app/FragmentActivity). You can create your own or use CastActivity provided by this plugin. The Cast Options Provider class is included with this plugin and will be merged to your `AndroidManifest.xml`.
-
 The Google Cast design checklist requires a sender app to provide an expanded controller. Include `ExpandedControllerActivity` in your `AndroidManifest.xml`.
 
 ```xml
 <!-- App_Resources/Android/src/main/res/AndroidManifest.xml -->
-<activity android:name="org.nativescript.cast.CastActivity">
-  <!-- ... -->
-</activity>
-
 <activity
   android:name="com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity"
   android:label="@string/app_name"
@@ -43,18 +39,17 @@ The Google Cast design checklist requires a sender app to provide an expanded co
   </intent-filter>
   <meta-data
     android:name="android.support.PARENT_ACTIVITY"
-    android:value="org.nativescript.cast.CastActivity"/>
+    android:value="com.tns.NativeScriptActivity"/>
 </activity>
 ```
 
-If you are using Webpack, add `'nativescript-cast/cast-activity'` and `'nativescript-cast/cast-options-provider'` to `appComponents`.
+If you are using Webpack, add `'nativescript-cast/cast-options-provider'` to `appComponents`. You will have to repeat this step after performing a `tns update`.
 
 ```js
 // webpack.config.js
 const appComponents = [
   'tns-core-modules/ui/frame',
   'tns-core-modules/ui/frame/activity',
-  'nativescript-cast/cast-activity',
   'nativescript-cast/cast-options-provider'
 ];
 ```
@@ -89,12 +84,17 @@ application.on(application.launchEvent, (args) => {
 });
 ```
 
-#### ⚠️ Note: Xcode 10 & iOS 12+ ⚠️
+#### ⚠️ iOS 12+ & Xcode 10 ⚠️
 
-If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, the "Access WiFi Information" capability is required in order to discover and connect to Cast devices.
-The plugin comes with an `app.entitlements` which will add this capability to the workspace, however, you must also `Add the Access WiFi information feature to your App ID` . 
+If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, the "Access WiFi Information" capability is required in order to discover and connect to Cast devices. The plugin comes with an `app.entitlements` which will add this capability to the workspace, however, you must also `Add the Access WiFi information feature to your App ID` .
 
 See [iOS sender setup](https://developers.google.com/cast/docs/ios_sender/) for more info.
+
+#### ⚠️ iOS 13+ & Guest Mode ⚠️
+
+iOS 13+ requires Bluetooth and Microphone permissions in order to use Guest Mode with Chromecast. This plugin sets these permissions in the `Info.plist` file.
+
+See [iOS Guest Mode](https://developers.google.com/cast/docs/guest_mode#ios_guest_mode) for more info.
 
 ---
 
