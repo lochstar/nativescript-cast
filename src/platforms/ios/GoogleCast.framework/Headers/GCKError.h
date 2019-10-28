@@ -8,7 +8,7 @@
  * Framework errors.
  */
 
-GCK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * @enum GCKErrorCode
@@ -160,6 +160,24 @@ typedef NS_ENUM(NSInteger, GCKErrorCode) {
   GCKErrorCodeSocketInvalidParameter = 26,
 
   /**
+   * Error indicating that the response received was invalid.
+   */
+  GCKErrorCodeInvalidResponse = 27,
+
+  /**
+   * Error indicating that the session update went through, but all devices could not be moved.
+   */
+  GCKErrorCodeFailedSessionUpdate = 28,
+
+  /**
+   * Error indicating that a device request could not be completed because the current session is
+   * not active.
+   *
+   * @since 4.4.5
+   */
+  GCKErrorCodeSessionIsNotActive = 29,
+
+  /**
    * Error code indicating that a media load failed on the receiver side.
    */
   GCKErrorCodeMediaLoadFailed = 30,
@@ -173,6 +191,16 @@ typedef NS_ENUM(NSInteger, GCKErrorCode) {
    * Error indicating that no media session is currently available.
    */
   GCKErrorCodeNoMediaSession = 32,
+
+  /**
+   * Error code indicating that the current session is not a cast session.
+   */
+  GCKErrorCodeNotCastSession = 33,
+
+  /**
+   * Error code indicating that a generic media error happens.
+   */
+  GCKErrorCodeMediaError = 34,
 
   /**
    * Error code indicating that device authentication failed due to error received.
@@ -342,6 +370,29 @@ typedef NS_ENUM(NSInteger, GCKErrorCode) {
    * Error code indicating that an unknown, unexpected error has occurred.
    */
   GCKErrorCodeUnknown = 99,
+
+  /**
+   * Error code indicating that the authentication message received was not properly formatted and
+   * encountered an error while parsing.
+   *
+   * @since 4.4.5
+   */
+  GCKErrorCodeDeviceAuthenticationMessageParseFailure = 100,
+
+  /**
+   * Error code indicating that the authentication message received had the <code>challenge</code>
+   * property set to a non-null value.
+   *
+   * @since 4.4.5
+   */
+  GCKErrorCodeDeviceAuthenticationMessageChallengeReceivedFailure = 101,
+
+  /**
+   * Error code indicating that the authentication message request timed out.
+   *
+   * @since 4.4.5
+   */
+  GCKErrorCodeDeviceAuthenticationTimeoutFailure = 102
 };
 
 /**
@@ -350,9 +401,23 @@ typedef NS_ENUM(NSInteger, GCKErrorCode) {
 GCK_EXTERN NSString *const kGCKErrorCustomDataKey;
 
 /**
+ * The key for an API-specific detailed error code.
+ *
+ * @since 4.4.3
+ */
+GCK_EXTERN NSString *const kGCKErrorDetailedCodeKey;
+
+/**
  * The key for extra error information, such as an API-specific error description.
  */
 GCK_EXTERN NSString *const kGCKErrorExtraInfoKey;
+
+/**
+ * The key for an API-specific error reason.
+ *
+ * @since 4.4.3
+ */
+GCK_EXTERN NSString *const kGCKErrorReasonKey;
 
 /**
  * The error domain for GCKErrorCode.
@@ -369,11 +434,11 @@ GCK_EXPORT
 + (GCKError *)errorWithCode:(GCKErrorCode)code;
 
 /** Constructs a GCKError with the given error code and optional custom data. */
-+ (GCKError *)errorWithCode:(GCKErrorCode)code customData:(id GCK_NULLABLE_TYPE)customData;
++ (GCKError *)errorWithCode:(GCKErrorCode)code customData:(nullable id)customData;
 
 /** Returns the human-readable description for a given error code. */
 + (NSString *)enumDescriptionForCode:(GCKErrorCode)code;
 
 @end
 
-GCK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END

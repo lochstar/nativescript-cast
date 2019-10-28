@@ -20,7 +20,6 @@ declare const GCKSessionManagerListener: any;
 declare const CGRectMake: any;
 declare const GCKCastContext: any;
 declare const GCKMediaTrackTypeText: any;
-// declare const GCKMediaTrackTypeAudio: any;
 declare const GCKMediaTextTrackSubtypeSubtitles: any;
 declare const GCKRemoteMediaClientListener: any;
 declare const GCKMediaPlayerStateIdle: any;

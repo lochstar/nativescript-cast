@@ -4,6 +4,7 @@
 #import <GoogleCast/GCKMediaCommon.h>
 #import <GoogleCast/GCKMediaInformation.h>
 #import <GoogleCast/GCKMediaMetadata.h>
+#import <GoogleCast/GCKMediaQueue.h>
 #import <GoogleCast/GCKMediaQueueItem.h>
 #import <GoogleCast/GCKMediaStatus.h>
 #import <GoogleCast/GCKRequest.h>
@@ -11,12 +12,13 @@
 #import <Foundation/Foundation.h>
 
 @class GCKMediaLoadOptions;
+@class GCKMediaLoadRequestData;
 @class GCKMediaQueueLoadOptions;
 @class GCKMediaSeekOptions;
 @protocol GCKRemoteMediaClientListener;
 @protocol GCKRemoteMediaClientAdInfoParserDelegate;
 
-GCK_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONNULL_BEGIN
 
 
 /**
@@ -32,16 +34,32 @@ GCK_EXPORT
 @property(nonatomic, assign, readonly) BOOL connected;
 
 /** The current media status, as reported by the media control channel. */
-@property(nonatomic, strong, readonly, GCK_NULLABLE) GCKMediaStatus *mediaStatus;
+@property(nonatomic, strong, readonly, nullable) GCKMediaStatus *mediaStatus;
+
+/**
+ * The media queue.
+ *
+ * @since 4.3.4
+ */
+@property(nonatomic, strong, readonly) GCKMediaQueue *mediaQueue;
 
 /**
  * The amount of time that has passed since the last media status update was received. If a
- * status request is currently in progress, this will be 0.
+ * media status has not been received yet this value will be NAN.
  */
 @property(nonatomic, assign, readonly) NSTimeInterval timeSinceLastMediaStatusUpdate;
 
 /**
+ * A flag that indicates whether this client is playing a live stream.
+ *
+ * @since 4.4.1
+ */
+@property(nonatomic, readonly, getter=isPlayingLiveStream) BOOL playingLiveStream;
+
+/**
  * Adds a listener to this object's list of listeners.
+ *
+ * The added listener is weakly held, and should be retained to avoid unexpected deallocation.
  *
  * @param listener The listener to add.
  */
@@ -60,13 +78,25 @@ GCK_EXPORT
  *
  * @deprecated Use GCKAdBreakStatus instead.
  */
-@property(nonatomic, weak, readwrite) id<GCKRemoteMediaClientAdInfoParserDelegate>
-    adInfoParserDelegate;
+@property(nonatomic, weak) id<GCKRemoteMediaClientAdInfoParserDelegate> adInfoParserDelegate;
+
+/**
+ * Loads and starts playback of a media item or a queue of media items with a request data.
+ *
+ * @param requestData Describes the media load request.
+ * @return The GCKRequest object for tracking this request.
+ *
+ * @since 4.4.1
+ */
+- (GCKRequest *)loadMediaWithLoadRequestData:(GCKMediaLoadRequestData *)requestData;
 
 /**
  * Loads and starts playback of a new media item with default options.
  *
- * @param mediaInfo An object describing the media item to load.
+ * It is recommended to use @ref loadMediaWithLoadRequestData: instead, which is an advanced
+ * load command supporting loading a single item or a queue with additional options.
+ *
+ * @param mediaInfo Describes the media item to load.
  * @return The GCKRequest object for tracking this request.
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo;
@@ -74,9 +104,13 @@ GCK_EXPORT
 /**
  * Loads and starts playback of a new media item with the specified options.
  *
- * @param mediaInfo An object describing the media item to load.
+ * It is recommended to use @ref loadMediaWithLoadRequestData:  instead, which is an advanced
+ * load command supporting loading a single item or a queue with additional options.
+ *
+ * @param mediaInfo Describes the media item to load.
  * @param options The load options for this request.
  * @return The GCKRequest object for tracking this request.
+ *
  * @since 4.0
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
@@ -85,67 +119,67 @@ GCK_EXPORT
 /**
  * Loads and optionally starts playback of a new media item.
  *
- * @param mediaInfo An object describing the media item to load.
+ * @param mediaInfo Describes the media item to load.
  * @param autoplay Whether playback should start immediately.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use loadMedia:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
-- (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo autoplay:(BOOL)autoplay
-    GCK_DEPRECATED("Use loadMedia:withOptions:");
+- (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
+                 autoplay:(BOOL)autoplay GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new media item.
  *
- * @param mediaInfo An object describing the media item to load.
+ * @param mediaInfo Describes the media item to load.
  * @param autoplay Whether playback should start immediately.
  * @param playPosition The initial playback position.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use loadMedia:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
                  autoplay:(BOOL)autoplay
              playPosition:(NSTimeInterval)playPosition
-    GCK_DEPRECATED("Use loadMedia:withOptions:");
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new media item.
  *
- * @param mediaInfo An object describing the media item to load.
+ * @param mediaInfo Describes the media item to load.
  * @param autoplay Whether playback should start immediately.
  * @param playPosition The initial playback position.
  * @param customData Custom application-specific data to pass along with the request. Must either be
  * an object that can be serialized to JSON using
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use loadMedia:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
                  autoplay:(BOOL)autoplay
              playPosition:(NSTimeInterval)playPosition
-               customData:(id GCK_NULLABLE_TYPE)customData
-    GCK_DEPRECATED("Use loadMedia:withOptions:");
+               customData:(nullable id)customData
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new media item.
  *
- * @param mediaInfo An object describing the media item to load.
+ * @param mediaInfo Describes the media item to load.
  * @param autoplay Whether playback should start immediately.
  * @param playPosition The initial playback position.
  * @param activeTrackIDs An array of integers specifying the active tracks.
  * May be <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use loadMedia:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
                  autoplay:(BOOL)autoplay
              playPosition:(NSTimeInterval)playPosition
-           activeTrackIDs:(NSArray<NSNumber *> *GCK_NULLABLE_TYPE)activeTrackIDs
-    GCK_DEPRECATED("Use loadMedia:withOptions:");
+           activeTrackIDs:(nullable NSArray<NSNumber *> *)activeTrackIDs
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new media item.
  *
- * @param mediaInfo An object describing the media item to load.
+ * @param mediaInfo Describes the media item to load.
  * @param autoplay Whether playback should start immediately.
  * @param playPosition The initial playback position.
  * @param activeTrackIDs An array of integers specifying the active tracks.
@@ -154,14 +188,14 @@ GCK_EXPORT
  * an object that can be serialized to JSON using
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use loadMedia:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)loadMedia:(GCKMediaInformation *)mediaInfo
                  autoplay:(BOOL)autoplay
              playPosition:(NSTimeInterval)playPosition
-           activeTrackIDs:(NSArray<NSNumber *> *GCK_NULLABLE_TYPE)activeTrackIDs
-               customData:(id GCK_NULLABLE_TYPE)customData
-    GCK_DEPRECATED("Use loadMedia:withOptions:");
+           activeTrackIDs:(nullable NSArray<NSNumber *> *)activeTrackIDs
+               customData:(nullable id)customData
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Sets the playback rate for the current media session.
@@ -183,7 +217,7 @@ GCK_EXPORT
  * @return The GCKRequest object for tracking this request.
  * @since 4.0
  */
-- (GCKRequest *)setPlaybackRate:(float)playbackRate customData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)setPlaybackRate:(float)playbackRate customData:(nullable id)customData;
 
 /**
  * Sets the active tracks. The request will fail if there is no current media status.
@@ -192,7 +226,7 @@ GCK_EXPORT
  * <code>nil</code> to disable any currently active tracks.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)setActiveTrackIDs:(NSArray<NSNumber *> *GCK_NULLABLE_TYPE)activeTrackIDs;
+- (GCKRequest *)setActiveTrackIDs:(nullable NSArray<NSNumber *> *)activeTrackIDs;
 
 /**
  * Sets the text track style. The request will fail if there is no current media status.
@@ -201,7 +235,7 @@ GCK_EXPORT
  * <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)setTextTrackStyle:(GCKMediaTextTrackStyle *GCK_NULLABLE_TYPE)textTrackStyle;
+- (GCKRequest *)setTextTrackStyle:(nullable GCKMediaTextTrackStyle *)textTrackStyle;
 
 /**
  * Pauses playback of the current media item. The request will fail if there is no current media
@@ -220,7 +254,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)pauseWithCustomData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)pauseWithCustomData:(nullable id)customData;
 
 /**
  * Stops playback of the current media item. If a queue is currently loaded, it will be removed. The
@@ -240,7 +274,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)stopWithCustomData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)stopWithCustomData:(nullable id)customData;
 
 /**
  * Begins (or resumes) playback of the current media item. Playback always begins at the
@@ -259,7 +293,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)playWithCustomData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)playWithCustomData:(nullable id)customData;
 
 /**
  * Sends a request to skip the playing ad.
@@ -317,8 +351,7 @@ GCK_EXPORT
  */
 - (GCKRequest *)seekToTimeInterval:(NSTimeInterval)position
                        resumeState:(GCKMediaResumeState)resumeState
-                        customData:(id GCK_NULLABLE_TYPE)customData
-    GCK_DEPRECATED("Use seekWithOptions:");
+                        customData:(nullable id)customData GCK_DEPRECATED("Use seekWithOptions:");
 
 /**
  * Requests the list of item IDs for the queue. The results are passed to the delegate callback
@@ -349,12 +382,12 @@ GCK_EXPORT
  * @param startIndex The index of the item in the items array that should be played first.
  * @param repeatMode The repeat mode for playing the queue.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use queueLoadItems:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)queueLoadItems:(NSArray<GCKMediaQueueItem *> *)queueItems
                     startIndex:(NSUInteger)startIndex
                     repeatMode:(GCKMediaRepeatMode)repeatMode
-    GCK_DEPRECATED("Use queueLoadItems:withOptions:");
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new queue of media items.
@@ -367,13 +400,13 @@ GCK_EXPORT
  * an object that can be serialized to JSON using
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use queueLoadItems:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)queueLoadItems:(NSArray<GCKMediaQueueItem *> *)queueItems
                     startIndex:(NSUInteger)startIndex
                     repeatMode:(GCKMediaRepeatMode)repeatMode
-                    customData:(id GCK_NULLABLE_TYPE)customData
-    GCK_DEPRECATED("Use queueLoadItems:withOptions:");
+                    customData:(nullable id)customData
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new queue of media items.
@@ -390,22 +423,27 @@ GCK_EXPORT
  * an object that can be serialized to JSON using
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
- * @deprecated Use queueLoadItems:withOptions:.
+ * @deprecated Use loadMediaWithLoadRequestData:.
  */
 - (GCKRequest *)queueLoadItems:(NSArray<GCKMediaQueueItem *> *)queueItems
                     startIndex:(NSUInteger)startIndex
                   playPosition:(NSTimeInterval)playPosition
                     repeatMode:(GCKMediaRepeatMode)repeatMode
-                    customData:(id GCK_NULLABLE_TYPE)customData
-    GCK_DEPRECATED("Use queueLoadItems:withOptions:");
+                    customData:(nullable id)customData
+    GCK_DEPRECATED("Use loadMediaWithLoadRequestData:");
 
 /**
  * Loads and optionally starts playback of a new queue of media items.
  *
+ * It is recommended to use @ref loadMediaWithLoadRequestData:  instead, which is an advanced
+ * load command supporting loading a single item or a queue with additional options.
+ *
  * @param queueItems An array of GCKMediaQueueItem instances to load. Must not be <code>nil</code>
- *   or empty.
- * @param options The options which to load the queue items by as defined by
+ * or empty.
+ * @param options The load options used to load the queue items, as defined by
  *   GCKMediaQueueLoadOptions
+ *
+ * @since 4.3.1
  */
 - (GCKRequest *)queueLoadItems:(NSArray<GCKMediaQueueItem *> *)queueItems
                    withOptions:(GCKMediaQueueLoadOptions *)options;
@@ -438,7 +476,7 @@ GCK_EXPORT
  */
 - (GCKRequest *)queueInsertItems:(NSArray<GCKMediaQueueItem *> *)queueItems
                 beforeItemWithID:(NSUInteger)beforeItemID
-                      customData:(id GCK_NULLABLE_TYPE)customData;
+                      customData:(nullable id)customData;
 
 /**
  * A convenience method that inserts a single item into the queue.
@@ -482,7 +520,7 @@ GCK_EXPORT
 - (GCKRequest *)queueInsertAndPlayItem:(GCKMediaQueueItem *)item
                       beforeItemWithID:(NSUInteger)beforeItemID
                           playPosition:(NSTimeInterval)playPosition
-                            customData:(id GCK_NULLABLE_TYPE)customData;
+                            customData:(nullable id)customData;
 
 /**
  * Updates the queue.
@@ -502,7 +540,7 @@ GCK_EXPORT
  * @return The GCKRequest object for tracking this request.
  */
 - (GCKRequest *)queueUpdateItems:(NSArray<GCKMediaQueueItem *> *)queueItems
-                      customData:(id GCK_NULLABLE_TYPE)customData;
+                      customData:(nullable id)customData;
 
 /**
  * Removes a list of media items from the queue. If the queue becomes empty as a result, the current
@@ -526,7 +564,7 @@ GCK_EXPORT
  * @return The GCKRequest object for tracking this request.
  */
 - (GCKRequest *)queueRemoveItemsWithIDs:(NSArray<NSNumber *> *)itemIDs
-                             customData:(id GCK_NULLABLE_TYPE)customData;
+                             customData:(nullable id)customData;
 
 /**
  * A convenience method that removes a single item from the queue.
@@ -564,7 +602,7 @@ GCK_EXPORT
  */
 - (GCKRequest *)queueReorderItemsWithIDs:(NSArray<NSNumber *> *)queueItemIDs
                   insertBeforeItemWithID:(NSUInteger)beforeItemID
-                              customData:(id GCK_NULLABLE_TYPE)customData;
+                              customData:(nullable id)customData;
 
 /**
  * A convenience method that moves a single item in the queue.
@@ -594,8 +632,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)queueJumpToItemWithID:(NSUInteger)itemID
-                           customData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)queueJumpToItemWithID:(NSUInteger)itemID customData:(nullable id)customData;
 
 /**
  * Jumps to the item with the specified ID in the queue.
@@ -612,7 +649,7 @@ GCK_EXPORT
  */
 - (GCKRequest *)queueJumpToItemWithID:(NSUInteger)itemID
                          playPosition:(NSTimeInterval)playPosition
-                           customData:(id GCK_NULLABLE_TYPE)customData;
+                           customData:(nullable id)customData;
 
 /**
  * Moves to the next item in the queue.
@@ -653,7 +690,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)setStreamVolume:(float)volume customData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)setStreamVolume:(float)volume customData:(nullable id)customData;
 
 /**
  * Sets whether the stream is muted. The request will fail if there is no current media session.
@@ -672,7 +709,7 @@ GCK_EXPORT
  * <a href="https://goo.gl/0vd4Q2"><b>NSJSONSerialization</b></a>, or <code>nil</code>.
  * @return The GCKRequest object for tracking this request.
  */
-- (GCKRequest *)setStreamMuted:(BOOL)muted customData:(id GCK_NULLABLE_TYPE)customData;
+- (GCKRequest *)setStreamMuted:(BOOL)muted customData:(nullable id)customData;
 
 /**
  * Requests updated media status information from the receiver.
@@ -687,6 +724,26 @@ GCK_EXPORT
  * media is currently loaded.
  */
 - (NSTimeInterval)approximateStreamPosition;
+
+/**
+ * Returns the approximate start position of seekable range as calculated from the last received
+ * stream information and the elapsed wall-time since that update. Returns 0 if the channel is not
+ * connected or if no media is currently loaded. Returns @c kGCKInvalidTimeInterval if the stream is
+ * not live stream or there is no seekable range.
+ *
+ * @since 4.4.1
+ */
+- (NSTimeInterval)approximateLiveSeekableRangeStart;
+
+/**
+ * Returns the approximate end position of seekable range as calculated from the last received
+ * stream information and the elapsed wall-time since that update. Returns 0 if the channel is not
+ * connected or if no media is currently loaded. Returns @c kGCKInvalidTimeInterval if the stream is
+ * not live stream or there is no seekable range.
+ *
+ * @since 4.4.1
+ */
+- (NSTimeInterval)approximateLiveSeekableRangeEnd;
 
 @end  // GCKRemoteMediaClient
 
@@ -717,7 +774,7 @@ GCK_EXPORT
  * the player.
  */
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client
-     didUpdateMediaStatus:(GCKMediaStatus *GCK_NULLABLE_TYPE)mediaStatus;
+     didUpdateMediaStatus:(nullable GCKMediaStatus *)mediaStatus;
 
 /**
  * Called when updated media metadata has been received from the receiver.
@@ -727,7 +784,7 @@ GCK_EXPORT
  * GCKRemoteMediaClient::mediaStatus property.
  */
 - (void)remoteMediaClient:(GCKRemoteMediaClient *)client
-    didUpdateMediaMetadata:(GCKMediaMetadata *GCK_NULLABLE_TYPE)mediaMetadata;
+    didUpdateMediaMetadata:(nullable GCKMediaMetadata *)mediaMetadata;
 
 /**
  * Called when the media playback queue has been updated on the receiver.
@@ -829,9 +886,9 @@ GCK_EXPORT
  * @return An array of GCKAdBreakInfo objects representing the ad breaks for this content, or nil
  * if there are no ad breaks.
  */
-- (NSArray<GCKAdBreakInfo *> *GCK_NULLABLE_TYPE)remoteMediaClient:(GCKRemoteMediaClient *)client
-                                   shouldSetAdBreaksInMediaStatus:(GCKMediaStatus *)mediaStatus;
+- (nullable NSArray<GCKAdBreakInfo *> *)remoteMediaClient:(GCKRemoteMediaClient *)client
+                           shouldSetAdBreaksInMediaStatus:(GCKMediaStatus *)mediaStatus;
 
 @end // GCKRemoteMediaClientListener
 
-GCK_ASSUME_NONNULL_END
+NS_ASSUME_NONNULL_END

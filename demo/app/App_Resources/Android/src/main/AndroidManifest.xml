@@ -28,7 +28,7 @@
 		<activity
 			android:name="com.tns.NativeScriptActivity"
 			android:label="@string/title_activity_kimera"
-			android:configChanges="keyboardHidden|orientation|screenSize"
+			android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|locale|uiMode"
 			android:theme="@style/LaunchScreenTheme">
 
 			<meta-data android:name="SET_THEME_ON_LAUNCH" android:resource="@style/AppTheme" />
@@ -47,11 +47,9 @@
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
       </intent-filter>
-			<!--
       <meta-data
         android:name="android.support.PARENT_ACTIVITY"
-        android:value="org.nativescript.cast.CastActivity"/>
-				-->
+        android:value="com.tns.NativeScriptActivity"/>
     </activity>
 
 		<activity android:name="com.tns.ErrorReportActivity"/>

@@ -24,17 +24,12 @@ const {
   CastContext,
 } = com.google.android.gms.cast.framework;
 
-// @ts-ignore
 const MediaInfo = com.google.android.gms.cast.MediaInfo;
-// @ts-ignore
 const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
-// @ts-ignore
 const WebImage = com.google.android.gms.common.images.WebImage;
-// @ts-ignore
 const MediaTrack = com.google.android.gms.cast.MediaTrack;
 // @ts-ignore
 const ArrayList = java.util.ArrayList;
-// @ts-ignore
 const MediaStatus = com.google.android.gms.cast.MediaStatus;
 
 class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
@@ -168,6 +163,7 @@ function initSessionManagerListener(): void {
   }
 
   @Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
+  // @ts-ignore
   class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
     public owner: CastButton;
 
@@ -277,6 +273,7 @@ function initRemoteMediaClientListener(): void {
   }
 
   @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener])
+  // @ts-ignore
   class RemoteMediaClientListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener {
     public owner: CastButton;
 
@@ -372,7 +369,6 @@ export class CastButton extends CastButtonBase {
   public mMediaRouter: androidx.mediarouter.media.MediaRouter;
   public mMediaRouterCallback: androidx.mediarouter.media.MediaRouter.Callback;
   public mMediaRouteSelector: androidx.mediarouter.media.MediaRouteSelector;
-
   public channels: object;
 
   constructor() {
@@ -499,6 +495,7 @@ export class CastButton extends CastButtonBase {
       // Images
       if (mediaInfo.metadata.images && mediaInfo.metadata.images.length) {
         mediaInfo.metadata.images.forEach(img => {
+          // @ts-ignore
           const uri = android.net.Uri.parse(img.url);
           const thumb = new WebImage(uri, img.width, img.height);
           metadata.addImage(thumb);
@@ -524,6 +521,7 @@ export class CastButton extends CastButtonBase {
 
     if (mediaInfo.customData) {
       // build a JSONObject to pass to setCustomData
+      // @ts-ignore
       const customData = new org.json.JSONObject(JSON.stringify(mediaInfo.customData));
       builtMediaInfo.setCustomData(customData);
     }
@@ -551,6 +549,7 @@ export class CastButton extends CastButtonBase {
   }
 
   showController() {
+    // @ts-ignore
     const intent = new android.content.Intent(this._context, com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity.class);
     this._context.startActivity(intent);
   }
@@ -600,7 +599,6 @@ export class CastButton extends CastButtonBase {
     const drawable = a.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
     a.recycle();
 
-    // @ts-ignore
     androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
     mRouteButton.setRemoteIndicatorDrawable(drawable);
   }
