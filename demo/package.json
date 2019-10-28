@@ -9,7 +9,7 @@
     }
   },
   "dependencies": {
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.15",
     "nativescript-cast": "file:../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "0.7.0",
@@ -20,12 +20,11 @@
     "karma": "^4.0.0",
     "karma-jasmine": "^2.0.1",
     "karma-nativescript-launcher": "^0.4.0",
-    "nativescript-css-loader": "~0.26.1",
+    "karma-webpack": "3.0.5",
     "nativescript-dev-webpack": "~1.1.0",
     "tns-platform-declarations": "6.0.1",
     "tslint": "~5.16.0",
-    "typescript": "3.4.5",
-    "karma-webpack": "3.0.5"
+    "typescript": "3.4.5"
   },
   "scripts": {
     "build.plugin": "cd ../src && npm run build",
