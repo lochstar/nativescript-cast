@@ -16,8 +16,6 @@ module.exports = env => {
     const appComponents = [
         "tns-core-modules/ui/frame",
         "tns-core-modules/ui/frame/activity",
-        "nativescript-cast/cast-activity.android",
-        "nativescript-cast/cast-options-provider.android",
     ];
 
     const platform = env && (env.android && "android" || env.ios && "ios");
@@ -33,8 +31,7 @@ module.exports = env => {
 
     const {
         // The 'appPath' and 'appResourcesPath' values are fetched from
-        // the nsconfig.json configuration file
-        // when bundling with `tns run android|ios --bundle`.
+        // the nsconfig.json configuration file.
         appPath = "app",
         appResourcesPath = "app/App_Resources",
 
@@ -166,7 +163,7 @@ module.exports = env => {
         module: {
             rules: [
                 {
-                    test: nsWebpack.getEntryPathRegExp(appFullPath, entryPath),
+                    include: join(appFullPath, entryPath),
                     use: [
                         // Require all Android app components
                         platform === "android" && {
