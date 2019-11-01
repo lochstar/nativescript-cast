@@ -612,12 +612,15 @@ export class CastButton extends CastButtonBase {
     const castSession = this.mSessionManager.getCurrentCastSession();
 
     // Immediately crashes with no error ?
+    console.log('crashy');
+    /*
     castSession.setMessageReceivedCallbacks(namespace, new com.google.android.gms.cast.Cast.MessageReceivedCallback({
       onMessageReceived(param0: com.google.android.gms.cast.CastDevice, param1: string, param2: string): void {
         console.log('onMessageReceived');
         // didReceiveTextMessage(args);
       }
     }));
+    */
 
     this.channels[namespace] = true;
 
