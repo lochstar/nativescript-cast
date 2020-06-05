@@ -26,34 +26,34 @@
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
-        <StackLayout visibility="{{ canCast && hasControl ? 'visible' : 'collapsed'}}">
+        <StackLayout visibility="{{ canCast ? 'visible' : 'collapsed'}}">
           <FlexboxLayout
             orientation="horizontal"
             justifyContent="space-between"
             class="controls"
           >
             <Button
-              text="&#xff04b; Play"
+              text="&#xf04b; Play"
               tap="{{ handlePlayTap }}"
-              class="btn btn-primary"
+              class="btn btn-primary fas"
               isEnabled="{{ canCast }}"
             />
             <Button
-              text="&#xff04c; Pause"
+              text="&#xf04c; Pause"
               tap="{{ handlePauseTap }}"
-              class="btn btn-primary"
+              class="btn btn-primary fas"
               isEnabled="{{ canCast }}"
             />
             <Button
-              text="&#xff04e; Seek"
+              text="&#xf04e; Seek"
               tap="{{ handleSeekTap }}"
-              class="btn btn-primary"
+              class="btn btn-primary fas"
               isEnabled="{{ canCast }}"
             />
             <Button
-              text="&#xff04d; Stop"
+              text="&#xf04d; Stop"
               tap="{{ handleStopTap }}"
-              class="btn btn-primary"
+              class="btn btn-primary fas"
               isEnabled="{{ canCast }}"
             />
           </FlexboxLayout>
