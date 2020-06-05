@@ -28,5 +28,6 @@ publish/package
 demo/report/report.html
 demo/report/stats.json
 NOTES.md
+LOG.md
 */.migration_backup
 */.update_backup

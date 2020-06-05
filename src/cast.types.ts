@@ -11,6 +11,11 @@ export interface CastMediaInfo {
 export interface CastMediaStatus {
   activeTrackIds: number[] | null;
   playerState: PlayerState;
+
+  preloadedItemID: any;
+  loadingItemID: any;
+  currentItemID: any;
+  queueItemCount: any;
 }
 
 export interface CastTextTrack {

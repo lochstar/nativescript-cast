@@ -71,11 +71,14 @@
             isEnabled="{{ canCast }}"
           />
 
+          <Label text="Media Status" />
           <TextView
             text="{{ mediaStatusString }}"
             editable="false"
             class="media-info"
           />
+
+          <Label text="Media Info" />
           <TextView
             text="{{ mediaInfoString }}"
             editable="false"

@@ -587,6 +587,11 @@ export class CastButton extends CastButtonBase {
       status = {
         playerState,
         activeTrackIds,
+
+        preloadedItemID: null,
+        loadingItemID: null,
+        currentItemID: null,
+        queueItemCount: null,
       };
     }
     this.sendEvent(CastButtonBase.castEvent, {

@@ -27,6 +27,12 @@ declare const GCKMediaPlayerStatePaused: any;
 declare const GCKMediaPlayerStateBuffering: any;
 declare const GCKMediaPlayerStateLoading: any;
 
+declare const GCKMediaQueue: any;
+declare const GCKMediaQueueDataBuilder: any;
+declare const GCKMediaQueueDelegate: any;
+declare const GCKMediaLoadRequestData: any;
+declare const GCKMediaLoadRequestDataBuilder: any;
+
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
   public owner: CastButton;
@@ -232,7 +238,7 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
   }
 
   public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
-    // console.log('remoteMediaClientDidUpdateQueue');
+    console.log('remoteMediaClientDidUpdateQueue');
   }
 
   public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
@@ -240,18 +246,28 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
   }
 
   public didReceiveQueueItemIDs(queueItems: number[]) {
+    console.log('didReceiveQueueItemIDs');
+    console.log(queueItems);
   }
 
   public didInsertQueueItemsWithIDs(queueItems: number[]) {
+    console.log('didInsertQueueItemsWithIDs');
+    console.log(queueItems);
   }
 
   public didUpdateQueueItemsWithIDs(queueItems: number[]) {
+    console.log('didInsertQueueItemsWithIDs');
+    console.log(queueItems);
   }
 
   public didRemoveQueueItemsWithIDs(queueItems: number[]) {
+    console.log('didInsertQueueItemsWithIDs');
+    console.log(queueItems);
   }
 
   public didReceiveQueueItems(items: GCKMediaQueueItem[]) {
+    console.log('didInsertQueueItemsWithIDs');
+    console.log(items);
   }
 
   protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
@@ -281,7 +297,52 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
     return {
       activeTrackIds,
       playerState,
+
+      preloadedItemID: mediaStatus.preloadedItemID,
+      loadingItemID: mediaStatus.loadingItemID,
+      currentItemID: mediaStatus.currentItemID,
+      queueItemCount: mediaStatus.queueItemCount,
     };
+  }
+}
+
+class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
+  public static ObjCProtocols = [GCKMediaQueueDelegate];
+  public owner: CastButton;
+
+  constructor() {
+    super();
+
+    // necessary when extending TypeScript constructors
+    return global.__native(this);
+  }
+
+  mediaQueueWillChange(queue: any) {
+    console.info('mediaQueueWillChange');
+    // console.log(queue);
+  }
+  mediaQueueDidReloadItems(queue: any) {
+    console.info('mediaQueueDidReloadItems');
+    // console.log(queue);
+  }
+  didInsertItemsInRange(queue: any, range: NSRange) {
+    console.info('didInsertItemsInRange');
+    // console.log(queue);
+    console.log(range);
+  }
+  didUpdateItemsAtIndexes(queue: any, indexes: NSArray<NSNumber>) {
+    console.info('didUpdateItemsAtIndexes');
+    // console.log(queue);
+    console.log(indexes);
+  }
+  didRemoveItemsAtIndexes(queue: any, indexes: NSArray<NSNumber>) {
+    console.info('didRemoveItemsAtIndexes');
+    // console.log(queue);
+    console.log(indexes);
+  }
+  mediaQueueDidChange(queue: any) {
+    console.info('mediaQueueDidChange');
+    // console.log(queue.itemCount);
   }
 }
 
@@ -294,6 +355,8 @@ export class CastButton extends CastButtonBase {
   public mSessionManager: any;
   public mSessionManagerListener: any;
   public mRemoteMediaClientListener: any;
+
+  public mMediaQueueDelegate: any;
 
   constructor() {
     super();
@@ -315,6 +378,9 @@ export class CastButton extends CastButtonBase {
     this.mSessionManagerListener.owner = this;
     this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl;
     this.mRemoteMediaClientListener.owner = this;
+
+    this.mMediaQueueDelegate = new MediaQueueDelegate;
+    this.mMediaQueueDelegate.owner = this;
 
     this.addSessionManagerListener();
 
@@ -369,7 +435,7 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.currentCastSession.remoteMediaClient;
   }
 
-  loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
+  buildMediaInfo(mediaInfo: CastMediaInfo) {
     const metadataPrefix = 'kGCKMetadataKey';
     let metadata;
 
@@ -398,17 +464,14 @@ export class CastButton extends CastButtonBase {
       }
     }
 
-    // Build media info
+    // Include customData if defined
+    const customData = mediaInfo.customData || null;
 
-    // TODO: handle these fields
-
+    // TODO: handle textTrackStyle
     const textTrackStyle = null;
 
-    // if customData is provided in the mediaInfo, otherwise null
-    const customData = mediaInfo.customData ? mediaInfo.customData : null;
-
+    // Handle mediaTracks
     let mediaTracks = null;
-
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
       mediaTracks = NSMutableArray.arrayWithCapacity(mediaInfo.textTracks.length);
       mediaInfo.textTracks.forEach((track, index) => {
@@ -420,6 +483,7 @@ export class CastButton extends CastButtonBase {
     // Convert streamType to number value
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
 
+    // Build media info
     const builtMediaInfo = GCKMediaInformation.alloc().initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(
       mediaInfo.contentId,
       streamType,
@@ -431,13 +495,73 @@ export class CastButton extends CastButtonBase {
       customData
     );
 
+    return builtMediaInfo;
+  }
+
+  loadMedia(media: any, autoplay = true, position?: number) {
+    const isQueue = media instanceof Array;
+
+    // Add listeners to RemoteMediaclient
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
+
+    // Prepare load request
+    const requestData = GCKMediaLoadRequestDataBuilder.alloc().init();
+
+    // Create queue
+    // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_queue_data_builder
+    // queue types: https://developers.google.com/cast/docs/reference/ios/g_c_k_media_queue_data_8h#a86077ae076b4f939158e54de26ab6b12
+    if (isQueue) {
+      console.log('handle queue');
+      // Add queue event listeners
+      const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClient(remoteMediaClient);
+      mediaQueue.addDelegate(this.mMediaQueueDelegate);
+
+      const mediaQueueData = GCKMediaQueueDataBuilder.alloc().init();
+      mediaQueueData.id = 'queue-test-id';
+      mediaQueueData.name = 'A Test Queue';
+      // mediaQueueData.repeatMode =
+      // mediaQueueData.containerMetadata =
+      // mediaQueueData.startIndex =
+      // mediaQueueData.startTime =
+      // mediaQueueData.items = [];
+
+      // Create queue items
+      const queueItems = [];
+      media.forEach(mediaInfo => {
+        // Build queue item
+        const builtMediaInfo = this.buildMediaInfo(mediaInfo);
+        const builder = GCKMediaQueueItemBuilder.alloc().init();
+        builder.mediaInformation = builtMediaInfo;
+        queueItems.push(builder.build());
+      });
+
+      // Set queue items to queue data
+      mediaQueueData.items = NSArray.arrayWithArray(queueItems);
+
+      // Set built queue data to request
+      requestData.queueData = mediaQueueData.build();
+    } else {
+      console.log('handle single');
+      const builtMediaInfo = this.buildMediaInfo(media);
+      requestData.mediaInformation = builtMediaInfo;
+    }
+
+    // deprecated
+    /*
     const options = GCKMediaLoadOptions.alloc().init();
     options.autoplay = autoplay;
     options.playPosition = position;
-
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
     remoteMediaClient.loadMediaWithOptions(builtMediaInfo, options);
+    */
+
+    // Set options
+    requestData.autoplay = autoplay;
+    requestData.startTime = position;
+    // requestData.playbackRate = playbackRate;
+    // requestData.activeTrackIDs = activeTrackIDs;
+    // requestData.customData = customData;
+    remoteMediaClient.loadMediaWithLoadRequestData(requestData);
   }
 
   showController() {

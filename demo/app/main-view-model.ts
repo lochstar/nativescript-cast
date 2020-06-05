@@ -58,7 +58,7 @@ export class MainViewModel extends Observable {
     // multi-audio, subtitles not matching audio:
     // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
 
-    const media: CastMediaInfo = {
+    const mediaItem1: CastMediaInfo = {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
       streamType: 'BUFFERED',
@@ -97,7 +97,47 @@ export class MainViewModel extends Observable {
       ]
     };
 
-    this.cast.loadMedia(media);
+    const mediaItem2: CastMediaInfo = {
+      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
+      contentType: 'application/vnd.ms-sstr+xml',
+      streamType: 'BUFFERED',
+      duration: 734,
+      metadata: {
+        metadataType: 'MOVIE',
+        title: 'Tears of Steel',
+        subtitle: 'By Blender Foundation',
+        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
+        images: [
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+            width: 480,
+            height: 270,
+          },
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
+            width: 780,
+            height: 1200,
+          }
+        ]
+      },
+      textTracks: [
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+          contentType: 'text/vtt',
+          name: 'English',
+          language: 'en'
+        },
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+          contentType: 'text/vtt',
+          name: 'Spanish',
+          language: 'es'
+        }
+      ]
+    };
+
+    // this.cast.loadMedia(mediaItem1);
+    this.cast.loadMedia([mediaItem1, mediaItem2]);
   }
 
   handleShowControllerTap() {
