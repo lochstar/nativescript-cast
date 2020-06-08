@@ -13,6 +13,9 @@ import {
 const camelCase = require('lodash/fp/camelCase');
 const upperFirst = require('lodash/fp/upperFirst');
 
+declare const NSObject: any;
+
+/*
 declare const GCKUICastButton: any;
 declare const GCKDevice: any;
 declare const GCKSessionManagerListener: any;
@@ -32,6 +35,7 @@ declare const GCKMediaQueueDataBuilder: any;
 declare const GCKMediaQueueDelegate: any;
 declare const GCKMediaLoadRequestData: any;
 declare const GCKMediaLoadRequestDataBuilder: any;
+*/
 
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
