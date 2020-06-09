@@ -30,3 +30,16 @@
   border-color: #111;
   margin: 10 16;
 }
+
+.queue-list {
+
+}
+
+.queue-item {
+  background: blue;
+  color: white;
+}
+
+.queue-item-active {
+  background: orange;
+}

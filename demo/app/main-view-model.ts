@@ -1,6 +1,6 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
+import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, RepeatMode } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
@@ -12,6 +12,71 @@ export class MainViewModel extends Observable {
 
   public mediaInfoString: string;
   public mediaStatusString: string;
+
+  public mediaItems: CastMediaInfo[] = [
+    {
+      contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      contentType: 'video/mp4',
+      streamType: 'BUFFERED',
+      duration: 596,
+      metadata: {
+        metadataType: 'MOVIE',
+        title: 'Big Buck Bunny',
+        subtitle: 'By Blender Foundation',
+        description: 'Big Buck Bunny is licensed as Creative Commons Attribution 3.0.',
+        images: [
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/BigBuckBunny.jpg',
+            width: 480,
+            height: 270,
+          },
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/BigBuckBunny-780x1200.jpg',
+            width: 780,
+            height: 1200,
+          }
+        ]
+      }
+    },
+    {
+      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
+      contentType: 'application/vnd.ms-sstr+xml',
+      streamType: 'BUFFERED',
+      duration: 734,
+      metadata: {
+        metadataType: 'MOVIE',
+        title: 'Tears of Steel',
+        subtitle: 'By Blender Foundation',
+        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
+        images: [
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+            width: 480,
+            height: 270,
+          },
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
+            width: 780,
+            height: 1200,
+          }
+        ]
+      },
+      textTracks: [
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+          contentType: 'text/vtt',
+          name: 'English',
+          language: 'en'
+        },
+        {
+          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+          contentType: 'text/vtt',
+          name: 'Spanish',
+          language: 'es'
+        }
+      ]
+    },
+  ];
 
   constructor() {
     super();
@@ -45,8 +110,8 @@ export class MainViewModel extends Observable {
         this.set('mediaStatus', args.data.status);
         this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
         this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
-        const status = args.data.status as CastMediaStatus;
 
+        const status = args.data.status as CastMediaStatus;
         this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
       default:
@@ -58,86 +123,8 @@ export class MainViewModel extends Observable {
     // multi-audio, subtitles not matching audio:
     // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
 
-    const mediaItem1: CastMediaInfo = {
-      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
-      contentType: 'application/vnd.ms-sstr+xml',
-      streamType: 'BUFFERED',
-      duration: 734,
-      metadata: {
-        metadataType: 'MOVIE',
-        title: 'Tears of Steel',
-        subtitle: 'By Blender Foundation',
-        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
-        images: [
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
-            width: 480,
-            height: 270,
-          },
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
-            width: 780,
-            height: 1200,
-          }
-        ]
-      },
-      textTracks: [
-        {
-          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
-          contentType: 'text/vtt',
-          name: 'English',
-          language: 'en'
-        },
-        {
-          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
-          contentType: 'text/vtt',
-          name: 'Spanish',
-          language: 'es'
-        }
-      ]
-    };
-
-    const mediaItem2: CastMediaInfo = {
-      contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
-      contentType: 'application/vnd.ms-sstr+xml',
-      streamType: 'BUFFERED',
-      duration: 734,
-      metadata: {
-        metadataType: 'MOVIE',
-        title: 'Tears of Steel',
-        subtitle: 'By Blender Foundation',
-        description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
-        images: [
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
-            width: 480,
-            height: 270,
-          },
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/TearsOfSteel-780x1200.jpg',
-            width: 780,
-            height: 1200,
-          }
-        ]
-      },
-      textTracks: [
-        {
-          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
-          contentType: 'text/vtt',
-          name: 'English',
-          language: 'en'
-        },
-        {
-          src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
-          contentType: 'text/vtt',
-          name: 'Spanish',
-          language: 'es'
-        }
-      ]
-    };
-
     // this.cast.loadMedia(mediaItem1);
-    this.cast.loadMedia([mediaItem1, mediaItem2]);
+    this.cast.loadQueue(this.mediaItems, true, 0, RepeatMode.ALL);
   }
 
   handleShowControllerTap() {
@@ -168,5 +155,36 @@ export class MainViewModel extends Observable {
     } else {
       this.cast.setActiveTrackIds([]);
     }
+  }
+
+  handleListViewLoaded(args: EventData) {
+    const listView = <ListView>args.object;
+  }
+
+  selectItemTemplate(item, index, items) {
+    // console.log(item);
+
+    if (this.mediaStatus) {
+      console.log(index, this.mediaStatus.currentItemID);
+    }
+
+    console.log(index === this.currentItemID);
+    console.log(this.hasControl);
+    return index % 2 === 0 ? 'active' : 'inactive';
+  }
+
+  handleItemTap(args: ItemEventData) {
+    const index = args.index;
+    console.log(this.mediaItems[index].metadata.title);
+  }
+
+  handlePrevTap(args: EventData) {
+    console.log('prev');
+    this.cast.queuePreviousItem();
+  }
+
+  handleNextTap(args: EventData) {
+    console.log('next');
+    this.cast.queueNextItem();
   }
 }

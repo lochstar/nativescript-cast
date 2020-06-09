@@ -82,3 +82,23 @@ export enum CastEvent {
   onDeviceChanged = 'onDeviceChanged',
   onMediaStatusChanged = 'onMediaStatusChanged',
 }
+
+export enum QueueType {
+  ALBUM = 'ALBUM',
+  PLAYLIST = 'PLAYLIST',
+  AUDIO_BOOK = 'AUDIO_BOOK',
+  RADIO_STATION = 'RADIO_STATION',
+  PODCAST_SERIES = 'PODCAST_SERIES',
+  TV_SERIES = 'TV_SERIES',
+  VIDEO_PLAYLIST = 'VIDEO_PLAYLIST',
+  LIVE_TV = 'LIVET_V',
+  MOVIE = 'MOVIE',
+}
+
+export enum RepeatMode {
+  UNCHANGED = 'UNCHANGED',
+  OFF = 'OFF',
+  SINGLE = 'SINGLE',
+  ALL = 'ALL',
+  ALL_AND_SHUFFLE = 'ALL_AND_SHUFFLE',
+}

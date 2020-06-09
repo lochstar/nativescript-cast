@@ -57,6 +57,7 @@
               isEnabled="{{ canCast }}"
             />
           </FlexboxLayout>
+
           <Button
             text="Show controller"
             tap="{{ handleShowControllerTap }}"
@@ -68,6 +69,21 @@
             text="Switch Text Track"
             tap="{{ handleSwitchTextTrackTap }}"
             class="btn btn-primary"
+            isEnabled="{{ canCast }}"
+          />
+
+          <Label text="Queue" />
+
+          <Button
+            text="&#xf100; Prev"
+            tap="{{ handlePrevTap }}"
+            class="btn btn-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xf101; Next"
+            tap="{{ handleNextTap }}"
+            class="btn btn-primary fas"
             isEnabled="{{ canCast }}"
           />
 
