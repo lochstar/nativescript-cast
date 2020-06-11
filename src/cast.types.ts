@@ -12,10 +12,18 @@ export interface CastMediaStatus {
   activeTrackIds: number[] | null;
   playerState: PlayerState;
 
-  preloadedItemID: any;
-  loadingItemID: any;
+  idleReason: number;
+  isMuted: boolean;
+  playbackRate: number;
+  streamPosition: number;
+  volume: number;
+
   currentItemID: any;
-  queueItemCount: any;
+  loadingItemID: any;
+  preloadedItemID: any;
+
+  queueData: QueueData;
+  queueItemCount: number;
 }
 
 export interface CastTextTrack {
@@ -81,9 +89,15 @@ export enum CastEvent {
   onDeviceVolumeChanged = 'onDeviceVolumeChanged',
   onDeviceChanged = 'onDeviceChanged',
   onMediaStatusChanged = 'onMediaStatusChanged',
+
+  onDidReceiveQueueItemIDs = 'onDidReceiveQueueItemIDs',
+  onDidReceiveQueueItems = 'onDidReceiveQueueItems',
+
+  onDidUpdateQueue = 'onDidUpdateQueue',
 }
 
 export enum QueueType {
+  GENERIC = 'GENERIC',
   ALBUM = 'ALBUM',
   PLAYLIST = 'PLAYLIST',
   AUDIO_BOOK = 'AUDIO_BOOK',
@@ -91,7 +105,7 @@ export enum QueueType {
   PODCAST_SERIES = 'PODCAST_SERIES',
   TV_SERIES = 'TV_SERIES',
   VIDEO_PLAYLIST = 'VIDEO_PLAYLIST',
-  LIVE_TV = 'LIVET_V',
+  LIVE_TV = 'LIVE_TV',
   MOVIE = 'MOVIE',
 }
 
@@ -101,4 +115,24 @@ export enum RepeatMode {
   SINGLE = 'SINGLE',
   ALL = 'ALL',
   ALL_AND_SHUFFLE = 'ALL_AND_SHUFFLE',
+}
+
+export interface QueueData {
+  name: string;
+  queueID: string | number;
+  queueType: QueueType;
+  repeatMode: RepeatMode;
+  startIndex: number;
+  startTime: number;
+}
+
+export interface QueueItem {
+  mediaInformation: CastMediaInfo;
+  itemID: number;
+  autoplay: boolean;
+  startTime: number;
+  playbackDuration: number;
+  preloadTime: number;
+  activeTrackIds?: number[] | null;
+  customData?: any;
 }

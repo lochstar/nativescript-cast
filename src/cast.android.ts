@@ -8,10 +8,13 @@ import {
   CastMetadata,
   CastTextTrack,
   PlayerState,
+  RepeatMode,
 } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 const snakeCase = require('lodash/fp/snakeCase');
+
+const METADATA_PREFIX = 'KEY_';
 
 const {
   MediaRouter,
@@ -29,7 +32,12 @@ const WebImage = com.google.android.gms.common.images.WebImage;
 const MediaTrack = com.google.android.gms.cast.MediaTrack;
 // @ts-ignore
 const ArrayList = java.util.ArrayList;
+const List = java.util.List;
 const MediaStatus = com.google.android.gms.cast.MediaStatus;
+
+const MediaLoadRequestData = com.google.android.gms.cast.MediaLoadRequestData;
+const MediaQueueData = com.google.android.gms.cast.MediaQueueData;
+const MediaQueueItem = com.google.android.gms.cast.MediaQueueItem;
 
 class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -150,6 +158,37 @@ class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callbac
   }
 }
 
+class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
+  public owner: CastButton;
+
+  constructor(owner) {
+    super();
+
+    this.owner = owner;
+
+    return global.__native(this);
+  }
+
+  public onStatusUpdated() {
+    this.owner.onMediaStatusUpdate();
+  }
+
+  public onMetadataUpdated() {
+  }
+
+  public onQueueStatusUpdated() {
+  }
+
+  public onPreloadStatusUpdated() {
+  }
+
+  public onSendingRemoteMediaRequest() {
+  }
+
+  public onAdBreakStatusUpdated() {
+  }
+}
+
 interface SessionManagerListener {
   new(owner): com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
 }
@@ -260,54 +299,6 @@ function initSessionManagerListener(): void {
   SessionManagerListener = SessionManagerListenerImpl;
 }
 
-interface RemoteMediaClientListener {
-  new(owner): com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
-}
-
-let RemoteMediaClientListener: RemoteMediaClientListener;
-
-function initRemoteMediaClientListener(): void {
-  if (RemoteMediaClientListener) {
-    return;
-  }
-
-  @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener])
-  // @ts-ignore
-  class RemoteMediaClientListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener {
-    public owner: CastButton;
-
-    constructor(owner) {
-      super();
-
-      this.owner = owner;
-
-      // necessary when extending TypeScript constructors
-      return global.__native(this);
-    }
-
-    public onStatusUpdated() {
-      this.owner.onMediaStatusUpdate();
-    }
-
-    public onMetadataUpdated() {
-    }
-
-    public onQueueStatusUpdated() {
-    }
-
-    public onPreloadStatusUpdated() {
-    }
-
-    public onSendingRemoteMediaRequest() {
-    }
-
-    public onAdBreakStatusUpdated() {
-    }
-  }
-
-  RemoteMediaClientListener = RemoteMediaClientListenerImpl;
-}
-
 export class CastButton extends CastButtonBase {
   public nativeView: androidx.mediarouter.app.MediaRouteButton;
 
@@ -316,7 +307,8 @@ export class CastButton extends CastButtonBase {
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
-  public mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
+  // public mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
+  public mRemoteMediaClientCallback: com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback;
 
   public mMediaRouter: androidx.mediarouter.media.MediaRouter;
   public mMediaRouterCallback: androidx.mediarouter.media.MediaRouter.Callback;
@@ -333,7 +325,6 @@ export class CastButton extends CastButtonBase {
     const appContext = ad.getApplicationContext();
 
     initSessionManagerListener();
-    initRemoteMediaClientListener();
 
     // Create new instance of MediaRouteButton
     const button = new androidx.mediarouter.app.MediaRouteButton(this._context);
@@ -353,7 +344,8 @@ export class CastButton extends CastButtonBase {
     this.mCastContext = CastContext.getSharedInstance(appContext);
     this.mSessionManager = this.mCastContext.getSessionManager();
     this.mSessionManagerListener = new SessionManagerListener(this);
-    this.mRemoteMediaClientListener = new RemoteMediaClientListener(this);
+    // this.mRemoteMediaClientListener = new RemoteMediaClientListener(this);
+    this.mRemoteMediaClientCallback = new RemoteMediaClientCallback(this);
 
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
@@ -421,8 +413,7 @@ export class CastButton extends CastButtonBase {
     return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
   }
 
-  loadMedia(mediaInfo: CastMediaInfo, autoplay = true, position?: number) {
-    const metadataPrefix = 'KEY_';
+  buildMediaInfo(mediaInfo: CastMediaInfo) {
     let metadata;
 
     // Build metadata
@@ -435,7 +426,7 @@ export class CastButton extends CastButtonBase {
       // Add each valid metadata field
       Object.keys(mediaInfo.metadata).forEach(key => {
         if (CastButtonBase.validMetadataKeys.indexOf(key) > -1) {
-          const fixedKey = metadataPrefix + snakeCase(key).toUpperCase();
+          const fixedKey = METADATA_PREFIX + snakeCase(key).toUpperCase();
           const value = mediaInfo.metadata[key];
           metadata.putString(MediaMetadata[fixedKey], value);
         }
@@ -456,23 +447,23 @@ export class CastButton extends CastButtonBase {
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
 
     // Build media info
-    const builtMediaInfo = new MediaInfo.Builder(mediaInfo.contentId)
+    const mediaInformation = new MediaInfo.Builder(mediaInfo.contentId)
       .setContentType(mediaInfo.contentType)
       .setStreamType(MediaInfo[streamType]);
 
     if (metadata) {
-      builtMediaInfo.setMetadata(metadata);
+      mediaInformation.setMetadata(metadata);
     }
 
     if (mediaInfo.duration) {
-      builtMediaInfo.setStreamDuration(mediaInfo.duration);
+      mediaInformation.setStreamDuration(mediaInfo.duration);
     }
 
     if (mediaInfo.customData) {
       // build a JSONObject to pass to setCustomData
       // @ts-ignore
       const customData = new org.json.JSONObject(JSON.stringify(mediaInfo.customData));
-      builtMediaInfo.setCustomData(customData);
+      mediaInformation.setCustomData(customData);
     }
 
     if (mediaInfo.textTracks && mediaInfo.textTracks.length > 0) {
@@ -488,13 +479,78 @@ export class CastButton extends CastButtonBase {
         tracks.add(track);
       });
 
-      builtMediaInfo.setMediaTracks(tracks);
+      mediaInformation.setMediaTracks(tracks);
     }
+
+    return mediaInformation.build();
+  }
+
+  loadMedia(mediaInfo: CastMediaInfo, autoplay: boolean, position?: number) {
+    const builtMediaInfo = this.buildMediaInfo(mediaInfo);
 
     // Load media in to remote client
     const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
-    remoteMediaClient.load(builtMediaInfo.build(), autoplay, position);
+
+    const requestData = new MediaLoadRequestData.Builder()
+      // .setActiveTrackIds()
+      .setAutoplay(new java.lang.Boolean(autoplay))
+      // .setCredentials()
+      // .setCredentialsType()
+      .setCurrentTime(position)
+      // .setCustomData()
+      .setMediaInfo(builtMediaInfo)
+      // .setPlaybackRate()
+      .setQueueData(null);
+
+    remoteMediaClient.registerCallback(this.mRemoteMediaClientCallback);
+    remoteMediaClient.load(requestData.build());
+  }
+
+  loadQueue(mediaInfo: CastMediaInfo[], autoplay: boolean, position?: number, repeatMode?: RepeatMode) {
+    console.log('loadQueue');
+
+    // Create queue items
+    // const queueItems = [];
+    const queueItems = new ArrayList();
+    mediaInfo.forEach(mediaInfo => {
+      // Build queue item
+      const builtMediaInfo = this.buildMediaInfo(mediaInfo);
+      const queueItem = new MediaQueueItem.Builder(builtMediaInfo)
+        // .setActiveTrackIds()
+        // .setAutoplay(autoplay);
+        // .setCustomData()
+        // .setPlaybackDuration()
+        // .setPreloadTime()
+        // .setStartTime setStartTimeadTime()
+
+      queueItems.add(queueItem.build());
+    });
+
+    const queueData = new MediaQueueData.Builder()
+      // .setContainerMetadata()
+      // .setEntity()
+      .setItems(queueItems)
+      .setName('A Test Queue')
+      .setQueueId('queue-test-id');
+      // .setQueueType()
+      // .setRepeatMode()
+      // .setStartIndex()
+      // .setStartTime()
+
+    const requestData = new MediaLoadRequestData.Builder()
+      // .setActiveTrackIds()
+      .setAutoplay(new java.lang.Boolean(autoplay))
+      // .setCredentials()
+      // .setCredentialsType()
+      .setCurrentTime(position)
+      // .setCustomData()
+      // .setPlaybackRate()
+      .setQueueData(queueData.build());
+
+    // Load media in to remote client
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.registerCallback(this.mRemoteMediaClientCallback);
+    remoteMediaClient.load(requestData.build());
   }
 
   showController() {
@@ -552,6 +608,14 @@ export class CastButton extends CastButtonBase {
     mRouteButton.setRemoteIndicatorDrawable(drawable);
   }
 
+  queueNextItem() {
+    this.getRemoteMediaClient().queueNext(null);
+  }
+
+  queuePreviousItem() {
+    this.getRemoteMediaClient().queuePrev(null);
+  }
+
   onMediaStatusUpdate() {
     const mediaStatus = this.getRemoteMediaClient().getMediaStatus();
     let info = null;
@@ -584,14 +648,33 @@ export class CastButton extends CastButtonBase {
           break;
       }
 
+      const queueData = mediaStatus.getQueueData();
+
       status = {
         playerState,
         activeTrackIds,
 
-        preloadedItemID: null,
-        loadingItemID: null,
-        currentItemID: null,
-        queueItemCount: null,
+        // TODO
+        idleReason: mediaStatus.getIdleReason(),
+        isMuted: mediaStatus.isMute(),
+        playbackRate: mediaStatus.getPlaybackRate(),
+        streamPosition: mediaStatus.getStreamPosition(),
+        volume: mediaStatus.getStreamVolume(),
+
+        currentItemID: mediaStatus.getCurrentItemId(),
+        loadingItemID: mediaStatus.getLoadingItemId(),
+        preloadedItemID: mediaStatus.getPreloadedItemId(),
+
+        queueData: {
+          name: queueData.getName(),
+          queueID: queueData.getQueueId(),
+          queueType: queueData.getQueueType(),
+          repeatMode: queueData.getRepeatMode(),
+          // containerMetadata: getContainerMetadata(),
+          startIndex: queueData.getStartIndex(),
+          startTime: queueData.getStartTime(),
+        },
+        queueItemCount: mediaStatus.getQueueItemCount(),
       };
     }
     this.sendEvent(CastButtonBase.castEvent, {
