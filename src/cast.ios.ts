@@ -9,16 +9,19 @@ import {
   CastTextTrack,
   PlayerState,
   RepeatMode,
+  QueueType,
+  QueueItem,
 } from './cast.types';
 
 const camelCase = require('lodash/fp/camelCase');
 const upperFirst = require('lodash/fp/upperFirst');
 
 const METADATA_PREFIX = 'kGCKMetadataKey';
-const REPEAT_MODE_PREFIX = 'GCKMediaRepeatMode';
+// const REPEAT_MODE_PREFIX = 'GCKMediaRepeatMode';
 
 declare const NSObject: any;
 
+/*
 declare const GCKUICastButton: any;
 declare const GCKDevice: any;
 declare const GCKSessionManagerListener: any;
@@ -36,8 +39,153 @@ declare const GCKMediaPlayerStateLoading: any;
 declare const GCKMediaQueue: any;
 declare const GCKMediaQueueDataBuilder: any;
 declare const GCKMediaQueueDelegate: any;
-declare const GCKMediaLoadRequestData: any;
+// declare const GCKMediaLoadRequestData: any;
 declare const GCKMediaLoadRequestDataBuilder: any;
+*/
+
+function streamTypeNumberToString(streamType: number) {
+  switch (streamType) {
+    case 1:
+      return 'BUFFERED';
+    case 2:
+      return 'LIVE';
+    default:
+      return 'NONE';
+  }
+}
+
+function repeatModeStringToEnum(repeatMode: RepeatMode): GCKMediaRepeatMode {
+  switch (repeatMode) {
+    case RepeatMode.OFF:
+      return GCKMediaRepeatMode.Off;
+    case RepeatMode.SINGLE:
+      return GCKMediaRepeatMode.Single;
+    case RepeatMode.ALL:
+      return GCKMediaRepeatMode.All;
+    case RepeatMode.ALL_AND_SHUFFLE:
+      return GCKMediaRepeatMode.AllAndShuffle;
+    default:
+      return GCKMediaRepeatMode.Unchanged;
+  }
+}
+
+function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMode {
+  switch (repeatMode) {
+    case GCKMediaRepeatMode.Off:
+      return RepeatMode.OFF;
+    case GCKMediaRepeatMode.Single:
+      return RepeatMode.SINGLE;
+    case GCKMediaRepeatMode.All:
+      return RepeatMode.ALL;
+    case GCKMediaRepeatMode.AllAndShuffle:
+      return RepeatMode.ALL_AND_SHUFFLE;
+    default:
+      return RepeatMode.UNCHANGED;
+  }
+}
+
+function queueTypeStringToEnum(queueType: QueueType): GCKMediaQueueType {
+  switch (queueType) {
+    case QueueType.ALBUM:
+      return GCKMediaQueueType.Album;
+    case QueueType.PLAYLIST:
+      return GCKMediaQueueType.Playlist;
+    case QueueType.AUDIO_BOOK:
+      return GCKMediaQueueType.AudioBook;
+    case QueueType.RADIO_STATION:
+      return GCKMediaQueueType.RadioStation;
+    case QueueType.PODCAST_SERIES:
+      return GCKMediaQueueType.PodcastSeries;
+    case QueueType.TV_SERIES:
+      return GCKMediaQueueType.TVSeries;
+    case QueueType.VIDEO_PLAYLIST:
+      return GCKMediaQueueType.VideoPlayList;
+    case QueueType.LIVE_TV:
+      return GCKMediaQueueType.LiveTV;
+    case QueueType.MOVIE:
+      return GCKMediaQueueType.Movie;
+    default:
+      return GCKMediaQueueType.Generic;
+  }
+}
+
+function queueTypeEnumToString(queueType: GCKMediaQueueType): QueueType {
+  switch (queueType) {
+    case GCKMediaQueueType.Album:
+      return QueueType.ALBUM;
+    case GCKMediaQueueType.Playlist:
+      return QueueType.PLAYLIST;
+    case GCKMediaQueueType.AudioBook:
+      return QueueType.AUDIO_BOOK;
+    case GCKMediaQueueType.RadioStation:
+      return QueueType.RADIO_STATION;
+    case GCKMediaQueueType.PodcastSeries:
+      return QueueType.PODCAST_SERIES;
+    case GCKMediaQueueType.TVSeries:
+      return QueueType.TV_SERIES;
+    case GCKMediaQueueType.VideoPlayList:
+      return QueueType.VIDEO_PLAYLIST;
+    case GCKMediaQueueType.LiveTV:
+      return QueueType.LIVE_TV;
+    case GCKMediaQueueType.Movie:
+      return QueueType.MOVIE;
+    default:
+      return QueueType.GENERIC;
+  }
+}
+
+function convertMediaInfo(mediaInfo): CastMediaInfo {
+  if (!mediaInfo) {
+    return null;
+  }
+  const metadata = mediaInfo.metadata;
+  const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
+  const images = <any[]>ios.collections.nsArrayToJSArray(metadata.images());
+  let textTracks: CastTextTrack[] = [];
+
+  const castMetadata: CastMetadata = {
+    metadataType: metadata.metadataType,
+    images: [],
+  };
+
+  metaDataKeys.forEach(key => {
+    const fixedKey = camelCase(key.replace('kGCKMetadataKey', ''));
+    castMetadata[fixedKey] = metadata.objectForKey(key);
+  });
+
+  images.forEach(img => {
+    castMetadata.images.push({
+      url: img.URL.absoluteString,
+      width: img.width,
+      height: img.height
+    });
+  });
+
+  if (mediaInfo.mediaTracks) {
+    const tracks = <any[]>ios.collections.nsArrayToJSArray(mediaInfo.mediaTracks);
+    textTracks = tracks
+      .filter((track: any) => track.type === GCKMediaTrackType.Text)
+      .map((track) => {
+        return {
+          id: track.identifier,
+          src: track.contentIdentifier,
+          contentType: track.contentType,
+          name: track.name,
+          language: track.languageCode,
+        };
+      });
+  }
+
+  return {
+    contentId: mediaInfo.contentID,
+    streamType: streamTypeNumberToString(mediaInfo.streamType),
+    contentType: mediaInfo.contentType,
+    metadata: castMetadata,
+    duration: mediaInfo.streamDuration,
+    textTracks
+  };
+}
+
 // @ts-ignore
 class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
@@ -226,7 +374,7 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
       status = this.toCastMediaStatus(mediaStatus);
       const mediaInfo = mediaStatus.mediaInformation;
       if (mediaInfo) {
-        info = this.owner.convertMediaInfo(mediaInfo);
+        info = convertMediaInfo(mediaInfo);
       }
     }
     this.owner.sendEvent(CastButtonBase.castEvent, {
@@ -237,60 +385,108 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
     });
   }
 
-  public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata) {
-    // console.log('didUpdateMediaMetadata');
+  public remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>, beforeItemID: number): void {
+    // console.log('remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID');
+    // console.log(queueItemIDs);
   }
 
-  public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient) {
-    console.log('remoteMediaClientDidUpdateQueue');
+  public remoteMediaClientDidReceiveQueueItemIDs(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void {
+    let parsedQueueItemIDs = [];
+
+    if (queueItemIDs.count > 0) {
+      parsedQueueItemIDs = ios.collections.nsArrayToJSArray(queueItemIDs);
+    }
+
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.onDidReceiveQueueItemIDs,
+      queueItemIDs: parsedQueueItemIDs,
+      ios: this.owner.nativeView
+    });
   }
 
-  public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient) {
+  public remoteMediaClientDidReceiveQueueItems(client: GCKRemoteMediaClient, queueItems: NSArray<GCKMediaQueueItem>): void {
+    const parsedQueueItems = [];
+
+    if (queueItems.count > 0) {
+      const arr = ios.collections.nsArrayToJSArray(queueItems);
+
+      arr.forEach((item: any) => {
+        const activeTrackIds = item.activeTrackIDs
+          ? ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
+          : [];
+
+        const queueItem: QueueItem = {
+          mediaInformation: convertMediaInfo(item.mediaInformation),
+          itemID: item.itemID,
+          autoplay: item.autoplay,
+          startTime: item.startTime,
+          playbackDuration: item.playbackDuration,
+          preloadTime: item.preloadTime,
+          activeTrackIds: activeTrackIds,
+          customData: item.customData,
+        };
+        parsedQueueItems.push(queueItem);
+      });
+    }
+
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.onDidReceiveQueueItems,
+      queueItems: parsedQueueItems,
+      ios: this.owner.nativeView
+    });
+  }
+
+  public remoteMediaClientDidRemoveQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
+    console.log('remoteMediaClientDidRemoveQueueItemsWithIDs');
+    console.log(queueItems);
+  }
+
+  public remoteMediaClientDidInsertQueueItemsWithIDs(queueItems: number[]) {
+    console.log('didInremoteMediaClientDidInsertQueueItemsWithIDssertQueueItemsWithIDs');
+    console.log(queueItems);
+  }
+
+  public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient): void {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.onDidUpdateQueue,
+      ios: this.owner.nativeView
+    });
+  }
+
+  public remoteMediaClientDidUpdateQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
+    console.log('remoteMediaClientDidUpdateQueueItemsWithIDs');
+    console.log(queueItems);
+  }
+
+  public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata): void {
+    // console.log('remoteMediaClientDidUpdateMediaMetadata');
+    // console.log(mediaMetaData);
+  }
+
+  public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient): void {
     // console.log('remoteMediaClientDidUpdatePreloadStatus');
-  }
-
-  public didReceiveQueueItemIDs(queueItems: number[]) {
-    console.log('didReceiveQueueItemIDs');
-    console.log(queueItems);
-  }
-
-  public didInsertQueueItemsWithIDs(queueItems: number[]) {
-    console.log('didInsertQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public didUpdateQueueItemsWithIDs(queueItems: number[]) {
-    console.log('didInsertQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public didRemoveQueueItemsWithIDs(queueItems: number[]) {
-    console.log('didInsertQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public didReceiveQueueItems(items: GCKMediaQueueItem[]) {
-    console.log('didInsertQueueItemsWithIDs');
-    console.log(items);
   }
 
   protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
     let playerState: PlayerState = PlayerState.UNKNOWN;
     switch (mediaStatus.playerState) {
-      case GCKMediaPlayerStateIdle:
+      case GCKMediaPlayerState.Idle:
         playerState = PlayerState.IDLE;
         break;
-      case GCKMediaPlayerStatePlaying:
+      case GCKMediaPlayerState.Playing:
         playerState = PlayerState.PLAYING;
         break;
-      case GCKMediaPlayerStatePaused:
+      case GCKMediaPlayerState.Paused:
         playerState = PlayerState.PAUSED;
         break;
-      case GCKMediaPlayerStateBuffering:
+      case GCKMediaPlayerState.Buffering:
         playerState = PlayerState.BUFFERING;
         break;
-      case GCKMediaPlayerStateLoading:
+      case GCKMediaPlayerState.Loading:
         playerState = PlayerState.LOADING;
+        break;
+      default:
+        playerState = PlayerState.UNKNOWN;
         break;
     }
 
@@ -302,9 +498,25 @@ class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaCl
       activeTrackIds,
       playerState,
 
-      preloadedItemID: mediaStatus.preloadedItemID,
-      loadingItemID: mediaStatus.loadingItemID,
+      idleReason: mediaStatus.idleReason,
+      isMuted: mediaStatus.isMuted,
+      playbackRate: mediaStatus.playbackRate,
+      streamPosition: mediaStatus.streamPosition,
+      volume: mediaStatus.volume,
+
       currentItemID: mediaStatus.currentItemID,
+      loadingItemID: mediaStatus.loadingItemID,
+      preloadedItemID: mediaStatus.preloadedItemID,
+
+      queueData: {
+        name: mediaStatus.queueData.name,
+        queueID: mediaStatus.queueData.queueID,
+        queueType: queueTypeEnumToString(mediaStatus.queueData.queueType),
+        repeatMode: repeatModeEnumToString(mediaStatus.queueData.repeatMode),
+        // containerMetadata
+        startIndex: mediaStatus.queueData.startIndex,
+        startTime: mediaStatus.queueData.startTime,
+      },
       queueItemCount: mediaStatus.queueItemCount,
     };
   }
@@ -321,32 +533,40 @@ class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
     return global.__native(this);
   }
 
-  mediaQueueWillChange(queue: any) {
-    console.info('mediaQueueWillChange');
-    console.log(queue);
-  }
-  mediaQueueDidReloadItems(queue: any) {
+  mediaQueueDidReloadItems(queue: GCKMediaQueue): void {
     console.info('mediaQueueDidReloadItems');
-    console.log(queue);
+    // console.log(queue);
   }
-  didInsertItemsInRange(queue: any, range: NSRange) {
+  didInsertItemsInRange(queue: GCKMediaQueue, range: NSRange): void {
     console.info('didInsertItemsInRange');
-    console.log(queue);
+    // console.log(queue);
     console.log(range);
   }
-  didUpdateItemsAtIndexes(queue: any, indexes: NSArray<NSNumber>) {
+  didUpdateItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
     console.info('didUpdateItemsAtIndexes');
-    console.log(queue);
+    // console.log(queue);
     console.log(indexes);
   }
-  didRemoveItemsAtIndexes(queue: any, indexes: NSArray<NSNumber>) {
+  didRemoveItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
     console.info('didRemoveItemsAtIndexes');
-    console.log(queue);
+    // console.log(queue);
     console.log(indexes);
   }
-  mediaQueueDidChange(queue: any) {
-    console.info('mediaQueueDidChange');
-    console.log(queue);
+  mediaQueueWillChange(queue: GCKMediaQueue): void {
+    /*
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.mediaQueueWillChange,
+      ios: this.owner.nativeView
+    });
+    */
+  }
+  mediaQueueDidChange(queue: GCKMediaQueue) {
+    /*
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.mediaQueueChanged,
+      ios: this.owner.nativeView
+    });
+    */
   }
 }
 
@@ -372,7 +592,6 @@ export class CastButton extends CastButtonBase {
   public createNativeView(): Object {
     // Create new instance of GCKUICastButton
     const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
-    // const button = new GCKUICastButton(CGRectMake(0, 0, 24, 24));
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
@@ -467,12 +686,6 @@ export class CastButton extends CastButtonBase {
       }
     }
 
-    // Include customData if defined
-    const customData = mediaInfo.customData || null;
-
-    // TODO: handle textTrackStyle
-    const textTrackStyle = null;
-
     // Handle mediaTracks
     let mediaTracks = null;
     // let mediaTracks = NSArray.arrayWithArray([]);
@@ -480,7 +693,7 @@ export class CastButton extends CastButtonBase {
       mediaTracks = NSMutableArray.arrayWithCapacity(mediaInfo.textTracks.length);
       mediaInfo.textTracks.forEach((track, index) => {
         mediaTracks.addObject(GCKMediaTrack.alloc().initWithIdentifierContentIdentifierContentTypeTypeTextSubtypeNameLanguageCodeCustomData(
-          index + 1, track.src, track.contentType, GCKMediaTrackTypeText, GCKMediaTextTrackSubtypeSubtitles, track.name, track.language, null));
+          index + 1, track.src, track.contentType, GCKMediaTrackType.Text, GCKMediaTextTrackSubtype.Subtitles, track.name, track.language, null));
       });
     }
 
@@ -499,7 +712,8 @@ export class CastButton extends CastButtonBase {
     // mediaInformation.startAbsoluteTime = 0;
     mediaInformation.streamDuration =  mediaInfo.duration;
     mediaInformation.streamType = streamType;
-    mediaInformation.textTrackStyle = textTrackStyle;
+    // TODO: handle textTrackStyle
+    mediaInformation.textTrackStyle = null;
 
     /* deprecated
     const builtMediaInfo = GCKMediaInformation.alloc().initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(
@@ -525,15 +739,20 @@ export class CastButton extends CastButtonBase {
     // Prepare load request
     const requestData = GCKMediaLoadRequestDataBuilder.alloc().init();
 
+    // Set media information
     const builtMediaInfo = this.buildMediaInfo(media);
     requestData.mediaInformation = builtMediaInfo;
 
-    // Set options
-    requestData.autoplay = +autoplay;  // 0/1
-    requestData.startTime = position;
-    // requestData.playbackRate = playbackRate;
+    // Set other options
     // requestData.activeTrackIDs = activeTrackIDs;
+    requestData.autoplay = +autoplay;  // 0/1
+    // requestData.credentials = credentials;
+    // requestData.credentialsType = credentialsType;
     // requestData.customData = customData;
+    // requestData.playbackRate = playbackRate;
+    requestData.startTime = position;
+
+    // Load request
     remoteMediaClient.loadMediaWithLoadRequestData(requestData);
 
     // deprecated
@@ -552,6 +771,7 @@ export class CastButton extends CastButtonBase {
 
     // Add queue event listeners
     const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClient(remoteMediaClient);
+    // const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClientCacheSizeMaxFetchCount(remoteMediaClient, 50, 20);
     mediaQueue.addDelegate(this.mMediaQueueDelegate);
 
     // Create queue
@@ -567,7 +787,7 @@ export class CastButton extends CastButtonBase {
 
     // Set repeatMode
     if (repeatMode) {
-      mediaQueueData.repeatMode = this.repeatModeStringToEnum(repeatMode);
+      mediaQueueData.repeatMode = repeatModeStringToEnum(repeatMode);
     }
 
     // mediaQueueData.startIndex = startIndex;
@@ -578,15 +798,15 @@ export class CastButton extends CastButtonBase {
     media.forEach(mediaInfo => {
       // Build queue item
       const builtMediaInfo = this.buildMediaInfo(mediaInfo);
-      const builder = GCKMediaQueueItemBuilder.alloc().init();
-      // builder.activeTrackIDs = activeTrackIDs;
-      builder.autoplay = autoplay;
-      // builder.customData = customData;
-      builder.mediaInformation = builtMediaInfo;
-      // builder.playbackDuration = playbackDuration;
-      // builder.preloadTime = preloadTime;
-      // builder.startTime = startTime;
-      queueItems.push(builder.build());
+      const queueItem = GCKMediaQueueItemBuilder.alloc().init();
+      // queueItem.activeTrackIDs = activeTrackIDs;
+      queueItem.autoplay = autoplay;
+      // queueItem.customData = customData;
+      queueItem.mediaInformation = builtMediaInfo;
+      // queueItem.playbackDuration = playbackDuration;
+      // queueItem.preloadTime = preloadTime;
+      // queueItem.startTime = startTime;
+      queueItems.push(queueItem.build());
     });
 
     // Set queue items to queue data
@@ -596,16 +816,6 @@ export class CastButton extends CastButtonBase {
     const requestData = GCKMediaLoadRequestDataBuilder.alloc().init();
     requestData.queueData = mediaQueueData.build();
     remoteMediaClient.loadMediaWithLoadRequestData(requestData);
-  }
-
-  queueNextItem() {
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.queueNextItem();
-  }
-
-  queuePreviousItem() {
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.queuePreviousItem();
   }
 
   showController() {
@@ -619,7 +829,7 @@ export class CastButton extends CastButtonBase {
       return {};
     }
     const mediaInfo = remoteMediaClient.mediaStatus.mediaInformation;
-    return this.convertMediaInfo(mediaInfo);
+    return convertMediaInfo(mediaInfo);
   }
 
   pauseMedia(customData?: any) {
@@ -650,70 +860,98 @@ export class CastButton extends CastButtonBase {
     mRouteButton.tintColor = new Color(color).ios;
   }
 
-  convertMediaInfo(mediaInfo): CastMediaInfo {
-    if (!mediaInfo) {
-      return null;
-    }
-    const metadata = mediaInfo.metadata;
-    const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
-    const images = <any[]>ios.collections.nsArrayToJSArray(metadata.images());
-    let textTracks: CastTextTrack[] = [];
-
-    const castMetadata: CastMetadata = {
-      metadataType: metadata.metadataType,
-      images: [],
-    };
-
-    metaDataKeys.forEach(key => {
-      const fixedKey = camelCase(key.replace('kGCKMetadataKey', ''));
-      castMetadata[fixedKey] = metadata.objectForKey(key);
-    });
-
-    images.forEach(img => {
-      castMetadata.images.push({
-        url: img.URL.absoluteString,
-        width: img.width,
-        height: img.height
-      });
-    });
-
-    if (mediaInfo.mediaTracks) {
-      const tracks = <any[]>ios.collections.nsArrayToJSArray(mediaInfo.mediaTracks);
-      textTracks = tracks
-        .filter((track: any) => track.type === GCKMediaTrackType.Text)
-        .map((track) => {
-          return {
-            id: track.identifier,
-            src: track.contentIdentifier,
-            contentType: track.contentType,
-            name: track.name,
-            language: track.languageCode,
-          };
-        });
-    }
-
-    return {
-      contentId: mediaInfo.contentID,
-      streamType: this.streamTypeNumberToString(mediaInfo.streamType),
-      contentType: mediaInfo.contentType,
-      metadata: castMetadata,
-      duration: mediaInfo.streamDuration,
-      textTracks
-    };
+  setVolume(volume: number, customData: any) {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.setStreamVolumeCustomData(volume, customData);
   }
 
-  repeatModeStringToEnum(repeatMode: string) {
-    switch (repeatMode) {
-      case 'OFF':
-        return GCKMediaRepeatMode.Off;
-      case 'SINGLE':
-        return GCKMediaRepeatMode.Single;
-      case 'ALL':
-        return GCKMediaRepeatMode.All;
-      case 'ALL_AND_SHUFFLE':
-        return GCKMediaRepeatMode.AllAndShuffle;
-      default:
-        return GCKMediaRepeatMode.Unchanged;
-    }
+  setMuted(muted: boolean, customData: any) {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.setStreamMutedCustomData(muted, customData);
+  }
+
+  queueFetchItemIDs() {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.queueFetchItemIDs();
+  }
+
+  queueFetchItemsForIDs(queueItemIDs: number[]) {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    // @ts-ignore
+    remoteMediaClient.queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
+  }
+
+  queueInsertItems(queueItems: CastMediaInfo[], beforeItemID: number, customData: any) {
+    console.log('queueInsertItems');
+    // remoteMediaClient.queueInsertItemsBeforeItemWithIDCustomData();
+  }
+
+  queueInsertItem(item: CastMediaInfo, beforeItemID: number) {
+    console.log('queueInsertItem');
+
+    // Build queue item
+    const builtMediaInfo = this.buildMediaInfo(item);
+    const builder = GCKMediaQueueItemBuilder.alloc().init();
+    // builder.activeTrackIDs = activeTrackIDs;
+    // builder.autoplay = autoplay;
+    // builder.customData = customData;
+    builder.mediaInformation = builtMediaInfo;
+    // builder.playbackDuration = playbackDuration;
+    // builder.preloadTime = preloadTime;
+    // builder.startTime = startTime;
+
+    const mediaQueueItem = builder.build();
+
+    this.getRemoteMediaClient().queueInsertItemBeforeItemWithID(mediaQueueItem, beforeItemID || kGCKMediaQueueInvalidItemID);
+  }
+
+  queueInsertAndPlayItem(item: CastMediaInfo, beforeItemID: number, playPosition: number, customData: any) {
+    console.log('queueInsertAndPlayItem');
+    // remoteMediaClient.queueInsertAndPlayItemBeforeItemWithIDPlayPositionCustomData();
+  }
+
+  queueUpdateItems(queueItems: CastMediaInfo[], customData: any) {
+    console.log('queueUpdateItems');
+    // remoteMediaClient.queueUpdateItemsCustomData();
+  }
+
+  queueRemoveItemWithID(itemID: number) {
+    console.log('queueRemoveItemWithID');
+    // remoteMediaClient.queueRemoveItemsWithIDsCustomData();
+  }
+
+  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
+    console.log('queueRemoveItemsWithIDs');
+    // remoteMediaClient.queueRemoveItemsWithIDsCustomData();
+  }
+
+  queueReorderItemsWithIDs(queueItemIDs: number[], beforeItemID: number, customData: any) {
+    console.log('queueReorderItemsWithIDs');
+    // remoteMediaClient.queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData();
+  }
+
+  queueMoveItemWithID(itemID: number, beforeItemID: number) {
+    console.log('queueMoveItemWithID');
+    // remoteMediaClient.queueMoveItemWithIDBeforeItemWithID();
+  }
+
+  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
+    console.log('queueJumpToItemWithID');
+    // remoteMediaClient.queueJumpToItemWithIDPlayPositionCustomData();
+  }
+
+  queueNextItem() {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.queueNextItem();
+  }
+
+  queuePreviousItem() {
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.queuePreviousItem();
+  }
+
+  queueSetRepeatMode(repeatMode: RepeatMode) {
+    console.log('queueSetRepeatMode');
+    // remoteMediaClient.queueSetRepeatMode();
   }
 }
