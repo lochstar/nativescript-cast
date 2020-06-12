@@ -6,6 +6,9 @@ export interface CastMediaInfo {
   textTracks?: CastTextTrack[];
   duration?: number;
   customData?: any;
+
+  startAbsoluteTime?: number;
+  textTrackStyle?: any;
 }
 
 export interface CastMediaStatus {
@@ -118,12 +121,12 @@ export enum RepeatMode {
 }
 
 export interface QueueData {
-  name: string;
-  queueID: string | number;
-  queueType: QueueType;
-  repeatMode: RepeatMode;
-  startIndex: number;
-  startTime: number;
+  name?: string|null;
+  queueID?: string | number;
+  queueType?: QueueType;
+  repeatMode?: RepeatMode;
+  startIndex?: number;
+  startTime?: number;
 }
 
 export interface QueueItem {
@@ -134,5 +137,64 @@ export interface QueueItem {
   playbackDuration: number;
   preloadTime: number;
   activeTrackIds?: number[] | null;
+  customData?: any;
+}
+
+export interface LoadMediaOptions {
+  activeTrackIds?: number[] | null;
+  autoplay?: boolean;
+  credentials: any;
+  credentialsType: any;
+  customData?: any;
+  startTime: number;
+  playbackRate?: number;
+}
+
+export interface LoadQueueOptions {
+  activeTrackIds?: number[] | null;
+  autoplay?: boolean;
+  clientCacheSize: number | null;
+  containerMetadata?: any;
+  customData?: any;
+  items: QueueItemOptions[];
+  maxFetchCount?: number | null;
+  name?: string;
+  playbackDuration?: number;
+  preloadTime?: number;
+  queueID?: any;
+  queueType?: QueueType;
+  repeatMode: RepeatMode;
+  startIndex?: number;
+  startTime: number;
+}
+
+export interface QueueItemOptions {
+  mediaInformation: CastMediaInfo;
+  itemID?: number;
+  activeTrackIds?: number[] | null;
+  autoplay?: boolean;
+  customData?: any;
+  playbackDuration?: number;
+  preloadTime?: number;
+  startTime?: number;
+}
+
+export interface QueueInsertItemOptions {
+  item: QueueItemOptions;
+  beforeItemID?: number;
+  playPosition?: number;
+  customData?: any;
+  play?: boolean;
+}
+
+export interface QueueInsertItemsOptions {
+  items: QueueItemOptions[];
+  beforeItemID?: number;
+  playPosition?: number;
+  customData?: any;
+}
+
+export interface QueueUpdateItemsOptions {
+  items: QueueItemOptions[];
   customData?: any;
 }

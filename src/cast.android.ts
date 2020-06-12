@@ -16,6 +16,10 @@ const snakeCase = require('lodash/fp/snakeCase');
 
 const METADATA_PREFIX = 'KEY_';
 
+// @ts-ignore
+const ArrayList = java.util.ArrayList;
+const WebImage = com.google.android.gms.common.images.WebImage;
+
 const {
   MediaRouter,
   MediaRouteSelector,
@@ -25,19 +29,15 @@ const {
   CastButtonFactory,
   CastContext,
 } = com.google.android.gms.cast.framework;
-
-const MediaInfo = com.google.android.gms.cast.MediaInfo;
-const MediaMetadata = com.google.android.gms.cast.MediaMetadata;
-const WebImage = com.google.android.gms.common.images.WebImage;
-const MediaTrack = com.google.android.gms.cast.MediaTrack;
-// @ts-ignore
-const ArrayList = java.util.ArrayList;
-const List = java.util.List;
-const MediaStatus = com.google.android.gms.cast.MediaStatus;
-
-const MediaLoadRequestData = com.google.android.gms.cast.MediaLoadRequestData;
-const MediaQueueData = com.google.android.gms.cast.MediaQueueData;
-const MediaQueueItem = com.google.android.gms.cast.MediaQueueItem;
+const {
+  MediaInfo,
+  MediaLoadRequestData,
+  MediaMetadata,
+  MediaQueueData,
+  MediaQueueItem,
+  MediaStatus,
+  MediaTrack,
+} = com.google.android.gms.cast;
 
 class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
   public owner: CastButton;
@@ -307,7 +307,6 @@ export class CastButton extends CastButtonBase {
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
-  // public mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
   public mRemoteMediaClientCallback: com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback;
 
   public mMediaRouter: androidx.mediarouter.media.MediaRouter;
@@ -608,6 +607,72 @@ export class CastButton extends CastButtonBase {
     mRouteButton.setRemoteIndicatorDrawable(drawable);
   }
 
+  setVolume(volume: number, customData: any) {
+    // const remoteMediaClient = this.getRemoteMediaClient();
+    // remoteMediaClient.setStreamVolumeCustomData(volume, customData);
+  }
+
+  setMuted(muted: boolean, customData: any) {
+    // const remoteMediaClient = this.getRemoteMediaClient();
+    // remoteMediaClient.setStreamMutedCustomData(muted, customData);
+  }
+
+  queueFetchItemIDs() {
+    // const remoteMediaClient = this.getRemoteMediaClient();
+    // remoteMediaClient.queueFetchItemIDs();
+  }
+
+  queueFetchItemsForIDs(queueItemIDs: number[]) {
+    // const remoteMediaClient = this.getRemoteMediaClient();
+    // @ts-ignore
+    // remoteMediaClient.queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
+  }
+
+  queueInsertItems(queueItems: CastMediaInfo[], beforeItemID: number, customData: any) {
+    console.log('queueInsertItems');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueInsertItem(item: CastMediaInfo, beforeItemID: number) {
+    console.log('queueInsertItem');
+    // this.getRemoteMediaClient().queueInsertItemBeforeItemWithID(mediaQueueItem, beforeItemID || kGCKMediaQueueInvalidItemID);
+  }
+
+  queueInsertAndPlayItem(item: CastMediaInfo, beforeItemID: number, playPosition: number, customData: any) {
+    console.log('queueInsertAndPlayItem');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueUpdateItems(queueItems: CastMediaInfo[], customData: any) {
+    console.log('queueUpdateItems');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueRemoveItemWithID(itemID: number) {
+    console.log('queueRemoveItemWithID');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
+    console.log('queueRemoveItemsWithIDs');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueReorderItemsWithIDs(queueItemIDs: number[], beforeItemID: number, customData: any) {
+    console.log('queueReorderItemsWithIDs');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueMoveItemWithID(itemID: number, beforeItemID: number) {
+    console.log('queueMoveItemWithID');
+    // this.getRemoteMediaClient().function();
+  }
+
+  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
+    console.log('queueJumpToItemWithID');
+    // this.getRemoteMediaClient().function();
+  }
+
   queueNextItem() {
     this.getRemoteMediaClient().queueNext(null);
   }
@@ -651,8 +716,8 @@ export class CastButton extends CastButtonBase {
       const queueData = mediaStatus.getQueueData();
 
       status = {
-        playerState,
         activeTrackIds,
+        playerState,
 
         // TODO
         idleReason: mediaStatus.getIdleReason(),
@@ -668,8 +733,9 @@ export class CastButton extends CastButtonBase {
         queueData: {
           name: queueData.getName(),
           queueID: queueData.getQueueId(),
-          queueType: queueData.getQueueType(),
-          repeatMode: queueData.getRepeatMode(),
+          // TODO
+          // queueType: queueData.getQueueType(),
+          // repeatMode: queueData.getRepeatMode(),
           // containerMetadata: getContainerMetadata(),
           startIndex: queueData.getStartIndex(),
           startTime: queueData.getStartTime(),
