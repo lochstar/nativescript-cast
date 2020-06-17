@@ -87,6 +87,12 @@ export enum PlayerState {
   LOADING = 'LOADING'
 }
 
+export enum ResumeState {
+  UNCHANGED = 'UNCHANGED',
+  PLAY = 'PLAY',
+  PAUSE = 'PAUSE',
+}
+
 export enum CastEvent {
   onProviderAdded = 'onProviderAdded',
   onProviderChanged = 'onProviderChanged',

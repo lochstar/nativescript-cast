@@ -7,6 +7,7 @@ import {
   CastTextTrack,
   CastTextTrackStyle,
   RepeatMode,
+  ResumeState,
   QueueType,
   LoadMediaOptions,
   LoadQueueOptions,
@@ -69,6 +70,17 @@ export function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMo
       return RepeatMode.ALL_AND_SHUFFLE;
     default:
       return RepeatMode.UNCHANGED;
+  }
+}
+
+export function resumeStateStringToEnum(resumeState: ResumeState): GCKMediaResumeState {
+  switch (resumeState) {
+    case ResumeState.PLAY:
+      return GCKMediaResumeState.Play;
+    case ResumeState.PAUSE:
+      return GCKMediaResumeState.Pause;
+    default:
+      return GCKMediaResumeState.Unchanged;
   }
 }
 
@@ -378,7 +390,7 @@ export class CastButton extends CastButtonBase {
     return builder.build();
   }
 
-  loadMedia(media: CastMediaInfo, options: LoadMediaOptions) {
+  loadMedia(media: CastMediaInfo, options?: LoadMediaOptions) {
     // Add listeners to RemoteMediaclient
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
@@ -498,11 +510,8 @@ export class CastButton extends CastButtonBase {
     this.getRemoteMediaClient().playWithCustomData(customData);
   }
 
-  seekMedia(position: number, resumeState = 0, customData?: any) {
-    // GCKMediaControlChannelResumeState.Unchanged: 0
-    // GCKMediaControlChannelResumeState.Play: 1
-    // GCKMediaControlChannelResumeState.Pause: 2
-    this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeState, customData);
+  seekMedia(position: number, resumeState?: ResumeState, customData?: any) {
+    this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeStateStringToEnum(resumeState), customData);
   }
 
   stopMedia(customData?: any) {
@@ -582,14 +591,14 @@ export class CastButton extends CastButtonBase {
     );
   }
 
-  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
+  queueRemoveItemsWithIDs(itemIDs: number[], customData?: any) {
     this.getRemoteMediaClient().queueRemoveItemsWithIDsCustomData(
       itemIDs,
       customData
     );
   }
 
-  queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData: any) {
+  queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData?: any) {
     this.getRemoteMediaClient().queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData(
       itemIDs,
       beforeItemID || kGCKMediaQueueInvalidItemID,
@@ -597,7 +606,7 @@ export class CastButton extends CastButtonBase {
     );
   }
 
-  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
+  queueJumpToItemWithID(itemID: number, playPosition?: number, customData?: any) {
     this.getRemoteMediaClient().queueJumpToItemWithIDPlayPositionCustomData(
       itemID,
       playPosition,

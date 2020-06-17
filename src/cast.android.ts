@@ -298,7 +298,7 @@ export class CastButton extends CastButtonBase {
     return queueItem.build();
   }
 
-  loadMedia(media: CastMediaInfo, options: LoadMediaOptions) {
+  loadMedia(media: CastMediaInfo, options?: LoadMediaOptions) {
     const builtMediaInfo = this.buildMediaInfo(media);
     const requestData = new MediaLoadRequestData.Builder()
       // .setActiveTrackIds()
