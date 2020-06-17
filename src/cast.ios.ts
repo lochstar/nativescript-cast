@@ -486,10 +486,22 @@ export class CastButton extends CastButtonBase {
     const requestData = GCKMediaLoadRequestDataBuilder.new();
     requestData.queueData = mediaQueueData.build();
     remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
+
+    // Add prev/next buttons to ExpandedMediaControls
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipPrevious, 1);
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipNext, 2);
   }
 
   showController() {
     this.mCastContext.presentDefaultExpandedMediaControls();
+  }
+
+  showCastInstructions() {
+    this.mCastContext.presentCastInstructionsViewControllerOnceWithCastButton(this.nativeView);
+  }
+
+  showCastDialog() {
+    this.mCastContext.presentCastDialog();
   }
 
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
