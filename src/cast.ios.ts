@@ -377,7 +377,7 @@ export class CastButton extends CastButtonBase {
     if (options) {
       builder.autoplay = options.autoplay || true;
       builder.customData = options.customData;
-      builder.playbackDuration = options.playbackDuration;
+      builder.playbackDuration = options.playbackDuration || Infinity;
       builder.preloadTime = options.preloadTime;
       builder.startTime = options.startTime || 0;
 
