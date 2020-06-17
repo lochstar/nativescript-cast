@@ -8,7 +8,7 @@ export interface CastMediaInfo {
   customData?: any;
 
   startAbsoluteTime?: number;
-  textTrackStyle?: any;
+  textTrackStyle?: CastTextTrackStyle;
 }
 
 export interface CastMediaStatus {
@@ -35,6 +35,21 @@ export interface CastTextTrack {
   contentType: string;
   name: string;
   language: string;
+}
+
+export interface CastTextTrackStyle {
+  backgroundColor?: string;
+  customData?: any;
+  edgeColor?: any;
+  edgeType?: any;
+  fontFamily?: any;
+  fontGenericFamily?: any;
+  fontScale?: any;
+  fontStyle?: any;
+  foregroundColor?: any;
+  windowColor?: any;
+  windowRoundedCornerRadius?: any;
+  windowType?: any;
 }
 
 export interface CastMetadata {
@@ -154,7 +169,7 @@ export interface LoadQueueOptions {
   activeTrackIds?: number[] | null;
   autoplay?: boolean;
   clientCacheSize: number | null;
-  containerMetadata?: any;
+  containerMetadata?: QueueContainerMetadata;
   customData?: any;
   items: QueueItemOptions[];
   maxFetchCount?: number | null;
@@ -166,6 +181,23 @@ export interface LoadQueueOptions {
   repeatMode: RepeatMode;
   startIndex?: number;
   startTime: number;
+}
+
+export interface QueueContainerMetadata {
+  containerType: QueueContainerType;
+  title?: string;
+  sections?: any[];
+  containerDuration?: number;
+  containerImages?: {url: string, width: number, height: number}[];
+  authors?: string[];
+  narrators?: string[];
+  publisher?: string;
+  releaseDate?: string;
+}
+
+export interface QueueContainerType {
+  GENERIC: 'GENERIC';
+  AUDIO_BOOK: 'AUDIO_BOOK';
 }
 
 export interface QueueItemOptions {

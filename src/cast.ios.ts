@@ -2,15 +2,12 @@ import { ios } from 'tns-core-modules/utils/utils';
 import { Color } from 'tns-core-modules/color';
 import { CastButtonBase } from './cast.common';
 import {
-  CastEvent,
   CastMediaInfo,
-  CastMediaStatus,
   CastMetadata,
   CastTextTrack,
-  PlayerState,
+  CastTextTrackStyle,
   RepeatMode,
   QueueType,
-  QueueItem,
   LoadMediaOptions,
   LoadQueueOptions,
   QueueInsertItemOptions,
@@ -18,6 +15,9 @@ import {
   QueueUpdateItemsOptions,
   QueueItemOptions,
 } from './cast.types';
+import { SessionManagerListenerImpl } from './session-manager-listener.ios';
+import { RemoteMediaClientListenerImpl } from './remote-media-client-listener.ios';
+import { MediaQueueDelegate } from './media-queue-delegate.ios';
 
 const camelCase = require('lodash/fp/camelCase');
 const upperFirst = require('lodash/fp/upperFirst');
@@ -25,34 +25,11 @@ const upperFirst = require('lodash/fp/upperFirst');
 const METADATA_PREFIX = 'kGCKMetadataKey';
 // const REPEAT_MODE_PREFIX = 'GCKMediaRepeatMode';
 
-// declare const NSArray: any;
-// declare const NSObject: any;
-// declare const NSURL: any;
-// declare const NSMutableArray: any;
+declare const NSArray: any;
+declare const NSURL: any;
+declare const NSMutableArray: any;
 
-/*
-declare const GCKUICastButton: any;
-declare const GCKDevice: any;
-declare const GCKSessionManagerListener: any;
-declare const CGRectMake: any;
-declare const GCKCastContext: any;
-declare const GCKMediaTrackTypeText: any;
-declare const GCKMediaTextTrackSubtypeSubtitles: any;
-declare const GCKRemoteMediaClientListener: any;
-declare const GCKMediaPlayerStateIdle: any;
-declare const GCKMediaPlayerStatePlaying: any;
-declare const GCKMediaPlayerStatePaused: any;
-declare const GCKMediaPlayerStateBuffering: any;
-declare const GCKMediaPlayerStateLoading: any;
-
-declare const GCKMediaQueue: any;
-declare const GCKMediaQueueDataBuilder: any;
-declare const GCKMediaQueueDelegate: any;
-// declare const GCKMediaLoadRequestData: any;
-declare const GCKMediaLoadRequestDataBuilder: any;
-*/
-
-function streamTypeNumberToString(streamType: number) {
+export function streamTypeNumberToString(streamType: number) {
   switch (streamType) {
     case GCKMediaStreamType.Buffered:
       return 'BUFFERED';
@@ -65,7 +42,7 @@ function streamTypeNumberToString(streamType: number) {
   }
 }
 
-function repeatModeStringToEnum(repeatMode: RepeatMode): GCKMediaRepeatMode {
+export function repeatModeStringToEnum(repeatMode: RepeatMode): GCKMediaRepeatMode {
   switch (repeatMode) {
     case RepeatMode.OFF:
       return GCKMediaRepeatMode.Off;
@@ -80,7 +57,7 @@ function repeatModeStringToEnum(repeatMode: RepeatMode): GCKMediaRepeatMode {
   }
 }
 
-function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMode {
+export function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMode {
   switch (repeatMode) {
     case GCKMediaRepeatMode.Off:
       return RepeatMode.OFF;
@@ -95,7 +72,7 @@ function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMode {
   }
 }
 
-function queueTypeStringToEnum(queueType: QueueType): GCKMediaQueueType {
+export function queueTypeStringToEnum(queueType: QueueType): GCKMediaQueueType {
   switch (queueType) {
     case QueueType.ALBUM:
       return GCKMediaQueueType.Album;
@@ -120,7 +97,7 @@ function queueTypeStringToEnum(queueType: QueueType): GCKMediaQueueType {
   }
 }
 
-function queueTypeEnumToString(queueType: GCKMediaQueueType): QueueType {
+export function queueTypeEnumToString(queueType: GCKMediaQueueType): QueueType {
   switch (queueType) {
     case GCKMediaQueueType.Album:
       return QueueType.ALBUM;
@@ -145,7 +122,7 @@ function queueTypeEnumToString(queueType: GCKMediaQueueType): QueueType {
   }
 }
 
-function convertMediaInfo(mediaInfo): CastMediaInfo {
+export function convertMediaInfo(mediaInfo): CastMediaInfo {
   if (!mediaInfo) {
     return null;
   }
@@ -153,6 +130,7 @@ function convertMediaInfo(mediaInfo): CastMediaInfo {
   const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
   const images = <any[]>ios.collections.nsArrayToJSArray(metadata.images());
   let textTracks: CastTextTrack[] = [];
+  let textTrackStyle: CastTextTrackStyle = {};
 
   const castMetadata: CastMetadata = {
     metadataType: metadata.metadataType,
@@ -187,6 +165,22 @@ function convertMediaInfo(mediaInfo): CastMediaInfo {
       });
   }
 
+  if (mediaInfo.textTrackStyle) {
+    textTrackStyle = {
+      foregroundColor: mediaInfo.textTrackStyle.foregroundColor.CSSString(),
+      backgroundColor: mediaInfo.textTrackStyle.foregroundColor.CSSString(),
+      // edgeType: mediaInfo.textTrackStyle.edgeType,
+      edgeColor: mediaInfo.textTrackStyle.edgeColor.CSSString(),
+      // windowType: mediaInfo.textTrackStyle.windowType,
+      windowColor: mediaInfo.textTrackStyle.windowColor.CSSString(),
+      // windowRoundedCornerRadius: mediaInfo.textTrackStyle.windowRoundedCornerRadius,
+      fontFamily: mediaInfo.textTrackStyle.fontFamily,
+      // fontGenericFamily
+      // fontStyle
+      customData: mediaInfo.textTrackStyle.customData
+    };
+  }
+
   return {
     contentId: mediaInfo.contentID,
     streamType: streamTypeNumberToString(mediaInfo.streamType),
@@ -194,397 +188,21 @@ function convertMediaInfo(mediaInfo): CastMediaInfo {
     metadata: castMetadata,
     duration: mediaInfo.streamDuration,
     textTracks: textTracks,
-    // TODO
-    textTrackStyle: mediaInfo.textTrackStyle,
+    textTrackStyle: textTrackStyle,
   };
-}
-
-// @ts-ignore
-class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
-  public static ObjCProtocols = [GCKSessionManagerListener];
-  public owner: CastButton;
-
-  public sessionManagerWillStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionStarting,
-      session: session,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerDidStartSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionStarted,
-      session: session,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerWillStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    // console.log('willStartCastSession');
-  }
-
-  public sessionManagerDidStartCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    // console.log('didStartCastSession');
-  }
-
-  public sessionManagerWillEndSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionEnding,
-      session: session,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerDidEndSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionEnded,
-      session: session,
-      error: error,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerWillEndCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    // console.log('willEndCastSession');
-  }
-
-  public sessionManagerDidEndCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
-    // console.log('didEndCastSession');
-  }
-
-  public sessionManagerDidFailToStartSessionWithError(sessionManager: GCKSessionManager, session: GCKSession, error: NSError) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionStartFailed,
-      session: session,
-      error: error,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerDidFailToStartCastSessionWithError(sessionManager: GCKSessionManager, session: GCKCastSession, error: NSError) {
-    // console.log('didFailToStartCastSession');
-  }
-
-  public sessionManagerDidSuspendSessionWithReason(sessionManager: GCKSessionManager, session: GCKSession, reason: GCKConnectionSuspendReason) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionSuspended,
-      session: session,
-      reason: reason,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerDidSuspendCastSessionWithReason(sessionManager: GCKSessionManager, session: GCKCastSession, reason: GCKConnectionSuspendReason) {
-    // console.log('didSuspendCastSession');
-  }
-
-  public sessionManagerWillResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionResuming,
-      session: session,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerDidResumeSession(sessionManager: GCKSessionManager, session: GCKSession) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onSessionResumed,
-      session: session,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerWillResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    // console.log('willResumeCastSession');
-  }
-
-  public sessionManagerDidResumeCastSession(sessionManager: GCKSessionManager, session: GCKCastSession) {
-    // console.log('didResumeCastSession');
-  }
-
-  public sessionManagerSessionDidUpdateDevice(sessionManager: GCKSessionManager, session: GCKSession, device: GCKDevice) {
-    /*
-    const deviceJSON = {
-      id: device.uniqueID,
-      name: device.friendlyName,
-      description: device.statusText,
-      address: device.ipAddress,
-
-      deviceType: device.type,
-      category: device.category,
-      version: device.deviceVersion,
-      deviceId: device.deviceID,
-      deviceVersion: device.deviceVersion,
-      modelName: device.modelName,
-      status: device.status,
-      statusText: device.statusText,
-    };
-    */
-
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDeviceChanged,
-      session: session,
-      device: device,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKSession, volume: number) {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDeviceVolumeChanged,
-      session: session,
-      volume: volume,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public sessionManagerCastSessionDidReceiveDeviceVolumeMuted(sessionManager: GCKSessionManager, session: GCKCastSession, volume: number) {
-    // console.log('castSession: didReceiveDeviceVolume');
-  }
-
-  public sessionManagerSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKSession, statusText: string) {
-    // console.log('didReceiveDeviceStatus');
-  }
-
-  public sessionManagerCastSessionDidReceiveDeviceStatus(sessionManager: GCKSessionManager, session: GCKCastSession, statusText: string) {
-    // console.log('castSession: didReceiveDeviceStatus');
-  }
-
-  public sessionManagerDidUpdateDefaultSessionOptionsForDeviceCategory(sessionManager: GCKSessionManager, category: string) {
-    // console.log('didUpdateDefaultSessionOptionsForDeviceCategory');
-  }
-}
-// @ts-ignore
-class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
-  public static ObjCProtocols = [GCKRemoteMediaClientListener];
-  public owner: CastButton;
-
-  public remoteMediaClientDidStartMediaSessionWithID(client: GCKRemoteMediaClient, sessionId: number) {
-    // console.log('didStartMediaSessionWithID ' + sessionId);
-  }
-
-  public remoteMediaClientDidUpdateMediaStatus(client: GCKRemoteMediaClient, mediaStatus: GCKMediaStatus) {
-    // console.log('updated mediaStatus');
-    let info = null;
-    let status = null;
-
-    if (mediaStatus) {
-      status = this.toCastMediaStatus(mediaStatus);
-      const mediaInfo = mediaStatus.mediaInformation;
-      if (mediaInfo) {
-        info = convertMediaInfo(mediaInfo);
-      }
-    }
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onMediaStatusChanged,
-      status,
-      info,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>, beforeItemID: number): void {
-    // console.log('remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID');
-    // console.log(queueItemIDs);
-  }
-
-  public remoteMediaClientDidReceiveQueueItemIDs(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void {
-    let parsedQueueItemIDs = [];
-
-    if (queueItemIDs.count > 0) {
-      parsedQueueItemIDs = ios.collections.nsArrayToJSArray(queueItemIDs);
-    }
-
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDidReceiveQueueItemIDs,
-      queueItemIDs: parsedQueueItemIDs,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public remoteMediaClientDidReceiveQueueItems(client: GCKRemoteMediaClient, queueItems: NSArray<GCKMediaQueueItem>): void {
-    const parsedQueueItems = [];
-
-    if (queueItems.count > 0) {
-      const arr = ios.collections.nsArrayToJSArray(queueItems);
-
-      arr.forEach((item: any) => {
-        const activeTrackIds = item.activeTrackIDs
-          ? ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
-          : [];
-
-        const queueItem: QueueItem = {
-          mediaInformation: convertMediaInfo(item.mediaInformation),
-          itemID: item.itemID,
-          autoplay: item.autoplay,
-          startTime: item.startTime,
-          playbackDuration: item.playbackDuration,
-          preloadTime: item.preloadTime,
-          activeTrackIds: activeTrackIds,
-          customData: item.customData,
-        };
-        parsedQueueItems.push(queueItem);
-      });
-    }
-
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDidReceiveQueueItems,
-      queueItems: parsedQueueItems,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public remoteMediaClientDidRemoveQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
-    console.log('remoteMediaClientDidRemoveQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public remoteMediaClientDidInsertQueueItemsWithIDs(queueItems: number[]) {
-    console.log('didInremoteMediaClientDidInsertQueueItemsWithIDssertQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDidUpdateQueue,
-      ios: this.owner.nativeView
-    });
-  }
-
-  public remoteMediaClientDidUpdateQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
-    console.log('remoteMediaClientDidUpdateQueueItemsWithIDs');
-    console.log(queueItems);
-  }
-
-  public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata): void {
-    // console.log('remoteMediaClientDidUpdateMediaMetadata');
-    // console.log(mediaMetaData);
-  }
-
-  public remoteMediaClientDidUpdatePreloadStatus(client: GCKRemoteMediaClient): void {
-    // console.log('remoteMediaClientDidUpdatePreloadStatus');
-  }
-
-  protected toCastMediaStatus(mediaStatus: GCKMediaStatus): CastMediaStatus {
-    let playerState: PlayerState = PlayerState.UNKNOWN;
-    switch (mediaStatus.playerState) {
-      case GCKMediaPlayerState.Idle:
-        playerState = PlayerState.IDLE;
-        break;
-      case GCKMediaPlayerState.Playing:
-        playerState = PlayerState.PLAYING;
-        break;
-      case GCKMediaPlayerState.Paused:
-        playerState = PlayerState.PAUSED;
-        break;
-      case GCKMediaPlayerState.Buffering:
-        playerState = PlayerState.BUFFERING;
-        break;
-      case GCKMediaPlayerState.Loading:
-        playerState = PlayerState.LOADING;
-        break;
-      default:
-        playerState = PlayerState.UNKNOWN;
-        break;
-    }
-
-    const activeTrackIds = mediaStatus.activeTrackIDs
-      ? ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
-      : [];
-
-    let queueData = null;
-    if (mediaStatus.queueData) {
-        queueData = {
-          name: mediaStatus.queueData.name,
-          queueID: mediaStatus.queueData.queueID,
-          queueType: queueTypeEnumToString(mediaStatus.queueData.queueType),
-          repeatMode: repeatModeEnumToString(mediaStatus.queueData.repeatMode),
-          // containerMetadata
-          startIndex: mediaStatus.queueData.startIndex,
-          startTime: mediaStatus.queueData.startTime,
-        };
-    }
-
-    return {
-      activeTrackIds,
-      playerState,
-
-      idleReason: mediaStatus.idleReason,
-      isMuted: mediaStatus.isMuted,
-      playbackRate: mediaStatus.playbackRate,
-      streamPosition: mediaStatus.streamPosition,
-      volume: mediaStatus.volume,  // not working?
-
-      currentItemID: mediaStatus.currentItemID,
-      loadingItemID: mediaStatus.loadingItemID,
-      preloadedItemID: mediaStatus.preloadedItemID,
-
-      queueData: queueData,
-      queueItemCount: mediaStatus.queueItemCount,
-    };
-  }
-}
-// @ts-ignore
-class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
-  public static ObjCProtocols = [GCKMediaQueueDelegate];
-  public owner: CastButton;
-
-  constructor() {
-    super();
-
-    // necessary when extending TypeScript constructors
-    return global.__native(this);
-  }
-
-  mediaQueueDidReloadItems(queue: GCKMediaQueue): void {
-    console.info('mediaQueueDidReloadItems');
-    // console.log(queue);
-  }
-  didInsertItemsInRange(queue: GCKMediaQueue, range: NSRange): void {
-    console.info('didInsertItemsInRange');
-    // console.log(queue);
-    console.log(range);
-  }
-  didUpdateItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
-    console.info('didUpdateItemsAtIndexes');
-    // console.log(queue);
-    console.log(indexes);
-  }
-  didRemoveItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
-    console.info('didRemoveItemsAtIndexes');
-    // console.log(queue);
-    console.log(indexes);
-  }
-  mediaQueueWillChange(queue: GCKMediaQueue): void {
-    /*
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.mediaQueueWillChange,
-      ios: this.owner.nativeView
-    });
-    */
-  }
-  mediaQueueDidChange(queue: GCKMediaQueue) {
-    /*
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.mediaQueueChanged,
-      ios: this.owner.nativeView
-    });
-    */
-  }
 }
 
 export class CastButton extends CastButtonBase {
   public nativeView: GCKUICastButton;
 
-  public CastDevice: any;
+  // public CastDevice: any;
 
-  public mCastContext: any;
-  public mSessionManager: any;
-  public mSessionManagerListener: any;
-  public mRemoteMediaClientListener: any;
+  public mCastContext: GCKCastContext;
+  public mSessionManager: GCKSessionManager;
+  public mSessionManagerListener: SessionManagerListenerImpl;
+  public mRemoteMediaClientListener: RemoteMediaClientListenerImpl;
 
-  public mMediaQueueDelegate: any;
+  public mMediaQueueDelegate: MediaQueueDelegate;
 
   constructor() {
     super();
@@ -595,6 +213,7 @@ export class CastButton extends CastButtonBase {
    */
   public createNativeView(): Object {
     // Create new instance of GCKUICastButton
+    // @ts-ignore
     const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
 
     // Get cast context and session manager
@@ -611,7 +230,7 @@ export class CastButton extends CastButtonBase {
 
     this.addSessionManagerListener();
 
-    this.CastDevice = GCKDevice;
+    // this.CastDevice = GCKDevice;
 
     return button;
   }
@@ -627,7 +246,7 @@ export class CastButton extends CastButtonBase {
     // Attach the owner to nativeView.
     // When nativeView is tapped we get the owning JS object through this field.
     (<any>this.nativeView).owner = this;
-
+    // @ts-ignore
     super.initNativeView();
   }
 
@@ -646,6 +265,7 @@ export class CastButton extends CastButtonBase {
     // If you want to recycle nativeView and have modified the nativeView
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
     // you have to reset it to its initial state here.
+    // @ts-ignore
     super.disposeNativeView();
   }
 
@@ -701,6 +321,23 @@ export class CastButton extends CastButtonBase {
       });
     }
 
+    // Handle textTrackStyle
+    let textTrackStyle = null;
+    if (mediaInfo.textTrackStyle) {
+      textTrackStyle = GCKMediaTextTrackStyle.new();
+      textTrackStyle.foregroundColor = GCKColor.alloc().initWithCSSString(mediaInfo.textTrackStyle.foregroundColor);
+      textTrackStyle.backgroundColor = GCKColor.alloc().initWithCSSString(mediaInfo.textTrackStyle.backgroundColor);
+      // textTrackStyle.edgeType = GCKMediaTextTrackStyleEdgeType.DropShadow;
+      textTrackStyle.edgeColor = GCKColor.alloc().initWithCSSString(mediaInfo.textTrackStyle.edgeColor);
+      // textTrackStyle.windowType = GCKMediaTextTrackStyleWindowType.RoundedCorners;
+      textTrackStyle.windowColor = GCKColor.alloc().initWithCSSString(mediaInfo.textTrackStyle.windowColor);
+      // textTrackStyle.windowRoundedCornerRadius
+      textTrackStyle.fontFamily = mediaInfo.textTrackStyle.fontFamily;
+      // textTrackStyle.fontGenericFamily = GCKMediaTextTrackStyleFontGenericFamily.SansSerif;
+      // textTrackStyle.fontStyle = GCKMediaTextTrackStyleFontStyle.Bold;
+      textTrackStyle.customData = mediaInfo.textTrackStyle.customData;
+    }
+
     // Convert streamType to number value
     const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
 
@@ -713,8 +350,7 @@ export class CastButton extends CastButtonBase {
     mediaInformation.startAbsoluteTime = mediaInfo.startAbsoluteTime;
     mediaInformation.streamDuration = mediaInfo.duration;
     mediaInformation.streamType = streamType;
-    // TODO: handle textTrackStyle
-    mediaInformation.textTrackStyle = mediaInfo.textTrackStyle;
+    mediaInformation.textTrackStyle = textTrackStyle;
 
     return mediaInformation.build();
   }
@@ -727,12 +363,16 @@ export class CastButton extends CastButtonBase {
 
     // Options
     if (options) {
-      // builder.activeTrackIDs = options.activeTrackIds;
       builder.autoplay = options.autoplay || true;
-      // builder.customData = options.customData;
-      // builder.playbackDuration = options.playbackDuration;
-      // builder.preloadTime = options.preloadTime;
-      // builder.startTime = options.startTime;
+      builder.customData = options.customData;
+      builder.playbackDuration = options.playbackDuration;
+      builder.preloadTime = options.preloadTime;
+      builder.startTime = options.startTime || 0;
+
+      // Set active track IDs
+      if (options.activeTrackIds && options.activeTrackIds.length) {
+        builder.activeTrackIDs = NSArray.arrayWithArray(options.activeTrackIds);
+      }
     }
 
     return builder.build();
@@ -752,51 +392,24 @@ export class CastButton extends CastButtonBase {
 
     // Set other options
     if (options) {
-      // TODO
-      // requestData.activeTrackIDs = options.activeTrackIds;
       requestData.autoplay = +options.autoplay;  // 0/1
-      /*
       requestData.credentials = options.credentials;
       requestData.credentialsType = options.credentialsType;
       requestData.customData = options.customData;
       requestData.playbackRate = options.playbackRate;
-      requestData.startTime = options.startTime;
-      */
-    }
+      requestData.startTime = options.startTime || 0;
 
-    // Load request
-    remoteMediaClient.loadMediaWithLoadRequestData(requestData);
-  }
-
-  loadQueue(options: LoadQueueOptions) {
-    // Add listeners to RemoteMediaclient
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
-
-    // Add queue event listeners
-    const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClientCacheSizeMaxFetchCount(remoteMediaClient, options.clientCacheSize, options.maxFetchCount);
-    mediaQueue.addDelegate(this.mMediaQueueDelegate);
-
-    // Create queue
-    // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_queue_data_builder
-    // queue types: https://developers.google.com/cast/docs/reference/ios/g_c_k_media_queue_data_8h#a86077ae076b4f939158e54de26ab6b12
-    const mediaQueueData = GCKMediaQueueDataBuilder.new();
-
-    // Queue options
-    if (options) {
-      mediaQueueData.queueID = options.queueID;
-      mediaQueueData.name = options.name;
-      // mediaQueueData.containerMetadata = options.containerMetadata;
-      mediaQueueData.queueType = queueTypeStringToEnum(options.queueType);
-      // mediaQueueData.startIndex = options.startIndex;
-      // mediaQueueData.startTime = options.startTime;
-
-      // Set repeatMode
-      if (options.repeatMode) {
-        mediaQueueData.repeatMode = repeatModeStringToEnum(options.repeatMode);
+      // Set active track IDs
+      if (options.activeTrackIds && options.activeTrackIds.length) {
+        requestData.activeTrackIDs = NSArray.arrayWithArray(options.activeTrackIds);
       }
     }
 
+    // Load request
+    remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
+  }
+
+  loadQueue(options: LoadQueueOptions) {
     // Create queue items
     const queueItems = [];
     options.items.forEach(item => {
@@ -811,13 +424,56 @@ export class CastButton extends CastButtonBase {
       }
     });
 
+    // Create queue
+    // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_queue_data_builder
+    const mediaQueueData = GCKMediaQueueDataBuilder.new();
+
+    // Queue options
+    if (options) {
+      mediaQueueData.queueID = options.queueID;
+      mediaQueueData.name = options.name;
+      mediaQueueData.queueType = queueTypeStringToEnum(options.queueType);
+      mediaQueueData.startIndex = options.startIndex || 0;
+      mediaQueueData.startTime = options.startTime || 0;
+
+      // Set repeatMode
+      if (options.repeatMode) {
+        mediaQueueData.repeatMode = repeatModeStringToEnum(options.repeatMode);
+      }
+
+      // TODO: Set metadata
+      /*
+      if (options.containerMetadata) {
+        const containerMetadata = GCKMediaQueueContainerMetadataBuilder.new();
+        containerMetadata.containerType = options.containerMetadata.containerType;
+        containerMetadata.title = options.containerMetadata.title;
+        containerMetadata.sections = options.containerMetadata.sections;
+        containerMetadata.containerDuration = options.containerMetadata.containerDuration;
+        containerMetadata.containerImages = options.containerMetadata.containerImages;
+        containerMetadata.authors = options.containerMetadata.authors;
+        containerMetadata.narrators = options.containerMetadata.narrators;
+        containerMetadata.publisher = options.containerMetadata.publisher;
+        containerMetadata.releaseDate = options.containerMetadata.releaseDate;
+        mediaQueueData.containerMetadata = containerMetadata.build();
+      }
+      */
+    }
+
     // Set items to media queue
     mediaQueueData.items = NSArray.arrayWithArray(queueItems);
+
+    // Add listeners to RemoteMediaclient
+    const remoteMediaClient = this.getRemoteMediaClient();
+    remoteMediaClient.addListener(this.mRemoteMediaClientListener);
+
+    // Add queue event listeners
+    const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClientCacheSizeMaxFetchCount(remoteMediaClient, options.clientCacheSize, options.maxFetchCount);
+    mediaQueue.addDelegate(this.mMediaQueueDelegate);
 
     // Prepare load request and set queueData
     const requestData = GCKMediaLoadRequestDataBuilder.new();
     requestData.queueData = mediaQueueData.build();
-    remoteMediaClient.loadMediaWithLoadRequestData(requestData);
+    remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
   }
 
   showController() {
@@ -872,15 +528,25 @@ export class CastButton extends CastButtonBase {
     remoteMediaClient.setStreamMutedCustomData(muted, customData);
   }
 
+  queueNextItem() {
+    this.getRemoteMediaClient().queueNextItem();
+  }
+
+  queuePreviousItem() {
+    this.getRemoteMediaClient().queuePreviousItem();
+  }
+
+  queueSetRepeatMode(repeatMode: RepeatMode) {
+    this.getRemoteMediaClient().queueSetRepeatMode(repeatModeStringToEnum(repeatMode));
+  }
+
   queueFetchItemIDs() {
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.queueFetchItemIDs();
+    this.getRemoteMediaClient().queueFetchItemIDs();
   }
 
   queueFetchItemsForIDs(queueItemIDs: number[]) {
-    const remoteMediaClient = this.getRemoteMediaClient();
     // @ts-ignore
-    remoteMediaClient.queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
+    this.getRemoteMediaClient().queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
   }
 
   queueInsertItem(options: QueueInsertItemOptions) {
@@ -916,6 +582,29 @@ export class CastButton extends CastButtonBase {
     );
   }
 
+  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
+    this.getRemoteMediaClient().queueRemoveItemsWithIDsCustomData(
+      itemIDs,
+      customData
+    );
+  }
+
+  queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData: any) {
+    this.getRemoteMediaClient().queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData(
+      itemIDs,
+      beforeItemID || kGCKMediaQueueInvalidItemID,
+      customData
+    );
+  }
+
+  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
+    this.getRemoteMediaClient().queueJumpToItemWithIDPlayPositionCustomData(
+      itemID,
+      playPosition,
+      customData
+    );
+  }
+
   queueUpdateItems(options: QueueUpdateItemsOptions) {
     console.log('queueUpdateItems not implemented');
     /*
@@ -930,40 +619,5 @@ export class CastButton extends CastButtonBase {
       options.customData
     );
     */
-  }
-
-  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
-    this.getRemoteMediaClient().queueRemoveItemsWithIDsCustomData(
-      itemIDs,
-      customData
-    );
-  }
-
-  queueReorderItemsWithIDs(queueItemIDs: number[], beforeItemID: number, customData: any) {
-    console.log('queueReorderItemsWithIDs');
-    // this.getRemoteMediaClient().queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData();
-  }
-
-  queueMoveItemWithID(itemID: number, beforeItemID: number) {
-    console.log('queueMoveItemWithID');
-    // this.getRemoteMediaClient().queueMoveItemWithIDBeforeItemWithID();
-  }
-
-  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
-    console.log('queueJumpToItemWithID');
-    // this.getRemoteMediaClient().queueJumpToItemWithIDPlayPositionCustomData();
-  }
-
-  queueNextItem() {
-    this.getRemoteMediaClient().queueNextItem();
-  }
-
-  queuePreviousItem() {
-    this.getRemoteMediaClient().queuePreviousItem();
-  }
-
-  queueSetRepeatMode(repeatMode: RepeatMode) {
-    console.log('queueSetRepeatMode');
-    // this.getRemoteMediaClient().queueSetRepeatMode();
   }
 }

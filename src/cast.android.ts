@@ -9,7 +9,46 @@ import {
   CastTextTrack,
   PlayerState,
   RepeatMode,
+  QueueType,
+  QueueItem,
+  LoadMediaOptions,
+  LoadQueueOptions,
+  QueueInsertItemOptions,
+  QueueInsertItemsOptions,
+  QueueUpdateItemsOptions,
+  QueueItemOptions,
 } from './cast.types';
+import { MediaRouterCallback } from './media-router-callback.android';
+import { RemoteMediaClientCallback } from './remote-media-client-callback.android';
+import { SessionManagerListenerImpl } from './session-manager-listener.android';
+// import { initProgressListener } from './remote-media-client-progress-listener.android';
+
+// Session Manager Listener Interface
+interface SessionManagerListener {
+  new(owner): com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
+}
+
+let SessionManagerListener: SessionManagerListener;
+
+function initSessionManagerListener(): void {
+  if (SessionManagerListener) {
+    return;
+  }
+  SessionManagerListener = SessionManagerListenerImpl;
+}
+
+// Progress Listener Interface
+interface ProgressListener {
+  new(owner): com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener;
+}
+
+let ProgressListener: ProgressListener;
+
+export function initProgressListener(): void {
+  if (ProgressListener) {
+    return;
+  }
+}
 
 const camelCase = require('lodash/fp/camelCase');
 const snakeCase = require('lodash/fp/snakeCase');
@@ -18,6 +57,7 @@ const METADATA_PREFIX = 'KEY_';
 
 // @ts-ignore
 const ArrayList = java.util.ArrayList;
+// @ts-ignore
 const WebImage = com.google.android.gms.common.images.WebImage;
 
 const {
@@ -39,275 +79,16 @@ const {
   MediaTrack,
 } = com.google.android.gms.cast;
 
-class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
-  public owner: CastButton;
-
-  constructor(owner) {
-    super();
-
-    this.owner = owner;
-
-    return global.__native(this);
-  }
-
-  public onProviderAdded(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onProviderAdded,
-      router: router,
-      provider: provider,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onProviderChanged(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onProviderChanged,
-      router: router,
-      provider: provider,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onProviderRemoved(router: androidx.mediarouter.media.MediaRouter, provider: androidx.mediarouter.media.MediaRouter.ProviderInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onProviderRemoved,
-      router: router,
-      provider: provider,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteAdded(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onRouteAdded,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    /*
-    const d = this.owner.CastDevice.getFromBundle(route.getExtras());
-    const address = d.getIpAddress();
-
-    const deviceJSON = {
-      id: route.getId(),
-      name: route.getName(),
-      description: route.getDescription(),
-      address: address,
-
-      deviceType: route.getDeviceType(),
-      playbackType: route.getPlaybackType(),
-      volume: route.getVolume(),
-    };
-    */
-
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDeviceChanged,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRoutePresentationDisplayChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onRoutePresentationDisplayChanged,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteRemoved(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onRouteRemoved,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteSelected(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onRouteSelected,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteUnselected(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onRouteUnselected,
-      router: router,
-      route: route,
-      android: this.owner.nativeView
-    });
-  }
-
-  public onRouteVolumeChanged(router: androidx.mediarouter.media.MediaRouter, route: androidx.mediarouter.media.MediaRouter.RouteInfo): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDeviceVolumeChanged,
-      router: router,
-      route: route,
-      volume: route.getVolume() / 20,  // Android volume is 0-20, change to 0-1
-      android: this.owner.nativeView,
-    });
-  }
-}
-
-class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
-  public owner: CastButton;
-
-  constructor(owner) {
-    super();
-
-    this.owner = owner;
-
-    return global.__native(this);
-  }
-
-  public onStatusUpdated() {
-    this.owner.onMediaStatusUpdate();
-  }
-
-  public onMetadataUpdated() {
-  }
-
-  public onQueueStatusUpdated() {
-  }
-
-  public onPreloadStatusUpdated() {
-  }
-
-  public onSendingRemoteMediaRequest() {
-  }
-
-  public onAdBreakStatusUpdated() {
-  }
-}
-
-interface SessionManagerListener {
-  new(owner): com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
-}
-
-let SessionManagerListener: SessionManagerListener;
-
-function initSessionManagerListener(): void {
-  if (SessionManagerListener) {
-    return;
-  }
-
-  @Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
-  // @ts-ignore
-  class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
-    public owner: CastButton;
-
-    constructor(owner) {
-      super();
-
-      this.owner = owner;
-
-      // necessary when extending TypeScript constructors
-      return global.__native(this);
-    }
-
-    onSessionEnded(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionEnded,
-        session: session,
-        error: error,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionEnding(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionEnding,
-        session: session,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionResumeFailed(session: com.google.android.gms.cast.framework.Session, error: number) {
-      /* Ignored due to no iOS equivalent
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: 'onSessionResumeFailed',
-        session: session,
-        error: error,
-        android: this.owner.nativeView
-      });
-      */
-    }
-
-    onSessionResumed(session: com.google.android.gms.cast.framework.Session, wasSuspended: boolean) {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionResumed,
-        session: session,
-        wasSuspended: wasSuspended,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionResuming(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionResuming,
-        session: session,
-        sessionId: sessionId,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionStartFailed(session: com.google.android.gms.cast.framework.Session, error: number): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionStartFailed,
-        session: session,
-        error: error,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionStarted(session: com.google.android.gms.cast.framework.Session, sessionId: string): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionStarted,
-        session: session,
-        sessionId: sessionId,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionStarting(session: com.google.android.gms.cast.framework.Session): void {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionStarting,
-        session: session,
-        android: this.owner.nativeView
-      });
-    }
-
-    onSessionSuspended(session: com.google.android.gms.cast.framework.Session, reason: number) {
-      this.owner.sendEvent(CastButtonBase.castEvent, {
-        eventName: CastEvent.onSessionSuspended,
-        session: session,
-        reason: reason,
-        android: this.owner.nativeView
-      });
-    }
-  }
-
-  SessionManagerListener = SessionManagerListenerImpl;
-}
-
 export class CastButton extends CastButtonBase {
   public nativeView: androidx.mediarouter.app.MediaRouteButton;
 
-  public CastDevice: com.google.android.gms.cast.CastDevice;
+  // public CastDevice: com.google.android.gms.cast.CastDevice;
 
   public mCastContext: com.google.android.gms.cast.framework.CastContext;
   public mSessionManager: com.google.android.gms.cast.framework.SessionManager;
   public mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
   public mRemoteMediaClientCallback: com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback;
+  public mRemoteMediaClientProgressListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener;
 
   public mMediaRouter: androidx.mediarouter.media.MediaRouter;
   public mMediaRouterCallback: androidx.mediarouter.media.MediaRouter.Callback;
@@ -324,6 +105,7 @@ export class CastButton extends CastButtonBase {
     const appContext = ad.getApplicationContext();
 
     initSessionManagerListener();
+    // initProgressListener();
 
     // Create new instance of MediaRouteButton
     const button = new androidx.mediarouter.app.MediaRouteButton(this._context);
@@ -343,14 +125,14 @@ export class CastButton extends CastButtonBase {
     this.mCastContext = CastContext.getSharedInstance(appContext);
     this.mSessionManager = this.mCastContext.getSessionManager();
     this.mSessionManagerListener = new SessionManagerListener(this);
-    // this.mRemoteMediaClientListener = new RemoteMediaClientListener(this);
     this.mRemoteMediaClientCallback = new RemoteMediaClientCallback(this);
+    // this.mRemoteMediaClientProgressListener = new ProgressListener(this);
 
     this.addMediaRouterCallback();
     this.addSessionManagerListener();
 
     // @ts-ignore
-    this.CastDevice = com.google.android.gms.cast.CastDevice;
+    // this.CastDevice = com.google.android.gms.cast.CastDevice;
 
     return button;
   }
@@ -382,6 +164,8 @@ export class CastButton extends CastButtonBase {
 
     this.removeMediaRouterCallback();
     this.removeSessionManagerListener();
+    this.removeRemoteMediaClientCallback();
+    // this.removeProgressListener();
 
     // If you want to recycle nativeView and have modified the nativeView
     // without using Property or CssProperty (e.g. outside our property system - 'setNative' callbacks)
@@ -405,6 +189,22 @@ export class CastButton extends CastButtonBase {
 
   removeSessionManagerListener(): void {
     this.mSessionManager.removeSessionManagerListener(this.mSessionManagerListener);
+  }
+
+  addRemoteMediaClientCallback(): void {
+    this.getRemoteMediaClient().registerCallback(this.mRemoteMediaClientCallback);
+  }
+
+  removeRemoteMediaClientCallback(): void {
+    this.getRemoteMediaClient().unregisterCallback(this.mRemoteMediaClientCallback);
+  }
+
+  addProgressListenenr(): void {
+    this.getRemoteMediaClient().addProgressListener(this.mRemoteMediaClientProgressListener, 100);
+  }
+
+  removeProgressListener(): void {
+    this.getRemoteMediaClient().removeProgressListener(this.mRemoteMediaClientProgressListener);
   }
 
   // https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient
@@ -484,72 +284,90 @@ export class CastButton extends CastButtonBase {
     return mediaInformation.build();
   }
 
-  loadMedia(mediaInfo: CastMediaInfo, autoplay: boolean, position?: number) {
-    const builtMediaInfo = this.buildMediaInfo(mediaInfo);
+  buildQueueItem(options: QueueItemOptions) {
+    // Build queue item
+    const builtMediaInfo = this.buildMediaInfo(options.mediaInformation);
+    const queueItem = new MediaQueueItem.Builder(builtMediaInfo)
+    // .setActiveTrackIds()
+    .setAutoplay(options.autoplay || true);
+    // .setCustomData()
+    // .setPlaybackDuration()
+    // .setPreloadTime()
+    // .setStartTime setStartTimeadTime()
 
-    // Load media in to remote client
-    const remoteMediaClient = this.getRemoteMediaClient();
+    return queueItem.build();
+  }
 
+  loadMedia(media: CastMediaInfo, options: LoadMediaOptions) {
+    const builtMediaInfo = this.buildMediaInfo(media);
     const requestData = new MediaLoadRequestData.Builder()
       // .setActiveTrackIds()
-      .setAutoplay(new java.lang.Boolean(autoplay))
+      .setAutoplay(new java.lang.Boolean(options.autoplay))
       // .setCredentials()
       // .setCredentialsType()
-      .setCurrentTime(position)
+      .setCurrentTime(options.startTime)
       // .setCustomData()
       .setMediaInfo(builtMediaInfo)
       // .setPlaybackRate()
       .setQueueData(null);
 
-    remoteMediaClient.registerCallback(this.mRemoteMediaClientCallback);
-    remoteMediaClient.load(requestData.build());
+    // Add listeners to RemoteMediaclient
+    this.addRemoteMediaClientCallback();
+    this.addProgressListenenr();
+    // Load media in to remote client
+    this.getRemoteMediaClient().load(requestData.build());
   }
 
-  loadQueue(mediaInfo: CastMediaInfo[], autoplay: boolean, position?: number, repeatMode?: RepeatMode) {
-    console.log('loadQueue');
-
+  loadQueue(options: LoadQueueOptions) {
     // Create queue items
-    // const queueItems = [];
     const queueItems = new ArrayList();
-    mediaInfo.forEach(mediaInfo => {
-      // Build queue item
-      const builtMediaInfo = this.buildMediaInfo(mediaInfo);
-      const queueItem = new MediaQueueItem.Builder(builtMediaInfo)
-        // .setActiveTrackIds()
-        // .setAutoplay(autoplay);
-        // .setCustomData()
-        // .setPlaybackDuration()
-        // .setPreloadTime()
-        // .setStartTime setStartTimeadTime()
+    options.items.forEach(item => {
+      const queueItem = this.buildQueueItem(item);
 
-      queueItems.add(queueItem.build());
+      // Set queue items to queue data
+      if (queueItem) {
+        queueItems.add(queueItem);
+      } else {
+        console.log('queue item not built');
+        console.log(item);
+      }
     });
 
-    const queueData = new MediaQueueData.Builder()
+    // Create queue
+    const queueData = new MediaQueueData.Builder();
+
+    // Queue options
+    if (options) {
+      queueData
+      .setName(options.name)
+      .setQueueId(options.queueID);
       // .setContainerMetadata()
       // .setEntity()
-      .setItems(queueItems)
-      .setName('A Test Queue')
-      .setQueueId('queue-test-id');
-      // .setQueueType()
-      // .setRepeatMode()
-      // .setStartIndex()
-      // .setStartTime()
+      // .setQueueType(queueTypeStringToEnum(options.queueType))
+      // .setRepeatMode(repeatModeStringToEnum(options.repeatMode))
+      // .setStartIndex(options.startIndex)
+      // .setStartTime(options.startTime)
+    }
 
+    // Set items to media queue
+    queueData.setItems(queueItems);
+
+    // Add listeners to RemoteMediaclient
+    this.addRemoteMediaClientCallback();
+    // this.addProgressListenenr();
+
+    // Prepare load request and set queueData
     const requestData = new MediaLoadRequestData.Builder()
       // .setActiveTrackIds()
-      .setAutoplay(new java.lang.Boolean(autoplay))
+      .setAutoplay(new java.lang.Boolean(options.autoplay || true))
       // .setCredentials()
       // .setCredentialsType()
-      .setCurrentTime(position)
+      // .setCurrentTime(options.position)
       // .setCustomData()
       // .setPlaybackRate()
       .setQueueData(queueData.build());
 
-    // Load media in to remote client
-    const remoteMediaClient = this.getRemoteMediaClient();
-    remoteMediaClient.registerCallback(this.mRemoteMediaClientCallback);
-    remoteMediaClient.load(requestData.build());
+    this.getRemoteMediaClient().load(requestData.build());
   }
 
   showController() {
@@ -617,7 +435,21 @@ export class CastButton extends CastButtonBase {
     // remoteMediaClient.setStreamMutedCustomData(muted, customData);
   }
 
+  queueNextItem() {
+    this.getRemoteMediaClient().queueNext(null);
+  }
+
+  queuePreviousItem() {
+    this.getRemoteMediaClient().queuePrev(null);
+  }
+
+  queueSetRepeatMode(repeatMode: RepeatMode) {
+    console.log('queueSetRepeatMode');
+    // this.getRemoteMediaClient().queueSetRepeatMode(repeatModeStringToEnum(repeatMode));
+  }
+
   queueFetchItemIDs() {
+    console.log('queueFetchItemIDs');
     // const remoteMediaClient = this.getRemoteMediaClient();
     // remoteMediaClient.queueFetchItemIDs();
   }
@@ -628,28 +460,13 @@ export class CastButton extends CastButtonBase {
     // remoteMediaClient.queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
   }
 
-  queueInsertItems(queueItems: CastMediaInfo[], beforeItemID: number, customData: any) {
-    console.log('queueInsertItems');
-    // this.getRemoteMediaClient().function();
-  }
-
-  queueInsertItem(item: CastMediaInfo, beforeItemID: number) {
+  queueInsertItem(options: QueueInsertItemOptions) {
     console.log('queueInsertItem');
     // this.getRemoteMediaClient().queueInsertItemBeforeItemWithID(mediaQueueItem, beforeItemID || kGCKMediaQueueInvalidItemID);
   }
 
-  queueInsertAndPlayItem(item: CastMediaInfo, beforeItemID: number, playPosition: number, customData: any) {
-    console.log('queueInsertAndPlayItem');
-    // this.getRemoteMediaClient().function();
-  }
-
-  queueUpdateItems(queueItems: CastMediaInfo[], customData: any) {
-    console.log('queueUpdateItems');
-    // this.getRemoteMediaClient().function();
-  }
-
-  queueRemoveItemWithID(itemID: number) {
-    console.log('queueRemoveItemWithID');
+  queueInsertItems(options: QueueInsertItemsOptions) {
+    console.log('queueInsertItems');
     // this.getRemoteMediaClient().function();
   }
 
@@ -663,22 +480,14 @@ export class CastButton extends CastButtonBase {
     // this.getRemoteMediaClient().function();
   }
 
-  queueMoveItemWithID(itemID: number, beforeItemID: number) {
-    console.log('queueMoveItemWithID');
-    // this.getRemoteMediaClient().function();
-  }
-
   queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
     console.log('queueJumpToItemWithID');
     // this.getRemoteMediaClient().function();
   }
 
-  queueNextItem() {
-    this.getRemoteMediaClient().queueNext(null);
-  }
-
-  queuePreviousItem() {
-    this.getRemoteMediaClient().queuePrev(null);
+  queueUpdateItems(options: QueueUpdateItemsOptions) {
+    console.log('queueUpdateItems not implemented');
+    // this.getRemoteMediaClient().function();
   }
 
   onMediaStatusUpdate() {
@@ -719,7 +528,6 @@ export class CastButton extends CastButtonBase {
         activeTrackIds,
         playerState,
 
-        // TODO
         idleReason: mediaStatus.getIdleReason(),
         isMuted: mediaStatus.isMute(),
         playbackRate: mediaStatus.getPlaybackRate(),
