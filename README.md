@@ -54,6 +54,8 @@ const appComponents = [
 ];
 ```
 
+Alternatively you can create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
+
 ---
 
 ### iOS
@@ -215,6 +217,10 @@ const mediaInfo = {
       language: 'es'
     }
   ],
+  textTrackStyle: {
+    foregroundColor: '#0000cc',
+    backgroundColor: '#00cc00',
+  },
   customData: {
     anything: 'you like'
   }
@@ -250,23 +256,29 @@ All unlisted events are ignored. See related documentation for futher details.
 
 ### Methods
 
-- `loadMedia(mediaInfo, autoplay, position): void`
+See [cast.types](src/cast.types.ts) for method options.
+
+- `loadMedia(media: CastMediaInfo, options?: LoadMediaOptions): void`
 
   Loads the specified media.
 
-- `playMedia(customData): void`
+- `loadQueue(options: LoadQueueOptions): void`
+
+  Loads a queue of media items.
+
+- `playMedia(customData? any): void`
 
   Plays the loaded media.
 
-- `pauseMedia(customData): void`
+- `pauseMedia(customData? any): void`
 
   Pauses the loaded media.
 
-- `seekMedia(position, resumeState, customData): void`
+- `seekMedia(position: number, resumeState?: ResumeState , customData?: any): void`
 
   Seeks the loaded media to position (seconds).
 
-- `stopMedia(customData): void`
+- `stopMedia(customData? any): void`
 
   Stops the loaded media.
 
@@ -281,6 +293,46 @@ All unlisted events are ignored. See related documentation for futher details.
 - `showController(): void`
 
   Show the expanded controller.
+
+- `queueNextItem(): void`
+
+  Play the next item in the queue.
+
+- `queuePreviousItem(): void`
+
+  Play the previous item in the queue.
+
+- `queueSetRepeatMode(repeatMode: RepeatMode): void`
+
+  Set the queue repeat mode.
+
+- `queueFetchItemIDs(): void`
+
+  Fetch queue item IDs. The response is returned by the event `onDidReceiveQueueItemIDs`.
+
+- `queueFetchItemsForIDs(queueItemIDs: number[]): void`
+
+  Fetch queue item data. The response is returned by the event `onDidReceiveQueueItems`.
+
+- `queueInsertItem(options: QueueInsertItemOptions): void`
+
+  Insert a single queue item.
+
+- `queueInsertItems(options: QueueInsertItemsOptions): void`
+
+  Insert multiple queue items.
+
+- `queueRemoveItemsWithIDs(itemIDs: number[], customData?: any): void`
+
+  Remove queue items by ID.
+
+- `queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData?: any): void`
+
+  Reorder queue items by ID.
+
+- `queueJumpToItemWithID(itemID: number, playPosition?: number, customData? any): void`
+
+  Jump to queue item by ID.
 
 ### mediaInfo
 
@@ -302,5 +354,4 @@ Valid `metadata.metadataType` values.
 ## TODO
 
 - Handle `mediaTracks`.
-- Handle `textTrackStyle`.
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).

@@ -1,19 +1,50 @@
 import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, RepeatMode } from 'nativescript-cast/cast.types';
+import { Switch } from 'tns-core-modules/ui/switch';
+import {
+  CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, RepeatMode,
+  // LoadQueueOptions,
+} from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
   public hasControl: boolean;
 
+  public autoplay: boolean;
+  public beforeItemID: number;
+  public itemIDs: string;
+  public repeatMode: RepeatMode;
+
   public mediaInfo: CastMediaInfo;
   public mediaStatus: CastMediaStatus;
+  public queueItems: any;
+  public queueItemIDs: number[];
 
   public mediaInfoString: string;
   public mediaStatusString: string;
+  public queueItemsString: string;
 
   public mediaItems: CastMediaInfo[] = [
+    {
+      contentId: 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8',
+      contentType: 'video/mp4',
+      streamType: 'LIVE',
+      duration: Infinity,
+      metadata: {
+        metadataType: 'MUSIC_TRACK',
+        title: 'Double J',
+        subtitle: 'Double J Radio',
+        description: '',
+        images: [
+          {
+            url: 'https://www.abc.net.au/cm/rimage/9990024-1x1-large.jpg',
+            width: 700,
+            height: 700,
+          }
+        ]
+      }
+    },
     {
       contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       contentType: 'video/mp4',
@@ -74,7 +105,11 @@ export class MainViewModel extends Observable {
           name: 'Spanish',
           language: 'es'
         }
-      ]
+      ],
+      textTrackStyle: {
+        foregroundColor: '#0000cc',
+        backgroundColor: '#00cc00',
+      }
     },
   ];
 
@@ -84,6 +119,11 @@ export class MainViewModel extends Observable {
     this.cast = null;
     this.canCast = false;
     this.hasControl = false;
+
+    this.autoplay = true;
+    this.beforeItemID = 0;
+    this.itemIDs = '';
+    this.repeatMode = RepeatMode.ALL;
   }
 
   handleCastEvent(args): void {
@@ -106,25 +146,68 @@ export class MainViewModel extends Observable {
         console.log('volume: ' + args.data.volume);
         break;
       case CastEvent.onMediaStatusChanged:
-        this.set('mediaInfo', args.data.info);
-        this.set('mediaStatus', args.data.status);
-        this.set('mediaInfoString', JSON.stringify(args.data.info, null, '  '));
-        this.set('mediaStatusString', JSON.stringify(args.data.status, null, '  '));
-
+        const info = args.data.info as CastMediaInfo;
         const status = args.data.status as CastMediaStatus;
+
+        this.set('mediaInfo', info);
+        this.set('mediaInfoString', JSON.stringify(info, null, '  '));
+
+        this.set('mediaStatus', status);
+        this.set('mediaStatusString', JSON.stringify(status, null, '  '));
+
         this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
+        break;
+      case CastEvent.onDidReceiveQueueItemIDs:
+        this.set('queueItemIDs', args.data.queueItemIDs);
+        break;
+      case CastEvent.onDidReceiveQueueItems:
+        this.set('queueItems', args.data.queueItems);
+        this.set('queueItemsString', JSON.stringify(args.data.queueItems, null, '  '));
+        break;
+      case CastEvent.onDidUpdateQueue:
+        this.cast.queueFetchItemIDs();
         break;
       default:
         break;
     }
   }
 
-  handleLoadTap(args: EventData) {
-    // multi-audio, subtitles not matching audio:
-    // amssamples.streaming.mediaservices.windows.net/f1ee994f-fcb8-455f-a15d-07f6f2081a60/Sintel_MultiAudio.ism/manifest
+  handleAutoplaySwitchLoaded(argsloaded) {
+    const mySwitch: Switch = <Switch> argsloaded.object;
+    mySwitch.on('checkedChange', (args) => {
+      const sw: Switch = <Switch> args.object;
+      this.set('autoplay', sw.checked);
+    });
+  }
 
-    // this.cast.loadMedia(mediaItem1);
-    this.cast.loadQueue(this.mediaItems, true, 0, RepeatMode.ALL);
+  handleLoadTap(args: EventData) {
+    this.cast.loadMedia(this.mediaItems[2], {
+      autoplay: this.autoplay,
+      activeTrackIds: [1],
+      // playbackRate: 2,
+      startTime: 22,
+    });
+
+    /*
+    const items = this.mediaItems.map(item => {
+      return {
+        mediaInformation: item,
+        autoplay: autoplay
+      };
+    });
+
+    this.cast.loadQueue({
+      clientCacheSize: 25,
+      maxFetchCount: 25,
+
+      items: items,
+      name:  'Demo Queue',
+      queueID: 'demp-queue',
+      repeatMode: this.repeatMode,
+      startTime: 60,
+      startIndex: 1,
+    });
+    */
   }
 
   handleShowControllerTap() {
@@ -147,6 +230,14 @@ export class MainViewModel extends Observable {
     this.cast.stopMedia();
   }
 
+  handleSetVolumeTap() {
+    this.cast.setVolume(this.mediaStatus.volume === 1 ? 0.5 : 1);
+  }
+
+  handleMuteTap() {
+    this.cast.setMuted(!this.mediaStatus.isMuted);
+  }
+
   handleSwitchTextTrackTap() {
     if (!this.mediaStatus.activeTrackIds.length) {
       this.cast.setActiveTrackIds([1]);
@@ -157,34 +248,78 @@ export class MainViewModel extends Observable {
     }
   }
 
-  handleListViewLoaded(args: EventData) {
-    const listView = <ListView>args.object;
-  }
-
-  selectItemTemplate(item, index, items) {
-    // console.log(item);
-
-    if (this.mediaStatus) {
-      console.log(index, this.mediaStatus.currentItemID);
-    }
-
-    console.log(index === this.currentItemID);
-    console.log(this.hasControl);
-    return index % 2 === 0 ? 'active' : 'inactive';
-  }
-
-  handleItemTap(args: ItemEventData) {
-    const index = args.index;
-    console.log(this.mediaItems[index].metadata.title);
-  }
-
   handlePrevTap(args: EventData) {
-    console.log('prev');
     this.cast.queuePreviousItem();
   }
 
   handleNextTap(args: EventData) {
-    console.log('next');
     this.cast.queueNextItem();
   }
+
+  handleQueueSetRepeatMode() {
+    const newRepeat = this.mediaStatus.queueData.repeatMode === RepeatMode.ALL ? RepeatMode.ALL_AND_SHUFFLE : RepeatMode.ALL;
+    this.cast.queueSetRepeatMode(newRepeat);
+  }
+
+  handleGetQueueItemsTap(args: EventData) {
+    this.cast.queueFetchItemsForIDs(this.queueItemIDs);
+  }
+
+  handleInsertQueueItemTap() {
+    this.cast.queueInsertItem({
+      item: {
+        mediaInformation: this.mediaItems[1],
+        autoplay: this.autoplay
+      },
+      beforeItemID: this.beforeItemID,
+    });
+  }
+
+  handleInsertQueueItemsTap() {
+    const items = this.mediaItems.map(item => {
+      return {
+        mediaInformation: item,
+      };
+    });
+
+    this.cast.queueInsertItems({
+      items: items.slice(0, 2)
+    });
+  }
+
+  handleRemoveItemsTap() {
+    const ids = this.itemIDs.split(',').map(n => parseInt(n));
+    this.cast.queueRemoveItemsWithIDs(ids);
+  }
+
+  handleReorderItemsTap() {
+    const ids = this.itemIDs.split(',').map(n => parseInt(n));
+    this.cast.queueReorderItemsWithIDs(ids, this.beforeItemID);
+  }
+
+  handleJumpToItemWithID() {
+    const ids = this.itemIDs.split(',').map(n => parseInt(n));
+    this.cast.queueJumpToItemWithID(ids);
+  }
+
+  // TODO
+  handleQueueUpdateItems() {
+    const updatedItems = this.queueItems.map(item => {
+      return {
+        ...item,
+        mediaInformation: {
+          ...item.mediaInformation,
+          metadata: {
+            ...item.mediaInformation.metadata,
+            title: `${item.mediaInformation.metadata.title} Updated`
+          }
+        },
+      };
+    });
+
+    this.cast.queueUpdateItems({
+      items: updatedItems
+    });
+  }
+
 }

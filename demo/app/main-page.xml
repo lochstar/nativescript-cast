@@ -3,6 +3,8 @@
   loaded="pageLoaded"
   class="page"
   xmlns:cast="nativescript-cast"
+  xmlns:comps="components"
+  xmlns:lv="nativescript-ui-listview"
 >
   <ActionBar title="Cast Demo">
     <ActionItem
@@ -26,7 +28,10 @@
           class="btn btn-primary"
           isEnabled="{{ canCast }}"
         />
-        <StackLayout visibility="{{ canCast ? 'visible' : 'collapsed'}}">
+
+        <StackLayout
+          _visibility="{{ canCast ? 'visible' : 'collapsed'}}"
+        >
           <FlexboxLayout
             orientation="horizontal"
             justifyContent="space-between"
@@ -56,49 +61,177 @@
               class="btn btn-primary fas"
               isEnabled="{{ canCast }}"
             />
+
+            <Button
+              text="&#xf100; Prev"
+              tap="{{ handlePrevTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+            />
+            <Button
+              text="&#xf101; Next"
+              tap="{{ handleNextTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+            />
           </FlexboxLayout>
 
-          <Button
-            text="Show controller"
-            tap="{{ handleShowControllerTap }}"
-            class="btn btn-primary"
-            isEnabled="{{ canCast }}"
-          />
+          <FlexboxLayout
+            orientation="horizontal"
+            justifyContent="space-between"
+            class="controls"
+          >
+            <Button
+              text="Set Volume"
+              tap="{{ handleSetVolumeTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ canCast }}"
+            />
+            <Button
+              text="Toggle Mute"
+              tap="{{ handleMuteTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ canCast }}"
+            />
+            <Button
+              text="Show Controller"
+              tap="{{ handleShowControllerTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ canCast }}"
+            />
 
-          <Button
-            text="Switch Text Track"
-            tap="{{ handleSwitchTextTrackTap }}"
-            class="btn btn-primary"
-            isEnabled="{{ canCast }}"
-          />
+            <Button
+              text="Switch Text Track"
+              tap="{{ handleSwitchTextTrackTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ mediaInfo.textTracks.length > 0 }}"
+            />
+          </FlexboxLayout>
 
           <Label text="Queue" />
 
-          <Button
-            text="&#xf100; Prev"
-            tap="{{ handlePrevTap }}"
-            class="btn btn-primary fas"
-            isEnabled="{{ canCast }}"
+          <FlexboxLayout
+            orientation="horizontal"
+            justifyContent="space-between"
+            class="controls"
+          >
+            <Button
+              text="Get All Items"
+              tap="{{ handleGetQueueItemsTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+            />
+            <Button
+              text="Insert Item"
+              tap="{{ handleInsertQueueItemTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+            />
+
+            <Button
+              text="Insert Items"
+              tap="{{ handleInsertQueueItemsTap }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+            />
+
+            <StackLayout orientation="horizontal">
+              <Label text="Before Item ID" />
+              <TextField
+                text="{{ beforeItemID }}"
+                keyboardType="number"
+                maxLength="99"
+                width="30"
+                textAlignment="center"
+                backgroundColor="#ddd"
+              />
+            </StackLayout>
+
+            <StackLayout orientation="horizontal">
+              <Label text="Autoplay" />
+              <Switch
+                checked="{{ autoplay }}"
+                loaded="handleAutoplaySwitchLoaded"
+              />
+            </StackLayout>
+          </FlexboxLayout>
+
+          <FlexboxLayout
+            orientation="horizontal"
+            justifyContent="space-between"
+            class="controls"
+          >
+            <!--
+            <Button
+              text="Update Items"
+              tap="{{ handleQueueUpdateItems }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ queueItemIDs.length > 0 }}"
+            />
+            -->
+
+            <Button
+              text="Toggle Repeat Mode"
+              tap="{{ handleQueueSetRepeatMode }}"
+              class="btn btn-primary fas"
+              isEnabled="{{ queueItemIDs.length > 0 }}"
+            />
+
+            <StackLayout orientation="horizontal">
+              <Button
+                text="Remove Items"
+                tap="{{ handleRemoveItemsTap }}"
+                class="btn btn-primary fas"
+                isEnabled="{{ itemIDs.length > 0 }}"
+              />
+              <Button
+                text="Reorder Items"
+                tap="{{ handleReorderItemsTap }}"
+                class="btn btn-primary fas"
+                isEnabled="{{ itemIDs.length > 0 }}"
+              />
+              <Button
+                text="Jump to Item"
+                tap="{{ handleJumpToItemWithID }}"
+                class="btn btn-primary fas"
+                isEnabled="{{ itemIDs.length > 0 }}"
+              />
+
+              <Label text="Item IDs" />
+              <TextField
+                text="{{ itemIDs }}"
+                maxLength="99"
+                width="40"
+                textAlignment="center"
+                backgroundColor="#ddd"
+              />
+            </StackLayout>
+          </FlexboxLayout>
+
+          <TextView
+            text="{{ queueItemIDs }}"
+            editable="false"
+            class="json"
           />
-          <Button
-            text="&#xf101; Next"
-            tap="{{ handleNextTap }}"
-            class="btn btn-primary fas"
-            isEnabled="{{ canCast }}"
+          <TextView
+            text="{{ queueItemsString }}"
+            editable="false"
+            class="json"
+            height="200"
           />
 
           <Label text="Media Status" />
           <TextView
             text="{{ mediaStatusString }}"
             editable="false"
-            class="media-info"
+            class="json"
           />
 
           <Label text="Media Info" />
           <TextView
             text="{{ mediaInfoString }}"
             editable="false"
-            class="media-info"
+            class="json"
           />
         </StackLayout>
       </StackLayout>
