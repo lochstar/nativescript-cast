@@ -181,18 +181,19 @@ export class MainViewModel extends Observable {
   }
 
   handleLoadTap(args: EventData) {
+    /*
     this.cast.loadMedia(this.mediaItems[2], {
       autoplay: this.autoplay,
       activeTrackIds: [1],
       // playbackRate: 2,
       startTime: 22,
     });
+    */
 
-    /*
     const items = this.mediaItems.map(item => {
       return {
         mediaInformation: item,
-        autoplay: autoplay
+        autoplay: this.autoplay
       };
     });
 
@@ -207,7 +208,6 @@ export class MainViewModel extends Observable {
       startTime: 60,
       startIndex: 1,
     });
-    */
   }
 
   handleShowControllerTap() {
