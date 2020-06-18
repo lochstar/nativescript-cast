@@ -10,10 +10,12 @@
   font-weight: 900;
 }
 
+ActionBar {
+  color: #fff;
+}
+
 .page {
-  margin: 10 0;
-  /* background-color: #111; */
-  /* color: #ccc; */
+  /* margin: 10 0; */
 }
 
 .controls {

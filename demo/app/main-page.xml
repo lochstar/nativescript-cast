@@ -3,17 +3,15 @@
   loaded="pageLoaded"
   class="page"
   xmlns:cast="nativescript-cast"
-  xmlns:comps="components"
-  xmlns:lv="nativescript-ui-listview"
 >
   <ActionBar title="Cast Demo">
     <ActionItem
       ios.position="right"
-      android:visibility="{{ castVisibility }}"
     >
       <StackLayout>
         <cast:CastButton
           id="cast"
+          color="#ffffff"
           cast="{{ handleCastEvent }}"
         />
       </StackLayout>
@@ -94,17 +92,35 @@
               isEnabled="{{ canCast }}"
             />
             <Button
+              text="Switch Text Track"
+              tap="{{ handleSwitchTextTrackTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ mediaInfo.textTracks.length > 0 }}"
+            />
+          </FlexboxLayout>
+
+          <FlexboxLayout
+            orientation="horizontal"
+            justifyContent="space-between"
+            class="controls ui"
+          >
+            <Button
               text="Show Controller"
               tap="{{ handleShowControllerTap }}"
               class="btn btn-primary"
               isEnabled="{{ canCast }}"
             />
-
             <Button
-              text="Switch Text Track"
-              tap="{{ handleSwitchTextTrackTap }}"
+              text="Show Instructions"
+              tap="{{ handleShowInstructionsTap }}"
               class="btn btn-primary"
-              isEnabled="{{ mediaInfo.textTracks.length > 0 }}"
+              isEnabled="{{ hasCast }}"
+            />
+            <Button
+              text="Show Dialog"
+              tap="{{ handleShowDialogTap }}"
+              class="btn btn-primary"
+              isEnabled="{{ hasCast }}"
             />
           </FlexboxLayout>
 

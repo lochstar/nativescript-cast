@@ -294,6 +294,14 @@ See [cast.types](src/cast.types.ts) for method options.
 
   Show the expanded controller.
 
+- `showCastInstructions(title: string, singleTime: boolean): void`
+
+  Shows the Cast instructions overlay.
+
+- `showCastDialog(): void`
+
+  Show the Cast destination dialog.
+
 - `queueNextItem(): void`
 
   Play the next item in the queue.

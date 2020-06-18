@@ -9,8 +9,6 @@ import {
   CastTextTrack,
   PlayerState,
   RepeatMode,
-  QueueType,
-  QueueItem,
   LoadMediaOptions,
   LoadQueueOptions,
   QueueInsertItemOptions,
@@ -22,6 +20,8 @@ import { MediaRouterCallback } from './media-router-callback.android';
 import { RemoteMediaClientCallback } from './remote-media-client-callback.android';
 import { SessionManagerListenerImpl } from './session-manager-listener.android';
 // import { initProgressListener } from './remote-media-client-progress-listener.android';
+
+declare var android: any;
 
 // Session Manager Listener Interface
 interface SessionManagerListener {
@@ -207,7 +207,6 @@ export class CastButton extends CastButtonBase {
     this.getRemoteMediaClient().removeProgressListener(this.mRemoteMediaClientProgressListener);
   }
 
-  // https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/RemoteMediaClient
   getRemoteMediaClient() {
     return this.mSessionManager.getCurrentCastSession().getRemoteMediaClient();
   }
@@ -376,6 +375,22 @@ export class CastButton extends CastButtonBase {
     this._context.startActivity(intent);
   }
 
+  showCastInstructions(title: string = 'Touch to cast media to your TV', singleTime: boolean) {
+    const overlay = new com.google.android.gms.cast.framework.IntroductoryOverlay.Builder(this._context, this.getNativeView())
+      // .setOnDismissed(onOverlayDismissedListener)
+      .setTitleText(title);
+
+    if (singleTime) {
+      overlay.setSingleTime();
+    }
+
+    overlay.build().show();
+  }
+
+  showCastDialog() {
+    this.getNativeView().showDialog();
+  }
+
   // https://developers.google.com/android/reference/com/google/android/gms/cast/MediaInfo
   getMediaInfo() {
     const mediaInfo = this.getRemoteMediaClient().getMediaInfo();
@@ -409,88 +424,76 @@ export class CastButton extends CastButtonBase {
     this.getRemoteMediaClient().setActiveMediaTracks(trackIds);
   }
 
-  setTintColor(color: string) {
-    const mRouteButton = this.getNativeView();
-    const appContext = ad.getApplicationContext();
-    // @ts-ignore
-    const castContext = new android.view.ContextThemeWrapper(appContext, androidx.mediarouter.mediarouter.R.style.Theme_MediaRouter);
-    const tintColor = new Color(color).android;
-    // @ts-ignore
-    const a = castContext.obtainStyledAttributes(null, androidx.mediarouter.mediarouter.R.styleable.MediaRouteButton, androidx.mediarouter.mediarouter.R.attr.mediaRouteButtonStyle, 0);
-    // @ts-ignore
-    const drawable = a.getDrawable(androidx.mediarouter.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
-    a.recycle();
-
-    androidx.core.graphics.drawable.DrawableCompat.setTint(drawable, tintColor);
-    mRouteButton.setRemoteIndicatorDrawable(drawable);
+  setTintColor(): void {
+    console.log('setTintColor not available for Android.');
   }
 
-  setVolume(volume: number, customData: any) {
+  setVolume(volume: number, customData: any): void {
     // const remoteMediaClient = this.getRemoteMediaClient();
     // remoteMediaClient.setStreamVolumeCustomData(volume, customData);
   }
 
-  setMuted(muted: boolean, customData: any) {
+  setMuted(muted: boolean, customData: any): void {
     // const remoteMediaClient = this.getRemoteMediaClient();
     // remoteMediaClient.setStreamMutedCustomData(muted, customData);
   }
 
-  queueNextItem() {
+  queueNextItem(): void {
     this.getRemoteMediaClient().queueNext(null);
   }
 
-  queuePreviousItem() {
+  queuePreviousItem(): void {
     this.getRemoteMediaClient().queuePrev(null);
   }
 
-  queueSetRepeatMode(repeatMode: RepeatMode) {
+  queueSetRepeatMode(repeatMode: RepeatMode): void {
     console.log('queueSetRepeatMode');
     // this.getRemoteMediaClient().queueSetRepeatMode(repeatModeStringToEnum(repeatMode));
   }
 
-  queueFetchItemIDs() {
+  queueFetchItemIDs(): void {
     console.log('queueFetchItemIDs');
     // const remoteMediaClient = this.getRemoteMediaClient();
     // remoteMediaClient.queueFetchItemIDs();
   }
 
-  queueFetchItemsForIDs(queueItemIDs: number[]) {
+  queueFetchItemsForIDs(queueItemIDs: number[]): void {
     // const remoteMediaClient = this.getRemoteMediaClient();
     // @ts-ignore
     // remoteMediaClient.queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
   }
 
-  queueInsertItem(options: QueueInsertItemOptions) {
+  queueInsertItem(options: QueueInsertItemOptions): void {
     console.log('queueInsertItem');
     // this.getRemoteMediaClient().queueInsertItemBeforeItemWithID(mediaQueueItem, beforeItemID || kGCKMediaQueueInvalidItemID);
   }
 
-  queueInsertItems(options: QueueInsertItemsOptions) {
+  queueInsertItems(options: QueueInsertItemsOptions): void {
     console.log('queueInsertItems');
     // this.getRemoteMediaClient().function();
   }
 
-  queueRemoveItemsWithIDs(itemIDs: number[], customData: any) {
+  queueRemoveItemsWithIDs(itemIDs: number[], customData: any): void {
     console.log('queueRemoveItemsWithIDs');
     // this.getRemoteMediaClient().function();
   }
 
-  queueReorderItemsWithIDs(queueItemIDs: number[], beforeItemID: number, customData: any) {
+  queueReorderItemsWithIDs(queueItemIDs: number[], beforeItemID: number, customData: any): void {
     console.log('queueReorderItemsWithIDs');
     // this.getRemoteMediaClient().function();
   }
 
-  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any) {
+  queueJumpToItemWithID(itemID: number, playPosition: number, customData: any): void {
     console.log('queueJumpToItemWithID');
     // this.getRemoteMediaClient().function();
   }
 
-  queueUpdateItems(options: QueueUpdateItemsOptions) {
+  queueUpdateItems(options: QueueUpdateItemsOptions): void {
     console.log('queueUpdateItems not implemented');
     // this.getRemoteMediaClient().function();
   }
 
-  onMediaStatusUpdate() {
+  onMediaStatusUpdate(): void {
     const mediaStatus = this.getRemoteMediaClient().getMediaStatus();
     let info = null;
     let status: CastMediaStatus = null;

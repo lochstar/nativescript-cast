@@ -9,6 +9,7 @@ import {
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
+  public hasCast: boolean;
   public hasControl: boolean;
 
   public autoplay: boolean;
@@ -118,6 +119,7 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
+    this.hasCast = false;
     this.hasControl = false;
 
     this.autoplay = true;
@@ -134,6 +136,11 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
+      case CastEvent.onProviderAdded:
+        this.set('hasCast', true);
+        this.cast.setTintColor('#ffffff');
+        break;
+
       case CastEvent.onSessionStarted:
         case CastEvent.onSessionResumed:
         this.set('canCast', true);
@@ -198,20 +205,28 @@ export class MainViewModel extends Observable {
     });
 
     this.cast.loadQueue({
-      clientCacheSize: 25,
-      maxFetchCount: 25,
+      // clientCacheSize: 25,
+      // maxFetchCount: 25,
 
       items: items,
-      name:  'Demo Queue',
-      queueID: 'demp-queue',
-      repeatMode: this.repeatMode,
-      startTime: 60,
-      startIndex: 1,
+      // name:  'Demo Queue',
+      // queueID: 'demp-queue',
+      // repeatMode: this.repeatMode,
+      // startTime: 60,
+      // startIndex: 1,
     });
   }
 
   handleShowControllerTap() {
     this.cast.showController();
+  }
+
+  handleShowInstructionsTap() {
+    this.cast.showCastInstructions();
+  }
+
+  handleShowDialogTap() {
+    this.cast.showCastDialog();
   }
 
   handlePlayTap(args: EventData) {
