@@ -8,6 +8,8 @@ import {
   CastTextTrackStyle,
   RepeatMode,
   ResumeState,
+  MetadataType,
+  StreamType,
   QueueType,
   LoadMediaOptions,
   LoadQueueOptions,
@@ -30,16 +32,67 @@ declare const NSArray: any;
 declare const NSURL: any;
 declare const NSMutableArray: any;
 
-export function streamTypeNumberToString(streamType: number) {
+export function metadataTypeEnumToString(metadataType: GCKMediaMetadataType): MetadataType {
+  switch (metadataType) {
+    case GCKMediaMetadataType.Movie:
+      return MetadataType.MOVIE;
+    case GCKMediaMetadataType.TVShow:
+      return MetadataType.TV_SHOW;
+    case GCKMediaMetadataType.MusicTrack:
+      return MetadataType.MUSIC_TRACK;
+    case GCKMediaMetadataType.Photo:
+      return MetadataType.PHOTO;
+    case GCKMediaMetadataType.AudioBookChapter:
+      return MetadataType.USER;
+    case GCKMediaMetadataType.User:
+      return MetadataType.USER;
+    default:
+      return MetadataType.GENERIC;
+  }
+}
+
+export function metadataTypeStringToEnum(metadataType: MetadataType): GCKMediaMetadataType {
+  switch (metadataType) {
+    case MetadataType.MOVIE:
+      return GCKMediaMetadataType.Movie;
+    case MetadataType.TV_SHOW:
+      return GCKMediaMetadataType.TVShow;
+    case MetadataType.MUSIC_TRACK:
+      return GCKMediaMetadataType.MusicTrack;
+    case MetadataType.PHOTO:
+      return GCKMediaMetadataType.Photo;
+    case MetadataType.AUDIO_BOOK_CHAPTER:
+      return GCKMediaMetadataType.AudioBookChapter;
+    case MetadataType.USER:
+      return GCKMediaMetadataType.User;
+    default:
+      return GCKMediaMetadataType.Generic;
+  }
+}
+
+export function streamTypeEnumToString(streamType: GCKMediaStreamType): StreamType {
   switch (streamType) {
     case GCKMediaStreamType.Buffered:
-      return 'BUFFERED';
+      return StreamType.BUFFERED;
     case GCKMediaStreamType.Live:
-      return 'LIVE';
+      return StreamType.LIVE;
     case GCKMediaStreamType.Unknown:
-      return 'UNKNOWN';
+      return StreamType.UNKNOWN;
     default:
-      return 'NONE';
+      return StreamType.NONE;
+  }
+}
+
+export function streamTypeStringToEnum(streamType: StreamType): GCKMediaStreamType {
+  switch (streamType) {
+    case StreamType.BUFFERED:
+      return GCKMediaStreamType.Buffered;
+    case StreamType.LIVE:
+      return GCKMediaStreamType.Live;
+    case StreamType.UNKNOWN:
+      return GCKMediaStreamType.Unknown;
+    default:
+      return GCKMediaStreamType.None;
   }
 }
 
@@ -54,7 +107,7 @@ export function repeatModeStringToEnum(repeatMode: RepeatMode): GCKMediaRepeatMo
     case RepeatMode.ALL_AND_SHUFFLE:
       return GCKMediaRepeatMode.AllAndShuffle;
     default:
-      return GCKMediaRepeatMode.Unchanged;
+      return GCKMediaRepeatMode.Off;
   }
 }
 
@@ -69,7 +122,7 @@ export function repeatModeEnumToString(repeatMode: GCKMediaRepeatMode): RepeatMo
     case GCKMediaRepeatMode.AllAndShuffle:
       return RepeatMode.ALL_AND_SHUFFLE;
     default:
-      return RepeatMode.UNCHANGED;
+      return RepeatMode.OFF;
   }
 }
 
@@ -145,7 +198,7 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
   let textTrackStyle: CastTextTrackStyle = {};
 
   const castMetadata: CastMetadata = {
-    metadataType: metadata.metadataType,
+    metadataType: metadataTypeEnumToString(metadata.metadataType),
     images: [],
   };
 
@@ -195,7 +248,7 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
 
   return {
     contentId: mediaInfo.contentID,
-    streamType: streamTypeNumberToString(mediaInfo.streamType),
+    streamType: streamTypeEnumToString(mediaInfo.streamType),
     contentType: mediaInfo.contentType,
     metadata: castMetadata,
     duration: mediaInfo.streamDuration,
@@ -214,6 +267,7 @@ export class CastButton extends CastButtonBase {
   public mSessionManagerListener: SessionManagerListenerImpl;
   public mRemoteMediaClientListener: RemoteMediaClientListenerImpl;
 
+  public mMediaQueue: GCKMediaQueue;
   public mMediaQueueDelegate: MediaQueueDelegate;
 
   constructor() {
@@ -230,7 +284,6 @@ export class CastButton extends CastButtonBase {
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
-    this.mCastContext.useDefaultExpandedMediaControls = true;
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl;
     this.mSessionManagerListener.owner = this;
@@ -239,6 +292,11 @@ export class CastButton extends CastButtonBase {
 
     this.mMediaQueueDelegate = new MediaQueueDelegate;
     this.mMediaQueueDelegate.owner = this;
+
+    // Add prev/next buttons to ExpandedMediaControls
+    this.mCastContext.useDefaultExpandedMediaControls = true;
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipPrevious, 1);
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipNext, 2);
 
     this.addSessionManagerListener();
 
@@ -300,8 +358,7 @@ export class CastButton extends CastButtonBase {
     // Build metadata
     // https://developers.google.com/cast/v2/reference/ios/interface_g_c_k_media_metadata
     if (mediaInfo.metadata) {
-      // Convert metadataType to number value
-      const metadataType = typeof mediaInfo.metadata.metadataType === 'string' ? this.metadataTypeStringToNumber(mediaInfo.metadata.metadataType) : mediaInfo.metadata.metadataType;
+      const metadataType = metadataTypeStringToEnum(mediaInfo.metadata.metadataType);
       metadata = GCKMediaMetadata.alloc().initWithMetadataType(metadataType);
 
       // Add each valid metadata field
@@ -351,7 +408,7 @@ export class CastButton extends CastButtonBase {
     }
 
     // Convert streamType to number value
-    const streamType = typeof mediaInfo.streamType === 'string' ? this.streamTypeStringToNumber(mediaInfo.streamType) : mediaInfo.streamType;
+    const streamType = typeof mediaInfo.streamType === 'string' ? streamTypeStringToEnum(mediaInfo.streamType) : mediaInfo.streamType;
 
     // Build media info
     const mediaInformation = GCKMediaInformationBuilder.alloc().initWithContentID(mediaInfo.contentId);
@@ -479,20 +536,18 @@ export class CastButton extends CastButtonBase {
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
 
     // Add queue event listeners
-    const mediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClientCacheSizeMaxFetchCount(remoteMediaClient, options.clientCacheSize, options.maxFetchCount);
-    mediaQueue.addDelegate(this.mMediaQueueDelegate);
+    this.mMediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClient(remoteMediaClient);
+    this.mMediaQueue.addDelegate(this.mMediaQueueDelegate);
 
     // Prepare load request and set queueData
     const requestData = GCKMediaLoadRequestDataBuilder.new();
     requestData.queueData = mediaQueueData.build();
     remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
-
-    // Add prev/next buttons to ExpandedMediaControls
-    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipPrevious, 1);
-    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipNext, 2);
   }
 
   showController() {
+    // this.mCastContext.defaultExpandedMediaControlsViewController.view.subviews.objectAtIndex(4).subviews.objectAtIndex(0).subviews.objectAtIndex(1).subviews.objectAtIndex(0).enabled = true;
+    // this.mCastContext.defaultExpandedMediaControlsViewController.view.subviews.objectAtIndex(4).subviews.objectAtIndex(0).subviews.objectAtIndex(3).subviews.objectAtIndex(0).enabled = true;
     this.mCastContext.presentDefaultExpandedMediaControls();
   }
 
@@ -565,9 +620,9 @@ export class CastButton extends CastButtonBase {
     this.getRemoteMediaClient().queueFetchItemIDs();
   }
 
-  queueFetchItemsForIDs(queueItemIDs: number[]) {
-    // @ts-ignore
-    this.getRemoteMediaClient().queueFetchItemsForIDs(ios.collections.jsArrayToNSArray(queueItemIDs));
+  queueFetchItemAtIndex(index: number): any {
+    const item = this.mMediaQueue.itemAtIndexFetchIfNeeded(index, true);
+    return item;
   }
 
   queueInsertItem(options: QueueInsertItemOptions) {
@@ -603,14 +658,14 @@ export class CastButton extends CastButtonBase {
     );
   }
 
-  queueRemoveItemsWithIDs(itemIDs: number[], customData?: any) {
+  queueRemoveItems(itemIDs: number[], customData?: any) {
     this.getRemoteMediaClient().queueRemoveItemsWithIDsCustomData(
       itemIDs,
       customData
     );
   }
 
-  queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData?: any) {
+  queueReorderItems(itemIDs: number[], beforeItemID: number, customData?: any) {
     this.getRemoteMediaClient().queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData(
       itemIDs,
       beforeItemID || kGCKMediaQueueInvalidItemID,
@@ -618,7 +673,7 @@ export class CastButton extends CastButtonBase {
     );
   }
 
-  queueJumpToItemWithID(itemID: number, playPosition?: number, customData?: any) {
+  queueJumpToItem(itemID: number, playPosition?: number, customData?: any) {
     this.getRemoteMediaClient().queueJumpToItemWithIDPlayPositionCustomData(
       itemID,
       playPosition,
@@ -628,17 +683,5 @@ export class CastButton extends CastButtonBase {
 
   queueUpdateItems(options: QueueUpdateItemsOptions) {
     console.log('queueUpdateItems not implemented');
-    /*
-    const queueItems = [];
-    options.items.forEach(item => {
-      const queueItem = this.buildQueueItem(item);
-      queueItems.push(queueItem);
-    });
-
-    this.getRemoteMediaClient().queueUpdateItemsCustomData(
-      queueItems,
-      options.customData
-    );
-    */
   }
 }

@@ -93,25 +93,22 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
   }
 
   public remoteMediaClientDidRemoveQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
-    console.log('remoteMediaClientDidRemoveQueueItemsWithIDs');
-    console.log(queueItems);
+    // console.log('remoteMediaClientDidRemoveQueueItemsWithIDs');
+    // console.log(queueItems);
   }
 
   public remoteMediaClientDidInsertQueueItemsWithIDs(queueItems: number[]) {
-    console.log('didInremoteMediaClientDidInsertQueueItemsWithIDssertQueueItemsWithIDs');
-    console.log(queueItems);
+    // console.log('didInremoteMediaClientDidInsertQueueItemsWithIDssertQueueItemsWithIDs');
+    // console.log(queueItems);
   }
 
   public remoteMediaClientDidUpdateQueue(client: GCKRemoteMediaClient): void {
-    this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.onDidUpdateQueue,
-      ios: this.owner.nativeView
-    });
+    // console.log('remoteMediaClientDidUpdateQueue');
   }
 
   public remoteMediaClientDidUpdateQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {
-    console.log('remoteMediaClientDidUpdateQueueItemsWithIDs');
-    console.log(queueItems);
+    // console.log('remoteMediaClientDidUpdateQueueItemsWithIDs');
+    // console.log(queueItems);
   }
 
   public remoteMediaClientDidUpdateMediaMetadata(client: GCKRemoteMediaClient, mediaMetaData: GCKMediaMetadata): void {
@@ -179,6 +176,11 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
 
       queueData: queueData,
       queueItemCount: mediaStatus.queueItemCount,
+
+      // BUG: always returning false?
+      // causing prev/next buttons to not work on media controller?
+      queueHasPreviousItem: mediaStatus.queueHasPreviousItem,
+      queueHasNextItem: mediaStatus.queueHasNextItem,
     };
   }
 }

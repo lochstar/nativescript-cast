@@ -19,7 +19,7 @@
     "test.ios": "npm run tsc && npm run tslint && cd ../demo && tns build ios && tns test ios --justlaunch",
     "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
     "plugin.tscwatch": "npm run tsc -- -w",
-    "demo.android": "npm run tsc && cd ../demo && tns run android",
+    "demo.android": "npm run tsc && cd ../demo && tns run android --no-hmr",
     "demo.ios": "npm run tsc && cd ../demo && tns run ios",
     "demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
     "demo-angular.android": "npm run tsc && cd ../demo-angular && tns run android",

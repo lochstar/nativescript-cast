@@ -233,26 +233,46 @@ cast.loadMedia(mediaInfo);
 
 ### <a name="events"></a>Events
 
-Event names follow the Android naming structure. iOS events are passed from `GCKSessionManagerListener` and `GCKRemoteMediaClientListener`. Android events are passed from `SessionManagerListener` and `MediaRouter.Callback`.
+Event names follow the Android naming structure.
+iOS events are passed from `GCKSessionManagerListener`, `GCKRemoteMediaClientListener` and `GCKMediaQueueDelegate`.
+Android events are passed from `SessionManagerListener`, `MediaRouter.Callback` and `MediaQueue.Callback`.
 
-| NativeScript          | Android               | iOS                                          |
-| --------------------- | --------------------- | -------------------------------------------- |
-| onSessionEnded        | onSessionEnded        | didEndSession                                |
-| onSessionEnding       | onSessionEnding       | willEndSession                               |
-| onSessionResumed      | onSessionResumed      | didResumeSession                             |
-| onSessionResuming     | onSessionResuming     | willResumeSession                            |
-| onSessionStarted      | onSessionStarted      | didStartSession                              |
-| onSessionStartFailed  | onSessionStartFailed  | didFailToStartSession                        |
-| onSessionStarting     | onSessionStarting     | willStartSession                             |
-| onSessionSuspended    | onSessionSuspended    | didSuspendSession                            |
-| onDeviceVolumeChanged | onRouteVolumeChanged  | didReceiveDeviceVolume                       |
-| onDeviceChanged       | onRouteChanged        | didUpdateDevice                              |
-| onMediaStatusChanged  | onStatusUpdated       | remoteMediaClientDidUpdateMediaStatus        |
+| NativeScript             | Android                | iOS                                          |
+| ------------------------ | ---------------------- | -------------------------------------------- |
+| onSessionEnded           | onSessionEnded         | didEndSession                                |
+| onSessionEnding          | onSessionEnding        | willEndSession                               |
+| onSessionResumed         | onSessionResumed       | didResumeSession                             |
+| onSessionResuming        | onSessionResuming      | willResumeSession                            |
+| onSessionStarted         | onSessionStarted       | didStartSession                              |
+| onSessionStartFailed     | onSessionStartFailed   | didFailToStartSession                        |
+| onSessionStarting        | onSessionStarting      | willStartSession                             |
+| onSessionSuspended       | onSessionSuspended     | didSuspendSession                            |
+| onDeviceVolumeChanged    | onRouteVolumeChanged   | didReceiveDeviceVolume                       |
+| onDeviceChanged          | onRouteChanged         | didUpdateDevice                              |
+| onMediaStatusChanged     | onStatusUpdated        | remoteMediaClientDidUpdateMediaStatus        |
+
+| mediaQueueWillChange     | mediaQueueWillChange   | mediaQueueWillChange       |
+| itemsReloaded            | itemsReloaded          | mediaQueueDidReloadItems   |
+| itemsInsertedInRange     | itemsInsertedInRange   | didInsertItemsInRange      |
+| itemsUpdatedAtIndexes    | itemsUpdatedAtIndexes  | didUpdateItemsAtIndexes    |
+| itemsRemovedAtIndexes    | itemsRemovedAtIndexes  | didRemoveItemsAtIndexes    |
+| mediaQueueChanged        | mediaQueueChanged      | mediaQueueDidChange        |
+
+| onDidReceiveQueueItemIDs | ---                    | remoteMediaClientDidReceiveQueueItemIDs
 
 All unlisted events are ignored. See related documentation for futher details.
 
- - Android: [SessionManagerListener](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManagerListener) & [MediaRouter.Callback](https://developer.android.com/reference/android/support/v7/media/MediaRouter.Callback)
- - iOS: [GCKSessionManagerListener](https://developers.google.com/cast/v3/reference/ios/protocol_g_c_k_session_manager_listener-p) & [GCKRemoteMediaClientListener](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_remote_media_client_listener-p)
+#### Android
+
+  - [SessionManagerListener](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManagerListener)
+  - [MediaRouter.Callback](https://developer.android.com/reference/androidx/mediarouter/media/MediaRouter.Callback?hl=id)
+  - [MediaQueue.Callback](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/MediaQueue.Callback)
+
+### iOS
+
+  - [GCKSessionManagerListener](https://developers.google.com/cast/v3/reference/ios/protocol_g_c_k_session_manager_listener-p)
+  - [GCKRemoteMediaClientListener](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_remote_media_client_listener-p)
+  - [GCKMediaQueueDelegate](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_media_queue_delegate-p)
 
 ### Methods
 
@@ -318,9 +338,9 @@ See [cast.types](src/cast.types.ts) for method options.
 
   Fetch queue item IDs. The response is returned by the event `onDidReceiveQueueItemIDs`.
 
-- `queueFetchItemsForIDs(queueItemIDs: number[]): void`
+- `queueFetchItemAtIndex(index: number): void`
 
-  Fetch queue item data. The response is returned by the event `onDidReceiveQueueItems`.
+  Fetch queue item data by index. The response is returned by the event `onDidReceiveQueueItems`.
 
 - `queueInsertItem(options: QueueInsertItemOptions): void`
 
@@ -330,36 +350,23 @@ See [cast.types](src/cast.types.ts) for method options.
 
   Insert multiple queue items.
 
-- `queueRemoveItemsWithIDs(itemIDs: number[], customData?: any): void`
+- `queueRemoveItems(itemIDs: number[], customData?: any): void`
 
   Remove queue items by ID.
 
-- `queueReorderItemsWithIDs(itemIDs: number[], beforeItemID: number, customData?: any): void`
+- `queueReorderItems(itemIDs: number[], beforeItemID: number, customData?: any): void`
 
   Reorder queue items by ID.
 
-- `queueJumpToItemWithID(itemID: number, playPosition?: number, customData? any): void`
+- `queueJumpToItem(itemID: number, playPosition?: number, customData? any): void`
 
   Jump to queue item by ID.
 
-### mediaInfo
-
-Valid `streamType` values.
-
-- NONE
-- BUFFERED
-- LIVE
-
-Valid `metadata.metadataType` values.
-
-- GENERIC
-- MOVIE
-- TV_SHOW
-- MUSIC_TRACK
-- PHOTO
-- USER
-
 ## TODO
 
-- Handle `mediaTracks`.
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).
+
+## Acknowledgements
+
+- [CodeLab](https://www.codelab.com.au/) - Current employer. Developed this plugin whilst learning NativeScript.
+- [loop.tv](https://loop.tv/) - Financed the development of Queue Support.

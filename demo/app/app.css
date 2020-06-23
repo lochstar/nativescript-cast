@@ -25,6 +25,7 @@ ActionBar {
 .controls .btn {
   font-size: 16;
   margin: 0;
+  font-weight: bold;
 }
 
 Label {

@@ -1,5 +1,6 @@
-import { CastButton } from './cast.ios';
-// import { CastEvent } from './cast.types';
+import { CastButtonBase } from './cast.common';
+import { CastButton } from './cast.android';
+import { CastEvent } from './cast.types';
 
 export class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
   public static ObjCProtocols = [GCKMediaQueueDelegate];
@@ -13,38 +14,48 @@ export class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegat
   }
 
   mediaQueueDidReloadItems(queue: GCKMediaQueue): void {
-    console.info('mediaQueueDidReloadItems');
-    // console.log(queue);
-  }
-  didInsertItemsInRange(queue: GCKMediaQueue, range: NSRange): void {
-    console.info('didInsertItemsInRange');
-    // console.log(queue);
-    console.log(range);
-  }
-  didUpdateItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
-    console.info('didUpdateItemsAtIndexes');
-    // console.log(queue);
-    console.log(indexes);
-  }
-  didRemoveItemsAtIndexes(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void {
-    console.info('didRemoveItemsAtIndexes');
-    // console.log(queue);
-    console.log(indexes);
-  }
-  mediaQueueWillChange(queue: GCKMediaQueue): void {
-    /*
     this.owner.sendEvent(CastButtonBase.castEvent, {
-      eventName: CastEvent.mediaQueueWillChange,
+      eventName: CastEvent.itemsReloaded,
       ios: this.owner.nativeView
     });
-    */
   }
-  mediaQueueDidChange(queue: GCKMediaQueue) {
-    /*
+
+  didInsertItemsInRange(queue: GCKMediaQueue, range: NSRange): void {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.itemsInsertedInRange,
+      insertIndex: range.location,
+      insertCount: range.length,
+      ios: this.owner.nativeView
+    });
+  }
+
+  didUpdateItemsAtIndexes(queue: GCKMediaQueue, indexes: number[]): void {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.itemsUpdatedAtIndexes,
+      indexes: indexes,
+      ios: this.owner.nativeView
+    });
+  }
+
+  didRemoveItemsAtIndexes(queue: GCKMediaQueue, indexes: number[]): void {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.itemsRemovedAtIndexes,
+      indexes: indexes,
+      ios: this.owner.nativeView
+    });
+  }
+
+  mediaQueueWillChange(queue: GCKMediaQueue): void {
     this.owner.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.mediaQueueChanged,
       ios: this.owner.nativeView
     });
-    */
+  }
+
+  mediaQueueDidChange(queue: GCKMediaQueue) {
+    this.owner.sendEvent(CastButtonBase.castEvent, {
+      eventName: CastEvent.mediaQueueWillChange,
+      ios: this.owner.nativeView
+    });
   }
 }

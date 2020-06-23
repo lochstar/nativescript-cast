@@ -15,6 +15,7 @@ export class MainViewModel extends Observable {
   public autoplay: boolean;
   public beforeItemID: number;
   public itemIDs: string;
+  public itemIndex: string;
   public repeatMode: RepeatMode;
 
   public mediaInfo: CastMediaInfo;
@@ -27,49 +28,6 @@ export class MainViewModel extends Observable {
   public queueItemsString: string;
 
   public mediaItems: CastMediaInfo[] = [
-    {
-      contentId: 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8',
-      contentType: 'video/mp4',
-      streamType: 'LIVE',
-      duration: Infinity,
-      metadata: {
-        metadataType: 'MUSIC_TRACK',
-        title: 'Double J',
-        subtitle: 'Double J Radio',
-        description: '',
-        images: [
-          {
-            url: 'https://www.abc.net.au/cm/rimage/9990024-1x1-large.jpg',
-            width: 700,
-            height: 700,
-          }
-        ]
-      }
-    },
-    {
-      contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      contentType: 'video/mp4',
-      streamType: 'BUFFERED',
-      duration: 596,
-      metadata: {
-        metadataType: 'MOVIE',
-        title: 'Big Buck Bunny',
-        subtitle: 'By Blender Foundation',
-        description: 'Big Buck Bunny is licensed as Creative Commons Attribution 3.0.',
-        images: [
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/BigBuckBunny.jpg',
-            width: 480,
-            height: 270,
-          },
-          {
-            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/BigBuckBunny-780x1200.jpg',
-            width: 780,
-            height: 1200,
-          }
-        ]
-      }
-    },
     {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
@@ -112,6 +70,49 @@ export class MainViewModel extends Observable {
         backgroundColor: '#00cc00',
       }
     },
+    {
+      contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      contentType: 'video/mp4',
+      streamType: 'BUFFERED',
+      duration: 596,
+      metadata: {
+        metadataType: 'MOVIE',
+        title: 'Big Buck Bunny',
+        subtitle: 'By Blender Foundation',
+        description: 'Big Buck Bunny is licensed as Creative Commons Attribution 3.0.',
+        images: [
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/BigBuckBunny.jpg',
+            width: 480,
+            height: 270,
+          },
+          {
+            url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/images_780x1200/BigBuckBunny-780x1200.jpg',
+            width: 780,
+            height: 1200,
+          }
+        ]
+      }
+    },
+    {
+      contentId: 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8',
+      contentType: 'video/mp4',
+      streamType: 'LIVE',
+      duration: Infinity,
+      metadata: {
+        metadataType: 'MUSIC_TRACK',
+        title: 'Double J',
+        subtitle: 'Double J Radio',
+        description: '',
+        images: [
+          {
+            url: 'https://www.abc.net.au/cm/rimage/9990024-1x1-large.jpg',
+            width: 700,
+            height: 700,
+          }
+        ]
+      }
+    },
   ];
 
   constructor() {
@@ -125,6 +126,7 @@ export class MainViewModel extends Observable {
     this.autoplay = true;
     this.beforeItemID = 0;
     this.itemIDs = '';
+    this.itemIndex = '0';
     this.repeatMode = RepeatMode.ALL;
   }
 
@@ -138,7 +140,6 @@ export class MainViewModel extends Observable {
     switch (args.data.eventName) {
       case CastEvent.onProviderAdded:
         this.set('hasCast', true);
-        this.cast.setTintColor('#ffffff');
         break;
 
       case CastEvent.onSessionStarted:
@@ -164,15 +165,16 @@ export class MainViewModel extends Observable {
 
         this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
+
+      case CastEvent.mediaQueueChanged:
+        this.cast.queueFetchItemIDs();
+        break;
       case CastEvent.onDidReceiveQueueItemIDs:
         this.set('queueItemIDs', args.data.queueItemIDs);
         break;
       case CastEvent.onDidReceiveQueueItems:
         this.set('queueItems', args.data.queueItems);
         this.set('queueItemsString', JSON.stringify(args.data.queueItems, null, '  '));
-        break;
-      case CastEvent.onDidUpdateQueue:
-        this.cast.queueFetchItemIDs();
         break;
       default:
         break;
@@ -188,15 +190,15 @@ export class MainViewModel extends Observable {
   }
 
   handleLoadTap(args: EventData) {
-    /*
     this.cast.loadMedia(this.mediaItems[2], {
       autoplay: this.autoplay,
       activeTrackIds: [1],
       // playbackRate: 2,
-      startTime: 22,
+      // startTime: 22,
     });
-    */
+  }
 
+  handleLoadQueueTap(args: EventData) {
     const items = this.mediaItems.map(item => {
       return {
         mediaInformation: item,
@@ -205,13 +207,10 @@ export class MainViewModel extends Observable {
     });
 
     this.cast.loadQueue({
-      // clientCacheSize: 25,
-      // maxFetchCount: 25,
-
       items: items,
-      // name:  'Demo Queue',
-      // queueID: 'demp-queue',
-      // repeatMode: this.repeatMode,
+      name:  'Demo Queue',
+      queueID: 'demp-queue',
+      repeatMode: this.repeatMode,
       // startTime: 60,
       // startIndex: 1,
     });
@@ -222,7 +221,7 @@ export class MainViewModel extends Observable {
   }
 
   handleShowInstructionsTap() {
-    this.cast.showCastInstructions();
+    this.cast.showCastInstructions('Touch to cast media to your TV', false);
   }
 
   handleShowDialogTap() {
@@ -238,7 +237,7 @@ export class MainViewModel extends Observable {
   }
 
   handleSeekTap(args: EventData) {
-    this.cast.seekMedia(23);
+    this.cast.seekMedia(10);
   }
 
   handleStopTap(args: EventData) {
@@ -271,13 +270,8 @@ export class MainViewModel extends Observable {
     this.cast.queueNextItem();
   }
 
-  handleQueueSetRepeatMode() {
-    const newRepeat = this.mediaStatus.queueData.repeatMode === RepeatMode.ALL ? RepeatMode.ALL_AND_SHUFFLE : RepeatMode.ALL;
-    this.cast.queueSetRepeatMode(newRepeat);
-  }
-
-  handleGetQueueItemsTap(args: EventData) {
-    this.cast.queueFetchItemsForIDs(this.queueItemIDs);
+  handleFetchQueueItemTap() {
+    this.cast.queueFetchItemAtIndex(parseInt(this.itemIndex, 10));
   }
 
   handleInsertQueueItemTap() {
@@ -304,37 +298,16 @@ export class MainViewModel extends Observable {
 
   handleRemoveItemsTap() {
     const ids = this.itemIDs.split(',').map(n => parseInt(n));
-    this.cast.queueRemoveItemsWithIDs(ids);
+    this.cast.queueRemoveItems(ids);
   }
 
   handleReorderItemsTap() {
     const ids = this.itemIDs.split(',').map(n => parseInt(n));
-    this.cast.queueReorderItemsWithIDs(ids, this.beforeItemID);
+    this.cast.queueReorderItems(ids, this.beforeItemID);
   }
 
-  handleJumpToItemWithID() {
+  handleJumpToItem() {
     const ids = this.itemIDs.split(',').map(n => parseInt(n));
-    this.cast.queueJumpToItemWithID(ids);
+    this.cast.queueJumpToItem(ids[0]);
   }
-
-  // TODO
-  handleQueueUpdateItems() {
-    const updatedItems = this.queueItems.map(item => {
-      return {
-        ...item,
-        mediaInformation: {
-          ...item.mediaInformation,
-          metadata: {
-            ...item.mediaInformation.metadata,
-            title: `${item.mediaInformation.metadata.title} Updated`
-          }
-        },
-      };
-    });
-
-    this.cast.queueUpdateItems({
-      items: updatedItems
-    });
-  }
-
 }

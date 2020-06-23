@@ -1,7 +1,7 @@
 export interface CastMediaInfo {
   contentId: string;
   contentType: string;
-  streamType: string;
+  streamType: StreamType;
   metadata: CastMetadata;
   textTracks?: CastTextTrack[];
   duration?: number;
@@ -27,6 +27,9 @@ export interface CastMediaStatus {
 
   queueData: QueueData;
   queueItemCount: number;
+
+  queueHasPreviousItem?: any;
+  queueHasNextItem?: any;
 }
 
 export interface CastTextTrack {
@@ -53,7 +56,7 @@ export interface CastTextTrackStyle {
 }
 
 export interface CastMetadata {
-  metadataType: 'MOVIE' | 'TV_SHOW' | 'MUSIC_TRACK' | 'PHOTO' | 'USER' | 'GENERIC';
+  metadataType: MetadataType;
   images?: {url: string, width: number, height: number}[];
   creationDate?: string;
   releaseDate?: string;
@@ -114,10 +117,32 @@ export enum CastEvent {
   onDeviceChanged = 'onDeviceChanged',
   onMediaStatusChanged = 'onMediaStatusChanged',
 
+  mediaQueueWillChange = 'mediaQueueWillChange',
+  itemsReloaded = 'itemsReloaded',
+  itemsInsertedInRange = 'itemsInsertedInRange',
+  itemsUpdatedAtIndexes = 'itemsUpdatedAtIndexes',
+  itemsRemovedAtIndexes = 'itemsRemovedAtIndexes',
+  mediaQueueChanged = 'mediaQueueChanged',
+
   onDidReceiveQueueItemIDs = 'onDidReceiveQueueItemIDs',
   onDidReceiveQueueItems = 'onDidReceiveQueueItems',
+}
 
-  onDidUpdateQueue = 'onDidUpdateQueue',
+export enum MetadataType {
+  MOVIE = 'MOVIE',
+  TV_SHOW = 'TV_SHOW',
+  MUSIC_TRACK = 'MUSIC_TRACK',
+  PHOTO = 'PHOTO',
+  USER = 'USER',
+  AUDIO_BOOK_CHAPTER = 'AUDIO_BOOK_CHAPTER',
+  GENERIC = 'GENERIC',
+}
+
+export enum StreamType {
+  BUFFERED = 'BUFFERED',
+  LIVE = 'LIVE',
+  UNKNOWN = 'UNKNOWN',
+  NONE = 'NONE',
 }
 
 export enum QueueType {
@@ -134,7 +159,6 @@ export enum QueueType {
 }
 
 export enum RepeatMode {
-  UNCHANGED = 'UNCHANGED',
   OFF = 'OFF',
   SINGLE = 'SINGLE',
   ALL = 'ALL',
@@ -174,11 +198,9 @@ export interface LoadMediaOptions {
 export interface LoadQueueOptions {
   activeTrackIds?: number[] | null;
   autoplay?: boolean;
-  clientCacheSize: number | null;
   containerMetadata?: QueueContainerMetadata;
   customData?: any;
   items: QueueItemOptions[];
-  maxFetchCount?: number | null;
   name?: string;
   playbackDuration?: number;
   preloadTime?: number;
