@@ -34,7 +34,7 @@ declare class GCKAdBreakClipInfo extends NSObject implements NSCopying, NSSecure
 
 	readonly title: string;
 
-	readonly vastAdsRequest: GCKAdBreakClipVastAdsRequest;
+	readonly vastAdsRequest: GCKVASTAdsRequest;
 
 	readonly whenSkippable: number;
 
@@ -44,30 +44,57 @@ declare class GCKAdBreakClipInfo extends NSObject implements NSCopying, NSSecure
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
-declare class GCKAdBreakClipVastAdsRequest extends NSObject implements NSCopying, NSSecureCoding {
+declare class GCKAdBreakClipInfoBuilder extends NSObject {
+
+	static alloc(): GCKAdBreakClipInfoBuilder; // inherited from NSObject
+
+	static new(): GCKAdBreakClipInfoBuilder; // inherited from NSObject
+
+	adBreakClipID: string;
+
+	clickThroughURL: NSURL;
+
+	contentID: string;
+
+	contentURL: NSURL;
+
+	customData: any;
+
+	duration: number;
+
+	hlsSegmentFormat: GCKHLSSegmentFormat;
+
+	mimeType: string;
+
+	posterURL: NSURL;
+
+	title: string;
+
+	vastAdsRequest: GCKVASTAdsRequest;
+
+	whenSkippable: number;
+
+	constructor(o: { adBreakClipID: string; });
+
+	constructor(o: { adBreakClipInfo: GCKAdBreakClipInfo; });
+
+	build(): GCKAdBreakClipInfo;
+
+	initWithAdBreakClipID(adBreakClipID: string): this;
+
+	initWithAdBreakClipInfo(adBreakClipInfo: GCKAdBreakClipInfo): this;
+}
+
+declare class GCKAdBreakClipVastAdsRequest extends GCKVASTAdsRequest {
 
 	static alloc(): GCKAdBreakClipVastAdsRequest; // inherited from NSObject
 
 	static new(): GCKAdBreakClipVastAdsRequest; // inherited from NSObject
-
-	readonly adTagUrl: NSURL;
-
-	readonly adsResponse: string;
-
-	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
-
-	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
-
-	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
-
-	encodeWithCoder(aCoder: NSCoder): void;
-
-	initWithCoder(aDecoder: NSCoder): this;
 }
 
 declare class GCKAdBreakInfo extends NSObject implements NSCopying, NSSecureCoding {
@@ -94,11 +121,38 @@ declare class GCKAdBreakInfo extends NSObject implements NSCopying, NSSecureCodi
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithPlaybackPosition(playbackPosition: number): this;
+}
+
+declare class GCKAdBreakInfoBuilder extends NSObject {
+
+	static alloc(): GCKAdBreakInfoBuilder; // inherited from NSObject
+
+	static new(): GCKAdBreakInfoBuilder; // inherited from NSObject
+
+	adBreakClipIDs: NSArray<string>;
+
+	adBreakID: string;
+
+	embedded: boolean;
+
+	playbackPosition: number;
+
+	watched: boolean;
+
+	constructor(o: { adBreakID: string; adBreakClipIds: NSArray<string> | string[]; });
+
+	constructor(o: { adBreakInfo: GCKAdBreakInfo; });
+
+	build(): GCKAdBreakInfo;
+
+	initWithAdBreakIDAdBreakClipIds(adBreakID: string, adBreakClipIDs: NSArray<string> | string[]): this;
+
+	initWithAdBreakInfo(adBreakInfo: GCKAdBreakInfo): this;
 }
 
 declare class GCKAdBreakStatus extends NSObject implements NSCopying {
@@ -115,6 +169,8 @@ declare class GCKAdBreakStatus extends NSObject implements NSCopying {
 
 	readonly currentAdBreakTime: number;
 
+	readonly whenSkippable: number;
+
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 }
 
@@ -127,6 +183,8 @@ declare class GCKApplicationMetadata extends NSObject implements NSCopying {
 	readonly applicationID: string;
 
 	readonly applicationName: string;
+
+	readonly iconURL: NSURL;
 
 	readonly images: NSArray<GCKImage>;
 
@@ -266,19 +324,19 @@ declare class GCKCastOptions extends NSObject implements NSCopying, NSSecureCodi
 
 	constructor(o: { receiverApplicationID: string; });
 
-	constructor(o: { supportedNamespaces: NSArray<string>; });
+	constructor(o: { supportedNamespaces: NSArray<string> | string[]; });
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithDiscoveryCriteria(discoveryCriteria: GCKDiscoveryCriteria): this;
 
 	initWithReceiverApplicationID(applicationID: string): this;
 
-	initWithSupportedNamespaces(namespaces: NSArray<string>): this;
+	initWithSupportedNamespaces(namespaces: NSArray<string> | string[]): this;
 }
 
 declare class GCKCastSession extends GCKSession {
@@ -373,7 +431,7 @@ declare class GCKColor extends NSObject implements NSCopying, NSSecureCoding {
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
 	initWithCGColor(color: any): this;
 
@@ -381,7 +439,7 @@ declare class GCKColor extends NSObject implements NSCopying, NSSecureCoding {
 
 	initWithCSSString(CSSString: string): this;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithRedGreenBlue(red: number, green: number, blue: number): this;
 
@@ -460,11 +518,11 @@ declare class GCKDevice extends NSObject implements NSCopying, NSSecureCoding {
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	hasCapabilities(deviceCapabilities: number): boolean;
+	hasCapabilities(deviceCapabilities: GCKDeviceCapabilities): boolean;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	isSameDeviceAs(other: GCKDevice): boolean;
 
@@ -475,21 +533,25 @@ declare class GCKDevice extends NSObject implements NSCopying, NSSecureCoding {
 	setAttributeForKey(attribute: NSObject, key: string): void;
 }
 
-declare const enum GCKDeviceCapability {
+declare const enum GCKDeviceCapabilities {
 
-	VideoOut = 1,
+	CapabilityVideoOut = 1,
 
-	VideoIn = 2,
+	CapabilityVideoIn = 2,
 
-	AudioOut = 4,
+	CapabilityAudioOut = 4,
 
-	AudioIn = 8,
+	CapabilityAudioIn = 8,
 
-	MultizoneGroup = 32,
+	CapabilityMultizoneGroup = 32,
 
-	MasterOrFixedVolume = 2048,
+	CapabilityDynamicGroup = 64,
 
-	AttenuationOrFixedVolume = 4096
+	CapabilityMasterOrFixedVolume = 2048,
+
+	CapabilityAttenuationOrFixedVolume = 4096,
+
+	CapabilityDynamicGroupingSupported = 65536
 }
 
 declare class GCKDeviceProvider extends NSObject {
@@ -577,11 +639,11 @@ declare class GCKDiscoveryCriteria extends NSObject implements NSCopying, NSSecu
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
 	initWithApplicationID(applicationID: string): this;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithNamespaces(namespaces: NSSet<string>): this;
 }
@@ -623,6 +685,8 @@ declare class GCKDiscoveryManager extends NSObject {
 
 interface GCKDiscoveryManagerListener extends NSObjectProtocol {
 
+	didHaveDiscoveredDeviceWhenStartingDiscovery?(): void;
+
 	didInsertDeviceAtIndex?(device: GCKDevice, index: number): void;
 
 	didRemoveDeviceAtIndex?(index: number): void;
@@ -649,6 +713,31 @@ declare const enum GCKDiscoveryState {
 	Stopped = 0,
 
 	Running = 1
+}
+
+declare class GCKDynamicDevice extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKDynamicDevice; // inherited from NSObject
+
+	static new(): GCKDynamicDevice; // inherited from NSObject
+
+	readonly capabilities: GCKDeviceCapabilities;
+
+	readonly deviceID: string;
+
+	readonly friendlyName: string;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	hasCapabilities(deviceCapabilities: GCKDeviceCapabilities): boolean;
+
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKError extends NSError {
@@ -726,11 +815,21 @@ declare const enum GCKErrorCode {
 
 	SocketInvalidParameter = 26,
 
+	InvalidResponse = 27,
+
+	FailedSessionUpdate = 28,
+
+	SessionIsNotActive = 29,
+
 	MediaLoadFailed = 30,
 
 	InvalidMediaPlayerState = 31,
 
 	NoMediaSession = 32,
+
+	NotCastSession = 33,
+
+	MediaError = 34,
 
 	AuthenticationErrorReceived = 40,
 
@@ -792,7 +891,13 @@ declare const enum GCKErrorCode {
 
 	UnsupportedFeature = 93,
 
-	Unknown = 99
+	Unknown = 99,
+
+	DeviceAuthenticationMessageParseFailure = 100,
+
+	DeviceAuthenticationMessageChallengeReceivedFailure = 101,
+
+	DeviceAuthenticationTimeoutFailure = 102
 }
 
 declare class GCKGenericChannel extends GCKCastChannel {
@@ -854,9 +959,9 @@ declare class GCKImage extends NSObject implements NSCopying, NSSecureCoding {
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithURLWidthHeight(URL: NSURL, width: number, height: number): this;
 }
@@ -886,6 +991,8 @@ declare class GCKLaunchOptions extends NSObject implements NSCopying, NSSecureCo
 
 	static new(): GCKLaunchOptions; // inherited from NSObject
 
+	androidReceiverCompatible: boolean;
+
 	languageCode: string;
 
 	relaunchIfRunning: boolean;
@@ -898,15 +1005,23 @@ declare class GCKLaunchOptions extends NSObject implements NSCopying, NSSecureCo
 
 	constructor(o: { relaunchIfRunning: boolean; });
 
+	constructor(o: { relaunchIfRunning: boolean; androidReceiverCompatible: boolean; });
+
+	constructor(o: { relaunchIfRunning: boolean; languageCode: string; androidReceiverCompatible: boolean; });
+
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithLanguageCodeRelaunchIfRunning(languageCode: string, relaunchIfRunning: boolean): this;
 
 	initWithRelaunchIfRunning(relaunchIfRunning: boolean): this;
+
+	initWithRelaunchIfRunningAndroidReceiverCompatible(relaunchIfRunning: boolean, androidReceiverCompatible: boolean): this;
+
+	initWithRelaunchIfRunningLanguageCodeAndroidReceiverCompatible(relaunchIfRunning: boolean, languageCode: string, androidReceiverCompatible: boolean): this;
 }
 
 declare class GCKLogger extends NSObject {
@@ -955,23 +1070,23 @@ declare class GCKLoggerFilter extends NSObject {
 
 	minimumLevel: GCKLoggerLevel;
 
-	addClassNames(classNames: NSArray<string>): void;
+	addClassNames(classNames: NSArray<string> | string[]): void;
 
-	addClassNamesMinimumLogLevel(classNames: NSArray<string>, minimumLogLevel: GCKLoggerLevel): void;
+	addClassNamesMinimumLogLevel(classNames: NSArray<string> | string[], minimumLogLevel: GCKLoggerLevel): void;
 
-	addFunctionNames(functionNames: NSArray<string>): void;
+	addFunctionNames(functionNames: NSArray<string> | string[]): void;
 
-	addFunctionNamesMinimumLogLevel(functionNames: NSArray<string>, minimumLogLevel: GCKLoggerLevel): void;
+	addFunctionNamesMinimumLogLevel(functionNames: NSArray<string> | string[], minimumLogLevel: GCKLoggerLevel): void;
 
-	addMessagePatterns(messagePatterns: NSArray<string>): void;
+	addMessagePatterns(messagePatterns: NSArray<string> | string[]): void;
 
-	addMessagePatternsCaseInsensitive(messagePatterns: NSArray<string>, caseInsensitive: boolean): void;
+	addMessagePatternsCaseInsensitive(messagePatterns: NSArray<string> | string[], caseInsensitive: boolean): void;
 
 	reset(): void;
 
-	setLoggingLevelForClasses(minimumLevel: GCKLoggerLevel, classNames: NSArray<string>): void;
+	setLoggingLevelForClasses(minimumLevel: GCKLoggerLevel, classNames: NSArray<string> | string[]): void;
 
-	setLoggingLevelForFunctions(minimumLevel: GCKLoggerLevel, functionNames: NSArray<string>): void;
+	setLoggingLevelForFunctions(minimumLevel: GCKLoggerLevel, functionNames: NSArray<string> | string[]): void;
 }
 
 declare const enum GCKLoggerLevel {
@@ -997,6 +1112,8 @@ declare class GCKMediaInformation extends NSObject implements NSCopying, NSSecur
 
 	static new(): GCKMediaInformation; // inherited from NSObject
 
+	readonly VMAP: GCKVASTAdsRequest;
+
 	readonly adBreakClips: NSArray<GCKAdBreakClipInfo>;
 
 	readonly adBreaks: NSArray<GCKAdBreakInfo>;
@@ -1005,6 +1122,8 @@ declare class GCKMediaInformation extends NSObject implements NSCopying, NSSecur
 
 	readonly contentType: string;
 
+	readonly contentURL: NSURL;
+
 	readonly customData: any;
 
 	readonly entity: string;
@@ -1012,6 +1131,8 @@ declare class GCKMediaInformation extends NSObject implements NSCopying, NSSecur
 	readonly mediaTracks: NSArray<GCKMediaTrack>;
 
 	readonly metadata: GCKMediaMetadata;
+
+	readonly startAbsoluteTime: number;
 
 	readonly streamDuration: number;
 
@@ -1023,19 +1144,19 @@ declare class GCKMediaInformation extends NSObject implements NSCopying, NSSecur
 
 	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
 
-	constructor(o: { contentID: string; streamType: GCKMediaStreamType; contentType: string; metadata: GCKMediaMetadata; adBreaks: NSArray<GCKAdBreakInfo>; adBreakClips: NSArray<GCKAdBreakClipInfo>; streamDuration: number; mediaTracks: NSArray<GCKMediaTrack>; textTrackStyle: GCKMediaTextTrackStyle; customData: any; });
+	constructor(o: { contentID: string; streamType: GCKMediaStreamType; contentType: string; metadata: GCKMediaMetadata; adBreaks: NSArray<GCKAdBreakInfo> | GCKAdBreakInfo[]; adBreakClips: NSArray<GCKAdBreakClipInfo> | GCKAdBreakClipInfo[]; streamDuration: number; mediaTracks: NSArray<GCKMediaTrack> | GCKMediaTrack[]; textTrackStyle: GCKMediaTextTrackStyle; customData: any; });
 
-	constructor(o: { contentID: string; streamType: GCKMediaStreamType; contentType: string; metadata: GCKMediaMetadata; streamDuration: number; mediaTracks: NSArray<GCKMediaTrack>; textTrackStyle: GCKMediaTextTrackStyle; customData: any; });
+	constructor(o: { contentID: string; streamType: GCKMediaStreamType; contentType: string; metadata: GCKMediaMetadata; streamDuration: number; mediaTracks: NSArray<GCKMediaTrack> | GCKMediaTrack[]; textTrackStyle: GCKMediaTextTrackStyle; customData: any; });
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
-	initWithContentIDStreamTypeContentTypeMetadataAdBreaksAdBreakClipsStreamDurationMediaTracksTextTrackStyleCustomData(contentID: string, streamType: GCKMediaStreamType, contentType: string, metadata: GCKMediaMetadata, adBreaks: NSArray<GCKAdBreakInfo>, adBreakClips: NSArray<GCKAdBreakClipInfo>, streamDuration: number, mediaTracks: NSArray<GCKMediaTrack>, textTrackStyle: GCKMediaTextTrackStyle, customData: any): this;
+	initWithContentIDStreamTypeContentTypeMetadataAdBreaksAdBreakClipsStreamDurationMediaTracksTextTrackStyleCustomData(contentID: string, streamType: GCKMediaStreamType, contentType: string, metadata: GCKMediaMetadata, adBreaks: NSArray<GCKAdBreakInfo> | GCKAdBreakInfo[], adBreakClips: NSArray<GCKAdBreakClipInfo> | GCKAdBreakClipInfo[], streamDuration: number, mediaTracks: NSArray<GCKMediaTrack> | GCKMediaTrack[], textTrackStyle: GCKMediaTextTrackStyle, customData: any): this;
 
-	initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(contentID: string, streamType: GCKMediaStreamType, contentType: string, metadata: GCKMediaMetadata, streamDuration: number, mediaTracks: NSArray<GCKMediaTrack>, textTrackStyle: GCKMediaTextTrackStyle, customData: any): this;
+	initWithContentIDStreamTypeContentTypeMetadataStreamDurationMediaTracksTextTrackStyleCustomData(contentID: string, streamType: GCKMediaStreamType, contentType: string, metadata: GCKMediaMetadata, streamDuration: number, mediaTracks: NSArray<GCKMediaTrack> | GCKMediaTrack[], textTrackStyle: GCKMediaTextTrackStyle, customData: any): this;
 
 	mediaTrackWithID(trackID: number): GCKMediaTrack;
 }
@@ -1046,6 +1167,8 @@ declare class GCKMediaInformationBuilder extends NSObject {
 
 	static new(): GCKMediaInformationBuilder; // inherited from NSObject
 
+	VMAP: GCKVASTAdsRequest;
+
 	adBreakClips: NSArray<GCKAdBreakClipInfo>;
 
 	adBreaks: NSArray<GCKAdBreakInfo>;
@@ -1054,6 +1177,8 @@ declare class GCKMediaInformationBuilder extends NSObject {
 
 	contentType: string;
 
+	contentURL: NSURL;
+
 	customData: any;
 
 	entity: string;
@@ -1061,6 +1186,8 @@ declare class GCKMediaInformationBuilder extends NSObject {
 	mediaTracks: NSArray<GCKMediaTrack>;
 
 	metadata: GCKMediaMetadata;
+
+	startAbsoluteTime: number;
 
 	streamDuration: number;
 
@@ -1072,6 +1199,8 @@ declare class GCKMediaInformationBuilder extends NSObject {
 
 	constructor(o: { contentID: string; entity: string; });
 
+	constructor(o: { contentURL: NSURL; });
+
 	constructor(o: { entity: string; });
 
 	constructor(o: { mediaInformation: GCKMediaInformation; });
@@ -1082,9 +1211,36 @@ declare class GCKMediaInformationBuilder extends NSObject {
 
 	initWithContentIDEntity(contentID: string, entity: string): this;
 
+	initWithContentURL(contentURL: NSURL): this;
+
 	initWithEntity(entity: string): this;
 
 	initWithMediaInformation(mediaInfo: GCKMediaInformation): this;
+}
+
+declare class GCKMediaLiveSeekableRange extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKMediaLiveSeekableRange; // inherited from NSObject
+
+	static new(): GCKMediaLiveSeekableRange; // inherited from NSObject
+
+	readonly endTime: number;
+
+	readonly isLiveDone: boolean;
+
+	readonly isMovingWindow: boolean;
+
+	readonly startTime: number;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKMediaLoadOptions extends NSObject implements NSCopying, NSSecureCoding {
@@ -1113,9 +1269,75 @@ declare class GCKMediaLoadOptions extends NSObject implements NSCopying, NSSecur
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
+}
+
+declare class GCKMediaLoadRequestData extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKMediaLoadRequestData; // inherited from NSObject
+
+	static new(): GCKMediaLoadRequestData; // inherited from NSObject
+
+	readonly activeTrackIDs: NSArray<number>;
+
+	readonly autoplay: number;
+
+	readonly credentials: string;
+
+	readonly credentialsType: string;
+
+	readonly customData: any;
+
+	readonly mediaInformation: GCKMediaInformation;
+
+	readonly playbackRate: number;
+
+	readonly queueData: GCKMediaQueueData;
+
+	readonly startTime: number;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	initWithCoder(coder: NSCoder): this;
+}
+
+declare class GCKMediaLoadRequestDataBuilder extends NSObject {
+
+	static alloc(): GCKMediaLoadRequestDataBuilder; // inherited from NSObject
+
+	static new(): GCKMediaLoadRequestDataBuilder; // inherited from NSObject
+
+	activeTrackIDs: NSArray<number>;
+
+	autoplay: number;
+
+	credentials: string;
+
+	credentialsType: string;
+
+	customData: any;
+
+	mediaInformation: GCKMediaInformation;
+
+	playbackRate: number;
+
+	queueData: GCKMediaQueueData;
+
+	startTime: number;
+
+	constructor(o: { mediaLoadRequestData: GCKMediaLoadRequestData; });
+
+	build(): GCKMediaLoadRequestData;
+
+	initWithMediaLoadRequestData(requestData: GCKMediaLoadRequestData): this;
 }
 
 declare class GCKMediaMetadata extends NSObject implements NSCopying, NSSecureCoding {
@@ -1148,11 +1370,11 @@ declare class GCKMediaMetadata extends NSObject implements NSCopying, NSSecureCo
 
 	doubleForKeyDefaultValue(key: string, defaultValue: number): number;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
 	images(): NSArray<any>;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithMetadataType(metadataType: GCKMediaMetadataType): this;
 
@@ -1198,6 +1420,8 @@ declare const enum GCKMediaMetadataType {
 
 	Photo = 4,
 
+	AudioBookChapter = 5,
+
 	User = 100
 }
 
@@ -1229,6 +1453,213 @@ declare const enum GCKMediaPlayerState {
 	Loading = 5
 }
 
+declare class GCKMediaQueue extends NSObject {
+
+	static alloc(): GCKMediaQueue; // inherited from NSObject
+
+	static new(): GCKMediaQueue; // inherited from NSObject
+
+	readonly cacheSize: number;
+
+	readonly cachedItemCount: number;
+
+	readonly itemCount: number;
+
+	constructor(o: { remoteMediaClient: GCKRemoteMediaClient; });
+
+	constructor(o: { remoteMediaClient: GCKRemoteMediaClient; cacheSize: number; });
+
+	constructor(o: { remoteMediaClient: GCKRemoteMediaClient; cacheSize: number; maxFetchCount: number; });
+
+	addDelegate(delegate: GCKMediaQueueDelegate): void;
+
+	clear(): void;
+
+	indexOfItemWithID(itemID: number): number;
+
+	initWithRemoteMediaClient(remoteMediaClient: GCKRemoteMediaClient): this;
+
+	initWithRemoteMediaClientCacheSize(remoteMediaClient: GCKRemoteMediaClient, cacheSize: number): this;
+
+	initWithRemoteMediaClientCacheSizeMaxFetchCount(remoteMediaClient: GCKRemoteMediaClient, cacheSize: number, maxFetchCount: number): this;
+
+	itemAtIndex(index: number): GCKMediaQueueItem;
+
+	itemAtIndexFetchIfNeeded(index: number, fetch: boolean): GCKMediaQueueItem;
+
+	itemIDAtIndex(index: number): number;
+
+	reload(): void;
+
+	removeDelegate(delegate: GCKMediaQueueDelegate): void;
+}
+
+declare class GCKMediaQueueContainerMetadata extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKMediaQueueContainerMetadata; // inherited from NSObject
+
+	static new(): GCKMediaQueueContainerMetadata; // inherited from NSObject
+
+	readonly authors: NSArray<string>;
+
+	readonly containerDuration: number;
+
+	readonly containerImages: NSArray<GCKImage>;
+
+	readonly containerType: GCKMediaQueueContainerType;
+
+	readonly narrators: NSArray<string>;
+
+	readonly publisher: string;
+
+	readonly releaseDate: string;
+
+	readonly sections: NSArray<GCKMediaMetadata>;
+
+	readonly title: string;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	initWithCoder(coder: NSCoder): this;
+}
+
+declare class GCKMediaQueueContainerMetadataBuilder extends NSObject {
+
+	static alloc(): GCKMediaQueueContainerMetadataBuilder; // inherited from NSObject
+
+	static new(): GCKMediaQueueContainerMetadataBuilder; // inherited from NSObject
+
+	authors: NSArray<string>;
+
+	containerDuration: number;
+
+	containerImages: NSArray<GCKImage>;
+
+	containerType: GCKMediaQueueContainerType;
+
+	narrators: NSArray<string>;
+
+	publisher: string;
+
+	releaseDate: string;
+
+	sections: NSArray<GCKMediaMetadata>;
+
+	title: string;
+
+	constructor(o: { containerMetadata: GCKMediaQueueContainerMetadata; });
+
+	constructor(o: { containerType: GCKMediaQueueContainerType; });
+
+	build(): GCKMediaQueueContainerMetadata;
+
+	initWithContainerMetadata(containerMetadata: GCKMediaQueueContainerMetadata): this;
+
+	initWithContainerType(containerType: GCKMediaQueueContainerType): this;
+}
+
+declare const enum GCKMediaQueueContainerType {
+
+	Generic = 0,
+
+	AudioBook = 1
+}
+
+declare class GCKMediaQueueData extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKMediaQueueData; // inherited from NSObject
+
+	static new(): GCKMediaQueueData; // inherited from NSObject
+
+	readonly containerMetadata: GCKMediaQueueContainerMetadata;
+
+	readonly entity: string;
+
+	readonly items: NSArray<GCKMediaQueueItem>;
+
+	readonly name: string;
+
+	readonly queueID: string;
+
+	readonly queueType: GCKMediaQueueType;
+
+	readonly repeatMode: GCKMediaRepeatMode;
+
+	readonly startIndex: number;
+
+	readonly startTime: number;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	initWithCoder(coder: NSCoder): this;
+}
+
+declare class GCKMediaQueueDataBuilder extends NSObject {
+
+	static alloc(): GCKMediaQueueDataBuilder; // inherited from NSObject
+
+	static new(): GCKMediaQueueDataBuilder; // inherited from NSObject
+
+	containerMetadata: GCKMediaQueueContainerMetadata;
+
+	entity: string;
+
+	items: NSArray<GCKMediaQueueItem>;
+
+	name: string;
+
+	queueID: string;
+
+	queueType: GCKMediaQueueType;
+
+	repeatMode: GCKMediaRepeatMode;
+
+	startIndex: number;
+
+	startTime: number;
+
+	constructor(o: { queueData: GCKMediaQueueData; });
+
+	constructor(o: { queueType: GCKMediaQueueType; });
+
+	build(): GCKMediaQueueData;
+
+	initWithQueueData(queueData: GCKMediaQueueData): this;
+
+	initWithQueueType(queueType: GCKMediaQueueType): this;
+}
+
+interface GCKMediaQueueDelegate extends NSObjectProtocol {
+
+	mediaQueueDidChange?(queue: GCKMediaQueue): void;
+
+	mediaQueueDidInsertItemsInRange?(queue: GCKMediaQueue, range: NSRange): void;
+
+	mediaQueueDidReloadItems?(queue: GCKMediaQueue): void;
+
+	mediaQueueDidRemoveItemsAtIndexes?(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void;
+
+	mediaQueueDidUpdateItemsAtIndexes?(queue: GCKMediaQueue, indexes: NSArray<number> | number[]): void;
+
+	mediaQueueWillChange?(queue: GCKMediaQueue): void;
+}
+declare var GCKMediaQueueDelegate: {
+
+	prototype: GCKMediaQueueDelegate;
+};
+
 declare class GCKMediaQueueItem extends NSObject implements NSCopying {
 
 	static alloc(): GCKMediaQueueItem; // inherited from NSObject
@@ -1251,17 +1682,17 @@ declare class GCKMediaQueueItem extends NSObject implements NSCopying {
 
 	readonly startTime: number;
 
-	constructor(o: { mediaInformation: GCKMediaInformation; autoplay: boolean; startTime: number; playbackDuration: number; preloadTime: number; activeTrackIDs: NSArray<number>; customData: any; });
+	constructor(o: { mediaInformation: GCKMediaInformation; autoplay: boolean; startTime: number; playbackDuration: number; preloadTime: number; activeTrackIDs: NSArray<number> | number[]; customData: any; });
 
-	constructor(o: { mediaInformation: GCKMediaInformation; autoplay: boolean; startTime: number; preloadTime: number; activeTrackIDs: NSArray<number>; customData: any; });
+	constructor(o: { mediaInformation: GCKMediaInformation; autoplay: boolean; startTime: number; preloadTime: number; activeTrackIDs: NSArray<number> | number[]; customData: any; });
 
 	clearItemID(): void;
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	initWithMediaInformationAutoplayStartTimePlaybackDurationPreloadTimeActiveTrackIDsCustomData(mediaInformation: GCKMediaInformation, autoplay: boolean, startTime: number, playbackDuration: number, preloadTime: number, activeTrackIDs: NSArray<number>, customData: any): this;
+	initWithMediaInformationAutoplayStartTimePlaybackDurationPreloadTimeActiveTrackIDsCustomData(mediaInformation: GCKMediaInformation, autoplay: boolean, startTime: number, playbackDuration: number, preloadTime: number, activeTrackIDs: NSArray<number> | number[], customData: any): this;
 
-	initWithMediaInformationAutoplayStartTimePreloadTimeActiveTrackIDsCustomData(mediaInformation: GCKMediaInformation, autoplay: boolean, startTime: number, preloadTime: number, activeTrackIDs: NSArray<number>, customData: any): this;
+	initWithMediaInformationAutoplayStartTimePreloadTimeActiveTrackIDsCustomData(mediaInformation: GCKMediaInformation, autoplay: boolean, startTime: number, preloadTime: number, activeTrackIDs: NSArray<number> | number[], customData: any): this;
 
 	mediaQueueItemModifiedWithBlock(block: (p1: GCKMediaQueueItemBuilder) => void): this;
 }
@@ -1313,9 +1744,32 @@ declare class GCKMediaQueueLoadOptions extends NSObject implements NSCopying, NS
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
+}
+
+declare const enum GCKMediaQueueType {
+
+	Generic = 0,
+
+	Album = 1,
+
+	Playlist = 2,
+
+	AudioBook = 3,
+
+	RadioStation = 4,
+
+	PodcastSeries = 5,
+
+	TVSeries = 6,
+
+	VideoPlayList = 7,
+
+	LiveTV = 8,
+
+	Movie = 9
 }
 
 declare const enum GCKMediaRepeatMode {
@@ -1359,9 +1813,9 @@ declare class GCKMediaRequestItem extends NSObject implements NSCopying, NSSecur
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithURLProtocolType(url: NSURL, protocolType: GCKStreamingProtocolType): this;
 
@@ -1391,15 +1845,17 @@ declare class GCKMediaSeekOptions extends NSObject implements NSCopying, NSSecur
 
 	resumeState: GCKMediaResumeState;
 
+	seekToInfinite: boolean;
+
 	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
 
 	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKMediaStatus extends NSObject implements NSCopying {
@@ -1422,6 +1878,8 @@ declare class GCKMediaStatus extends NSObject implements NSCopying {
 
 	readonly isMuted: boolean;
 
+	readonly liveSeekableRange: GCKMediaLiveSeekableRange;
+
 	readonly loadingItemID: number;
 
 	readonly mediaInformation: GCKMediaInformation;
@@ -1438,11 +1896,17 @@ declare class GCKMediaStatus extends NSObject implements NSCopying {
 
 	readonly preloadedItemID: number;
 
+	readonly queueData: GCKMediaQueueData;
+
 	readonly queueHasCurrentItem: boolean;
 
 	readonly queueHasLoadingItem: boolean;
 
+	readonly queueHasNextItem: boolean;
+
 	readonly queueHasPreviousItem: boolean;
+
+	readonly queueItemCount: number;
 
 	readonly queueRepeatMode: GCKMediaRepeatMode;
 
@@ -1460,13 +1924,9 @@ declare class GCKMediaStatus extends NSObject implements NSCopying {
 
 	isMediaCommandSupported(command: number): boolean;
 
-	queueHasNextItem(): boolean;
-
 	queueIndexForItemID(itemID: number): number;
 
 	queueItemAtIndex(index: number): GCKMediaQueueItem;
-
-	queueItemCount(): number;
 
 	queueItemWithItemID(itemID: number): GCKMediaQueueItem;
 }
@@ -1520,9 +1980,9 @@ declare class GCKMediaTextTrackStyle extends NSObject implements NSCopying, NSSe
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare const enum GCKMediaTextTrackStyleEdgeType {
@@ -1630,9 +2090,9 @@ declare class GCKMediaTrack extends NSObject implements NSCopying, NSSecureCodin
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithIdentifierContentIdentifierContentTypeTypeTextSubtypeNameLanguageCodeCustomData(identifier: number, contentIdentifier: string, contentType: string, type: GCKMediaTrackType, textSubtype: GCKMediaTextTrackSubtype, name: string, languageCode: string, customData: any): this;
 }
@@ -1648,39 +2108,25 @@ declare const enum GCKMediaTrackType {
 	Video = 3
 }
 
-declare class GCKMultizoneDevice extends NSObject implements NSCopying, NSSecureCoding {
+declare class GCKMultizoneDevice extends GCKDynamicDevice implements NSCopying, NSSecureCoding {
 
 	static alloc(): GCKMultizoneDevice; // inherited from NSObject
 
 	static new(): GCKMultizoneDevice; // inherited from NSObject
 
-	capabilities: number;
+	readonly muted: boolean;
 
-	readonly deviceID: string;
-
-	readonly friendlyName: string;
-
-	muted: boolean;
-
-	volumeLevel: number;
+	readonly volumeLevel: number;
 
 	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
 
 	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
 
-	constructor(o: { deviceID: string; friendlyName: string; capabilities: number; volumeLevel: number; muted: boolean; });
-
-	constructor(o: { JSONObject: any; });
-
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
-
-	initWithDeviceIDFriendlyNameCapabilitiesVolumeLevelMuted(deviceID: string, friendlyName: string, capabilities: number, volume: number, muted: boolean): this;
-
-	initWithJSONObject(JSONObject: any): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKMultizoneStatus extends NSObject implements NSCopying, NSSecureCoding {
@@ -1689,23 +2135,23 @@ declare class GCKMultizoneStatus extends NSObject implements NSCopying, NSSecure
 
 	static new(): GCKMultizoneStatus; // inherited from NSObject
 
-	devices: NSArray<GCKMultizoneDevice>;
+	readonly devices: NSArray<GCKMultizoneDevice>;
 
 	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
 
 	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
 
-	constructor(o: { devices: NSArray<GCKMultizoneDevice>; });
+	constructor(o: { devices: NSArray<GCKMultizoneDevice> | GCKMultizoneDevice[]; });
 
 	constructor(o: { JSONObject: any; });
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
-	initWithDevices(devices: NSArray<GCKMultizoneDevice>): this;
+	initWithDevices(devices: NSArray<GCKMultizoneDevice> | GCKMultizoneDevice[]): this;
 
 	initWithJSONObject(JSONObject: any): this;
 }
@@ -1742,9 +2188,9 @@ declare class GCKNetworkAddress extends NSObject implements NSCoding, NSCopying 
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithTypeAddressData(type: GCKNetworkAddressType, addressData: NSData): this;
 
@@ -1784,9 +2230,9 @@ declare class GCKOpenURLOptions extends NSObject implements NSCopying, NSSecureC
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKRemoteMediaClient extends NSObject {
@@ -1799,11 +2245,19 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	readonly connected: boolean;
 
+	readonly mediaQueue: GCKMediaQueue;
+
 	readonly mediaStatus: GCKMediaStatus;
+
+	readonly playingLiveStream: boolean;
 
 	readonly timeSinceLastMediaStatusUpdate: number;
 
 	addListener(listener: GCKRemoteMediaClientListener): void;
+
+	approximateLiveSeekableRangeEnd(): number;
+
+	approximateLiveSeekableRangeStart(): number;
 
 	approximateStreamPosition(): number;
 
@@ -1813,21 +2267,23 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	loadMediaAutoplayPlayPosition(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number): GCKRequest;
 
-	loadMediaAutoplayPlayPositionActiveTrackIDs(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number, activeTrackIDs: NSArray<number>): GCKRequest;
+	loadMediaAutoplayPlayPositionActiveTrackIDs(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number, activeTrackIDs: NSArray<number> | number[]): GCKRequest;
 
-	loadMediaAutoplayPlayPositionActiveTrackIDsCustomData(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number, activeTrackIDs: NSArray<number>, customData: any): GCKRequest;
+	loadMediaAutoplayPlayPositionActiveTrackIDsCustomData(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number, activeTrackIDs: NSArray<number> | number[], customData: any): GCKRequest;
 
 	loadMediaAutoplayPlayPositionCustomData(mediaInfo: GCKMediaInformation, autoplay: boolean, playPosition: number, customData: any): GCKRequest;
 
+	loadMediaWithLoadRequestData(requestData: GCKMediaLoadRequestData): GCKRequest;
+
 	loadMediaWithOptions(mediaInfo: GCKMediaInformation, options: GCKMediaLoadOptions): GCKRequest;
 
-	notifyDidInsertQueueItemsWithIDsBeforeItemWithID(itemIDs: NSArray<number>, beforeItemID: number): void;
+	notifyDidInsertQueueItemsWithIDsBeforeItemWithID(itemIDs: NSArray<number> | number[], beforeItemID: number): void;
 
-	notifyDidReceiveQueueItemIDs(itemIDs: NSArray<number>): void;
+	notifyDidReceiveQueueItemIDs(itemIDs: NSArray<number> | number[]): void;
 
-	notifyDidReceiveQueueItems(items: NSArray<GCKMediaQueueItem>): void;
+	notifyDidReceiveQueueItems(items: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[]): void;
 
-	notifyDidRemoveQueueItemsWithIDs(itemIDs: NSArray<number>): void;
+	notifyDidRemoveQueueItemsWithIDs(itemIDs: NSArray<number> | number[]): void;
 
 	notifyDidStartMediaSession(): void;
 
@@ -1839,7 +2295,7 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	notifyDidUpdateQueue(): void;
 
-	notifyDidUpdateQueueItemsWithIDs(itemIDs: NSArray<number>): void;
+	notifyDidUpdateQueueItemsWithIDs(itemIDs: NSArray<number> | number[]): void;
 
 	pause(): GCKRequest;
 
@@ -1851,7 +2307,7 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	queueFetchItemIDs(): GCKRequest;
 
-	queueFetchItemsForIDs(queueItemIDs: NSArray<number>): GCKRequest;
+	queueFetchItemsForIDs(queueItemIDs: NSArray<number> | number[]): GCKRequest;
 
 	queueInsertAndPlayItemBeforeItemWithID(item: GCKMediaQueueItem, beforeItemID: number): GCKRequest;
 
@@ -1859,9 +2315,9 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	queueInsertItemBeforeItemWithID(item: GCKMediaQueueItem, beforeItemID: number): GCKRequest;
 
-	queueInsertItemsBeforeItemWithID(queueItems: NSArray<GCKMediaQueueItem>, beforeItemID: number): GCKRequest;
+	queueInsertItemsBeforeItemWithID(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], beforeItemID: number): GCKRequest;
 
-	queueInsertItemsBeforeItemWithIDCustomData(queueItems: NSArray<GCKMediaQueueItem>, beforeItemID: number, customData: any): GCKRequest;
+	queueInsertItemsBeforeItemWithIDCustomData(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], beforeItemID: number, customData: any): GCKRequest;
 
 	queueJumpToItemWithID(itemID: number): GCKRequest;
 
@@ -1869,13 +2325,13 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	queueJumpToItemWithIDPlayPositionCustomData(itemID: number, playPosition: number, customData: any): GCKRequest;
 
-	queueLoadItemsStartIndexPlayPositionRepeatModeCustomData(queueItems: NSArray<GCKMediaQueueItem>, startIndex: number, playPosition: number, repeatMode: GCKMediaRepeatMode, customData: any): GCKRequest;
+	queueLoadItemsStartIndexPlayPositionRepeatModeCustomData(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], startIndex: number, playPosition: number, repeatMode: GCKMediaRepeatMode, customData: any): GCKRequest;
 
-	queueLoadItemsStartIndexRepeatMode(queueItems: NSArray<GCKMediaQueueItem>, startIndex: number, repeatMode: GCKMediaRepeatMode): GCKRequest;
+	queueLoadItemsStartIndexRepeatMode(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], startIndex: number, repeatMode: GCKMediaRepeatMode): GCKRequest;
 
-	queueLoadItemsStartIndexRepeatModeCustomData(queueItems: NSArray<GCKMediaQueueItem>, startIndex: number, repeatMode: GCKMediaRepeatMode, customData: any): GCKRequest;
+	queueLoadItemsStartIndexRepeatModeCustomData(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], startIndex: number, repeatMode: GCKMediaRepeatMode, customData: any): GCKRequest;
 
-	queueLoadItemsWithOptions(queueItems: NSArray<GCKMediaQueueItem>, options: GCKMediaQueueLoadOptions): GCKRequest;
+	queueLoadItemsWithOptions(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], options: GCKMediaQueueLoadOptions): GCKRequest;
 
 	queueMoveItemWithIDBeforeItemWithID(itemID: number, beforeItemID: number): GCKRequest;
 
@@ -1885,19 +2341,19 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	queueRemoveItemWithID(itemID: number): GCKRequest;
 
-	queueRemoveItemsWithIDs(itemIDs: NSArray<number>): GCKRequest;
+	queueRemoveItemsWithIDs(itemIDs: NSArray<number> | number[]): GCKRequest;
 
-	queueRemoveItemsWithIDsCustomData(itemIDs: NSArray<number>, customData: any): GCKRequest;
+	queueRemoveItemsWithIDsCustomData(itemIDs: NSArray<number> | number[], customData: any): GCKRequest;
 
-	queueReorderItemsWithIDsInsertBeforeItemWithID(queueItemIDs: NSArray<number>, beforeItemID: number): GCKRequest;
+	queueReorderItemsWithIDsInsertBeforeItemWithID(queueItemIDs: NSArray<number> | number[], beforeItemID: number): GCKRequest;
 
-	queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData(queueItemIDs: NSArray<number>, beforeItemID: number, customData: any): GCKRequest;
+	queueReorderItemsWithIDsInsertBeforeItemWithIDCustomData(queueItemIDs: NSArray<number> | number[], beforeItemID: number, customData: any): GCKRequest;
 
 	queueSetRepeatMode(repeatMode: GCKMediaRepeatMode): GCKRequest;
 
-	queueUpdateItems(queueItems: NSArray<GCKMediaQueueItem>): GCKRequest;
+	queueUpdateItems(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[]): GCKRequest;
 
-	queueUpdateItemsCustomData(queueItems: NSArray<GCKMediaQueueItem>, customData: any): GCKRequest;
+	queueUpdateItemsCustomData(queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[], customData: any): GCKRequest;
 
 	removeListener(listener: GCKRemoteMediaClientListener): void;
 
@@ -1911,7 +2367,7 @@ declare class GCKRemoteMediaClient extends NSObject {
 
 	seekWithOptions(options: GCKMediaSeekOptions): GCKRequest;
 
-	setActiveTrackIDs(activeTrackIDs: NSArray<number>): GCKRequest;
+	setActiveTrackIDs(activeTrackIDs: NSArray<number> | number[]): GCKRequest;
 
 	setPlaybackRate(playbackRate: number): GCKRequest;
 
@@ -1947,13 +2403,13 @@ declare var GCKRemoteMediaClientAdInfoParserDelegate: {
 
 interface GCKRemoteMediaClientListener extends NSObjectProtocol {
 
-	remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>, beforeItemID: number): void;
+	remoteMediaClientDidInsertQueueItemsWithIDsBeforeItemWithID?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number> | number[], beforeItemID: number): void;
 
-	remoteMediaClientDidReceiveQueueItemIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void;
+	remoteMediaClientDidReceiveQueueItemIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number> | number[]): void;
 
-	remoteMediaClientDidReceiveQueueItems?(client: GCKRemoteMediaClient, queueItems: NSArray<GCKMediaQueueItem>): void;
+	remoteMediaClientDidReceiveQueueItems?(client: GCKRemoteMediaClient, queueItems: NSArray<GCKMediaQueueItem> | GCKMediaQueueItem[]): void;
 
-	remoteMediaClientDidRemoveQueueItemsWithIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void;
+	remoteMediaClientDidRemoveQueueItemsWithIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number> | number[]): void;
 
 	remoteMediaClientDidStartMediaSessionWithID?(client: GCKRemoteMediaClient, sessionID: number): void;
 
@@ -1965,7 +2421,7 @@ interface GCKRemoteMediaClientListener extends NSObjectProtocol {
 
 	remoteMediaClientDidUpdateQueue?(client: GCKRemoteMediaClient): void;
 
-	remoteMediaClientDidUpdateQueueItemsWithIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void;
+	remoteMediaClientDidUpdateQueueItemsWithIDs?(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number> | number[]): void;
 }
 declare var GCKRemoteMediaClientListener: {
 
@@ -2223,9 +2679,9 @@ declare class GCKSessionTraits extends NSObject implements NSCopying, NSSecureCo
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithMinimumVolumeMaximumVolumeVolumeIncrementSupportsMuting(minimumVolume: number, maximumVolume: number, volumeIncrement: number, supportsMuting: boolean): this;
 
@@ -2262,15 +2718,17 @@ declare class GCKUIButton extends GCKUIMultistateButton {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): GCKUIButton; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): GCKUIButton; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUIButton; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): GCKUIButton; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): GCKUIButton; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUIButton; // inherited from UIAppearance
 
 	static buttonWithType(buttonType: UIButtonType): GCKUIButton; // inherited from UIButton
 
 	static new(): GCKUIButton; // inherited from NSObject
+
+	static systemButtonWithImageTargetAction(image: UIImage, target: any, action: string): GCKUIButton; // inherited from UIButton
 
 	applicationState: UIControlState;
 }
@@ -2303,21 +2761,23 @@ declare class GCKUICastButton extends UIButton {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): GCKUICastButton; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): GCKUICastButton; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUICastButton; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): GCKUICastButton; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): GCKUICastButton; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUICastButton; // inherited from UIAppearance
 
 	static buttonWithType(buttonType: UIButtonType): GCKUICastButton; // inherited from UIButton
 
 	static new(): GCKUICastButton; // inherited from NSObject
 
+	static systemButtonWithImageTargetAction(image: UIImage, target: any, action: string): GCKUICastButton; // inherited from UIButton
+
 	triggersDefaultCastDialog: boolean;
 
 	setAccessibilityLabelForCastState(label: string, state: GCKCastState): void;
 
-	setInactiveIconActiveIconAnimationIcons(inactiveIcon: UIImage, activeIcon: UIImage, animationIcons: NSArray<UIImage>): void;
+	setInactiveIconActiveIconAnimationIcons(inactiveIcon: UIImage, activeIcon: UIImage, animationIcons: NSArray<UIImage> | UIImage[]): void;
 }
 
 declare class GCKUICastContainerViewController extends UIViewController {
@@ -2460,9 +2920,9 @@ declare class GCKUIImageHints extends NSObject implements NSCopying, NSSecureCod
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 
 	initWithImageTypeImageSize(imageType: GCKMediaMetadataImageType, imageSize: CGSize): this;
 
@@ -2637,7 +3097,7 @@ declare class GCKUIMediaTrackSelectionViewController extends UITabBarController 
 
 interface GCKUIMediaTrackSelectionViewControllerDelegate extends NSObjectProtocol {
 
-	didSelectMediaTracks(mediaTrackIDs: NSArray<number>): void;
+	didSelectMediaTracks(mediaTrackIDs: NSArray<number> | number[]): void;
 }
 declare var GCKUIMediaTrackSelectionViewControllerDelegate: {
 
@@ -2722,15 +3182,17 @@ declare class GCKUIMultistateButton extends UIButton {
 
 	static appearanceForTraitCollectionWhenContainedIn(trait: UITraitCollection, ContainerClass: typeof NSObject): GCKUIMultistateButton; // inherited from UIAppearance
 
-	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject>): GCKUIMultistateButton; // inherited from UIAppearance
+	static appearanceForTraitCollectionWhenContainedInInstancesOfClasses(trait: UITraitCollection, containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUIMultistateButton; // inherited from UIAppearance
 
 	static appearanceWhenContainedIn(ContainerClass: typeof NSObject): GCKUIMultistateButton; // inherited from UIAppearance
 
-	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject>): GCKUIMultistateButton; // inherited from UIAppearance
+	static appearanceWhenContainedInInstancesOfClasses(containerTypes: NSArray<typeof NSObject> | typeof NSObject[]): GCKUIMultistateButton; // inherited from UIAppearance
 
 	static buttonWithType(buttonType: UIButtonType): GCKUIMultistateButton; // inherited from UIButton
 
 	static new(): GCKUIMultistateButton; // inherited from NSObject
+
+	static systemButtonWithImageTargetAction(image: UIImage, target: any, action: string): GCKUIMultistateButton; // inherited from UIButton
 
 	buttonState: number;
 
@@ -2800,9 +3262,13 @@ declare class GCKUIStyleAttributes extends NSObject {
 
 	static new(): GCKUIStyleAttributes; // inherited from NSObject
 
+	adImageContentMode: number;
+
 	audioTrackImage: UIImage;
 
 	backgroundColor: UIColor;
+
+	backgroundImageContentMode: number;
 
 	bodyTextColor: UIColor;
 
@@ -2842,6 +3308,8 @@ declare class GCKUIStyleAttributes extends NSObject {
 
 	iconTintColor: UIColor;
 
+	liveIndicatorColor: UIColor;
+
 	muteOffImage: UIImage;
 
 	muteOnImage: UIImage;
@@ -2855,6 +3323,14 @@ declare class GCKUIStyleAttributes extends NSObject {
 	skipNextImage: UIImage;
 
 	skipPreviousImage: UIImage;
+
+	sliderProgressColor: UIColor;
+
+	sliderSecondaryProgressColor: UIColor;
+
+	sliderTooltipBackgroundColor: UIColor;
+
+	sliderUnseekableProgressColor: UIColor;
 
 	stopImage: UIImage;
 
@@ -2881,6 +3357,24 @@ declare class GCKUIStyleAttributesConnectionController extends GCKUIStyleAttribu
 	static alloc(): GCKUIStyleAttributesConnectionController; // inherited from NSObject
 
 	static new(): GCKUIStyleAttributesConnectionController; // inherited from NSObject
+
+	readonly navigation: GCKUIStyleAttributesConnectionNavigation;
+
+	readonly toolbar: GCKUIStyleAttributesConnectionToolbar;
+}
+
+declare class GCKUIStyleAttributesConnectionNavigation extends GCKUIStyleAttributes {
+
+	static alloc(): GCKUIStyleAttributesConnectionNavigation; // inherited from NSObject
+
+	static new(): GCKUIStyleAttributesConnectionNavigation; // inherited from NSObject
+}
+
+declare class GCKUIStyleAttributesConnectionToolbar extends GCKUIStyleAttributes {
+
+	static alloc(): GCKUIStyleAttributesConnectionToolbar; // inherited from NSObject
+
+	static new(): GCKUIStyleAttributesConnectionToolbar; // inherited from NSObject
 }
 
 declare class GCKUIStyleAttributesDeviceChooser extends GCKUIStyleAttributes {
@@ -2957,9 +3451,36 @@ declare class GCKUIUtils extends NSObject {
 
 	static currentViewController(): UIViewController;
 
+	static localTimeAsString(localTime: number): string;
+
 	static new(): GCKUIUtils; // inherited from NSObject
 
 	static timeIntervalAsString(timeInterval: number): string;
+}
+
+declare class GCKVASTAdsRequest extends NSObject implements NSCopying, NSSecureCoding {
+
+	static alloc(): GCKVASTAdsRequest; // inherited from NSObject
+
+	static new(): GCKVASTAdsRequest; // inherited from NSObject
+
+	readonly adTagUrl: NSURL;
+
+	readonly adsResponse: string;
+
+	static readonly supportsSecureCoding: boolean; // inherited from NSSecureCoding
+
+	constructor(o: { adTagURL: NSURL; adsResponse: string; });
+
+	constructor(o: { coder: NSCoder; }); // inherited from NSCoding
+
+	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
+
+	encodeWithCoder(coder: NSCoder): void;
+
+	initWithAdTagURLAdsResponse(adTagURL: NSURL, adsResponse: string): this;
+
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare class GCKVideoInfo extends NSObject implements NSCopying, NSSecureCoding {
@@ -2980,9 +3501,9 @@ declare class GCKVideoInfo extends NSObject implements NSCopying, NSSecureCoding
 
 	copyWithZone(zone: interop.Pointer | interop.Reference<any>): any;
 
-	encodeWithCoder(aCoder: NSCoder): void;
+	encodeWithCoder(coder: NSCoder): void;
 
-	initWithCoder(aDecoder: NSCoder): this;
+	initWithCoder(coder: NSCoder): this;
 }
 
 declare const enum GCKVideoInfoHDRType {
@@ -3008,9 +3529,13 @@ declare var kGCKDefaultMediaReceiverApplicationID: string;
 
 declare var kGCKErrorCustomDataKey: string;
 
+declare var kGCKErrorDetailedCodeKey: string;
+
 declare var kGCKErrorDomain: string;
 
 declare var kGCKErrorExtraInfoKey: string;
+
+declare var kGCKErrorReasonKey: string;
 
 declare var kGCKExpandedMediaControlsTriggeredNotification: string;
 
@@ -3024,21 +3549,45 @@ declare var kGCKKeyConnectionState: string;
 
 declare var kGCKKeyHasDiscoveredDevices: string;
 
+declare var kGCKMediaCommandDislike: number;
+
+declare var kGCKMediaCommandEditTracks: number;
+
+declare var kGCKMediaCommandFollow: number;
+
+declare var kGCKMediaCommandLike: number;
+
 declare var kGCKMediaCommandPause: number;
 
 declare var kGCKMediaCommandQueueNext: number;
 
 declare var kGCKMediaCommandQueuePrevious: number;
 
+declare var kGCKMediaCommandQueueRepeat: number;
+
+declare var kGCKMediaCommandQueueRepeatAll: number;
+
+declare var kGCKMediaCommandQueueRepeatOne: number;
+
+declare var kGCKMediaCommandQueueShuffle: number;
+
 declare var kGCKMediaCommandSeek: number;
 
+declare var kGCKMediaCommandSetPlaybackRate: number;
+
 declare var kGCKMediaCommandSetVolume: number;
+
+declare var kGCKMediaCommandSkipAd: number;
 
 declare var kGCKMediaCommandSkipBackward: number;
 
 declare var kGCKMediaCommandSkipForward: number;
 
+declare var kGCKMediaCommandStreamTransfer: number;
+
 declare var kGCKMediaCommandToggleMute: number;
+
+declare var kGCKMediaCommandUnfollow: number;
 
 declare var kGCKMediaQueueInvalidItemID: number;
 
@@ -3048,7 +3597,13 @@ declare var kGCKMetadataKeyAlbumTitle: string;
 
 declare var kGCKMetadataKeyArtist: string;
 
+declare var kGCKMetadataKeyBookTitle: string;
+
 declare var kGCKMetadataKeyBroadcastDate: string;
+
+declare var kGCKMetadataKeyChapterNumber: string;
+
+declare var kGCKMetadataKeyChapterTitle: string;
 
 declare var kGCKMetadataKeyComposer: string;
 
@@ -3066,9 +3621,19 @@ declare var kGCKMetadataKeyLocationLongitude: string;
 
 declare var kGCKMetadataKeyLocationName: string;
 
+declare var kGCKMetadataKeyQueueItemID: string;
+
 declare var kGCKMetadataKeyReleaseDate: string;
 
 declare var kGCKMetadataKeySeasonNumber: string;
+
+declare var kGCKMetadataKeySectionDuration: string;
+
+declare var kGCKMetadataKeySectionStartAbsoluteTime: string;
+
+declare var kGCKMetadataKeySectionStartTimeInContainer: string;
+
+declare var kGCKMetadataKeySectionStartTimeInMedia: string;
 
 declare var kGCKMetadataKeySeriesTitle: string;
 
