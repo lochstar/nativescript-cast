@@ -250,15 +250,12 @@ Android events are passed from `SessionManagerListener`, `MediaRouter.Callback` 
 | onDeviceVolumeChanged    | onRouteVolumeChanged   | didReceiveDeviceVolume                       |
 | onDeviceChanged          | onRouteChanged         | didUpdateDevice                              |
 | onMediaStatusChanged     | onStatusUpdated        | remoteMediaClientDidUpdateMediaStatus        |
-
-| mediaQueueWillChange     | mediaQueueWillChange   | mediaQueueWillChange       |
-| itemsReloaded            | itemsReloaded          | mediaQueueDidReloadItems   |
-| itemsInsertedInRange     | itemsInsertedInRange   | didInsertItemsInRange      |
-| itemsUpdatedAtIndexes    | itemsUpdatedAtIndexes  | didUpdateItemsAtIndexes    |
-| itemsRemovedAtIndexes    | itemsRemovedAtIndexes  | didRemoveItemsAtIndexes    |
-| mediaQueueChanged        | mediaQueueChanged      | mediaQueueDidChange        |
-
-| onDidReceiveQueueItemIDs | ---                    | remoteMediaClientDidReceiveQueueItemIDs
+| mediaQueueWillChange     | mediaQueueWillChange   | mediaQueueWillChange                         |
+| itemsReloaded            | itemsReloaded          | mediaQueueDidReloadItems                     |
+| itemsInsertedInRange     | itemsInsertedInRange   | didInsertItemsInRange                        |
+| itemsUpdatedAtIndexes    | itemsUpdatedAtIndexes  | didUpdateItemsAtIndexes                      |
+| itemsRemovedAtIndexes    | itemsRemovedAtIndexes  | didRemoveItemsAtIndexes                      |
+| mediaQueueChanged        | mediaQueueChanged      | mediaQueueDidChange                          |
 
 All unlisted events are ignored. See related documentation for futher details.
 
@@ -302,25 +299,25 @@ See [cast.types](src/cast.types.ts) for method options.
 
   Stops the loaded media.
 
-- `getMediaInfo(): void`
-
-  Returns the loaded media info.
-
-- `setActiveTrackIds([trackIds]): void`
-
-  Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
-
 - `showController(): void`
 
   Show the expanded controller.
 
 - `showCastInstructions(title: string, singleTime: boolean): void`
 
-  Shows the Cast instructions overlay.
+  Shows the Cast instructions overlay. `title` and `singleTime` arguments are Android-only.
 
 - `showCastDialog(): void`
 
   Show the Cast destination dialog.
+
+- `getMediaInfo(): CastMediaInfo`
+
+  Returns the loaded media info.
+
+- `setActiveTrackIds([trackIds]): void`
+
+  Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
 
 - `queueNextItem(): void`
 
@@ -333,14 +330,6 @@ See [cast.types](src/cast.types.ts) for method options.
 - `queueSetRepeatMode(repeatMode: RepeatMode): void`
 
   Set the queue repeat mode.
-
-- `queueFetchItemIDs(): void`
-
-  Fetch queue item IDs. The response is returned by the event `onDidReceiveQueueItemIDs`.
-
-- `queueFetchItemAtIndex(index: number): void`
-
-  Fetch queue item data by index. The response is returned by the event `onDidReceiveQueueItems`.
 
 - `queueInsertItem(options: QueueInsertItemOptions): void`
 
@@ -364,6 +353,7 @@ See [cast.types](src/cast.types.ts) for method options.
 
 ## TODO
 
+- More queue-related functions.
 - Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).
 
 ## Acknowledgements

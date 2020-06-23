@@ -1,8 +1,8 @@
 export interface CastMediaInfo {
   contentId: string;
   contentType: string;
-  streamType: StreamType;
-  metadata: CastMetadata;
+  streamType?: StreamType;
+  metadata?: CastMetadata;
   textTracks?: CastTextTrack[];
   duration?: number;
   customData?: any;
@@ -123,9 +123,6 @@ export enum CastEvent {
   itemsUpdatedAtIndexes = 'itemsUpdatedAtIndexes',
   itemsRemovedAtIndexes = 'itemsRemovedAtIndexes',
   mediaQueueChanged = 'mediaQueueChanged',
-
-  onDidReceiveQueueItemIDs = 'onDidReceiveQueueItemIDs',
-  onDidReceiveQueueItems = 'onDidReceiveQueueItems',
 }
 
 export enum MetadataType {

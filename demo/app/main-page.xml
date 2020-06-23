@@ -54,13 +54,13 @@
           text="Show Instructions"
           tap="{{ handleShowInstructionsTap }}"
           class="btn btn-primary"
-          isEnabled="{{ hasCast }}"
+          isEnabled="{{ !!cast }}"
         />
         <Button
           text="Show Dialog"
           tap="{{ handleShowDialogTap }}"
           class="btn btn-primary"
-          isEnabled="{{ hasCast }}"
+          isEnabled="{{ !!cast }}"
         />
         <Button
           text="Show Controller"
@@ -137,6 +137,7 @@
           />
         </FlexboxLayout>
 
+        <!--
         <Label text="Queue" />
         <FlexboxLayout
           orientation="horizontal"
@@ -177,7 +178,8 @@
             />
           </StackLayout>
         </FlexboxLayout>
-
+        -->
+        <!--
         <FlexboxLayout
           orientation="horizontal"
           justifyContent="space-between"
@@ -189,7 +191,6 @@
             class="btn btn-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
-
           <Button
             text="Insert Item"
             tap="{{ handleInsertQueueItemTap }}"
@@ -204,7 +205,8 @@
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
         </FlexboxLayout>
-
+        -->
+        <!--
         <FlexboxLayout
           orientation="horizontal"
           justifyContent="space-between"
@@ -229,7 +231,9 @@
             isEnabled="{{ itemIDs.length > 0 }}"
           />
         </FlexboxLayout>
+        -->
 
+        <!--
         <TextView
           text="{{ queueItemIDs }}"
           editable="false"
@@ -241,6 +245,7 @@
           editable="false"
           class="json"
         />
+        -->
 
         <Label text="Media Status" />
         <TextView

@@ -33,7 +33,7 @@ export class MediaQueueCallback extends com.google.android.gms.cast.framework.me
       indexes: indexes,
       android: this.owner.nativeView
     });
-
+    /*
     const parsedQueueItems = [];
 
     if (indexes.length > 0) {
@@ -59,6 +59,7 @@ export class MediaQueueCallback extends com.google.android.gms.cast.framework.me
       queueItems: parsedQueueItems,
       android: this.owner.nativeView
     });
+    */
   }
 
   public itemsRemovedAtIndexes(indexes: number[]): void {

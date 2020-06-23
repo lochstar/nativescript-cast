@@ -8,7 +8,6 @@ import {
 } from './cast.ios';
 import {
   CastEvent,
-  QueueItem,
   PlayerState,
   CastMediaStatus,
 } from './cast.types';
@@ -47,6 +46,7 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
   }
 
   public remoteMediaClientDidReceiveQueueItemIDs(client: GCKRemoteMediaClient, queueItemIDs: NSArray<number>): void {
+    /*
     let parsedQueueItemIDs = [];
 
     if (queueItemIDs.count > 0) {
@@ -58,9 +58,11 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
       queueItemIDs: parsedQueueItemIDs,
       ios: this.owner.nativeView
     });
+    */
   }
 
   public remoteMediaClientDidReceiveQueueItems(client: GCKRemoteMediaClient, queueItems: NSArray<GCKMediaQueueItem>): void {
+    /*
     const parsedQueueItems = [];
 
     if (queueItems.count > 0) {
@@ -90,6 +92,7 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
       queueItems: parsedQueueItems,
       ios: this.owner.nativeView
     });
+    */
   }
 
   public remoteMediaClientDidRemoveQueueItemsWithIDs(client: GCKRemoteMediaClient, queueItems: number[]) {

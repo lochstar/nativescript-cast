@@ -1,3 +1,5 @@
+import camelCase from'lodash/fp/camelCase';
+import snakeCase from'lodash/fp/snakeCase';
 import { ad } from 'tns-core-modules/utils/utils';
 import { CastButtonBase } from './cast.common';
 import {
@@ -6,23 +8,49 @@ import {
   CastMediaStatus,
   CastMetadata,
   CastTextTrack,
-  PlayerState,
-  MetadataType,
-  StreamType,
-  RepeatMode,
   LoadMediaOptions,
   LoadQueueOptions,
+  MetadataType,
+  PlayerState,
   QueueInsertItemOptions,
   QueueInsertItemsOptions,
-  QueueUpdateItemsOptions,
+  QueueItem,
   QueueItemOptions,
   QueueType,
+  QueueUpdateItemsOptions,
+  RepeatMode,
+  StreamType,
 } from './cast.types';
-import { MediaRouterCallback } from './media-router-callback.android';
+// import { initProgressListener } from './remote-media-client-progress-listener.android';
 import { MediaQueueCallback } from './media-queue-callback.android';
+import { MediaRouterCallback } from './media-router-callback.android';
 import { RemoteMediaClientCallback } from './remote-media-client-callback.android';
 import { SessionManagerListenerImpl } from './session-manager-listener.android';
-// import { initProgressListener } from './remote-media-client-progress-listener.android';
+
+const {
+  MediaRouter,
+  MediaRouteSelector,
+  MediaControlIntent
+} = androidx.mediarouter.media;
+const {
+  CastButtonFactory,
+  CastContext,
+} = com.google.android.gms.cast.framework;
+const {
+  MediaInfo,
+  MediaLoadRequestData,
+  MediaMetadata,
+  MediaQueueData,
+  MediaQueueItem,
+  MediaStatus,
+  MediaTrack,
+} = com.google.android.gms.cast;
+
+const METADATA_PREFIX = 'KEY_';
+
+const ArrayList = java.util.ArrayList;
+// @ts-ignore
+const WebImage = com.google.android.gms.common.images.WebImage;
 
 declare var android: any;
 declare var java: any;
@@ -48,40 +76,11 @@ interface ProgressListener {
 
 let ProgressListener: ProgressListener;
 
-export function initProgressListener(): void {
+function initProgressListener(): void {
   if (ProgressListener) {
     return;
   }
 }
-
-const camelCase = require('lodash/fp/camelCase');
-const snakeCase = require('lodash/fp/snakeCase');
-
-const METADATA_PREFIX = 'KEY_';
-
-// @ts-ignore
-const ArrayList = java.util.ArrayList;
-// @ts-ignore
-const WebImage = com.google.android.gms.common.images.WebImage;
-
-const {
-  MediaRouter,
-  MediaRouteSelector,
-  MediaControlIntent
-} = androidx.mediarouter.media;
-const {
-  CastButtonFactory,
-  CastContext,
-} = com.google.android.gms.cast.framework;
-const {
-  MediaInfo,
-  MediaLoadRequestData,
-  MediaMetadata,
-  MediaQueueData,
-  MediaQueueItem,
-  MediaStatus,
-  MediaTrack,
-} = com.google.android.gms.cast;
 
 export function metadataTypeEnumToString(metadataType: number): MetadataType {
   switch (metadataType) {
@@ -681,6 +680,8 @@ export class CastButton extends CastButtonBase {
   }
 
   queueFetchItemIDs(): void {
+    console.log('queueFetchItemIDs not implemented');
+    /*
     const remoteMediaClient = this.getRemoteMediaClient();
     const mediaQueue = remoteMediaClient.getMediaQueue();
     const queueItemIDs = Array.from(mediaQueue.getItemIds());
@@ -690,13 +691,31 @@ export class CastButton extends CastButtonBase {
       queueItemIDs: queueItemIDs,
       android: this.nativeView
     });
+    */
   }
 
-  queueFetchItemAtIndex(index: number): any {
+  queueFetchItemAtIndex(index: number): void {
+    console.log('queueFetchItemAtIndex not implemented');
+    /*
     const remoteMediaClient = this.getRemoteMediaClient();
     const mediaQueue = remoteMediaClient.getMediaQueue();
     const item = mediaQueue.getItemAtIndex(index, true);
-    return item;
+
+    if (item) {
+      const queueItem: QueueItem = {
+        mediaInformation: convertMediaInfo(item.getMedia()),
+        itemID: item.getItemId(),
+        autoplay: item.getAutoplay(),
+        startTime: item.getStartTime(),
+        playbackDuration: item.getPlaybackDuration(),
+        preloadTime: item.getPreloadTime(),
+        activeTrackIds: Array.from(item.getActiveTrackIds()),
+        customData: item.getCustomData(),
+      };
+      return queueItem;
+    }
+    return null;
+    */
   }
 
   queueInsertItem(options: QueueInsertItemOptions): void {

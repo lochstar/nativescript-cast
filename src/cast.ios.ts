@@ -1,4 +1,6 @@
 import { ios } from 'tns-core-modules/utils/utils';
+import camelCase from'lodash/fp/camelCase';
+import upperFirst from'lodash/fp/upperFirst';
 import { Color } from 'tns-core-modules/color';
 import { CastButtonBase } from './cast.common';
 import {
@@ -6,27 +8,24 @@ import {
   CastMetadata,
   CastTextTrack,
   CastTextTrackStyle,
-  RepeatMode,
-  ResumeState,
-  MetadataType,
-  StreamType,
-  QueueType,
   LoadMediaOptions,
   LoadQueueOptions,
+  MetadataType,
   QueueInsertItemOptions,
   QueueInsertItemsOptions,
-  QueueUpdateItemsOptions,
+  QueueItem,
   QueueItemOptions,
+  QueueType,
+  QueueUpdateItemsOptions,
+  RepeatMode,
+  ResumeState,
+  StreamType,
 } from './cast.types';
-import { SessionManagerListenerImpl } from './session-manager-listener.ios';
-import { RemoteMediaClientListenerImpl } from './remote-media-client-listener.ios';
 import { MediaQueueDelegate } from './media-queue-delegate.ios';
-
-const camelCase = require('lodash/fp/camelCase');
-const upperFirst = require('lodash/fp/upperFirst');
+import { RemoteMediaClientListenerImpl } from './remote-media-client-listener.ios';
+import { SessionManagerListenerImpl } from './session-manager-listener.ios';
 
 const METADATA_PREFIX = 'kGCKMetadataKey';
-// const REPEAT_MODE_PREFIX = 'GCKMediaRepeatMode';
 
 declare const NSArray: any;
 declare const NSURL: any;
@@ -284,6 +283,7 @@ export class CastButton extends CastButtonBase {
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
+    this.mCastContext.useDefaultExpandedMediaControls = true;
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl;
     this.mSessionManagerListener.owner = this;
@@ -291,12 +291,8 @@ export class CastButton extends CastButtonBase {
     this.mRemoteMediaClientListener.owner = this;
 
     this.mMediaQueueDelegate = new MediaQueueDelegate;
+    // @ts-ignore
     this.mMediaQueueDelegate.owner = this;
-
-    // Add prev/next buttons to ExpandedMediaControls
-    this.mCastContext.useDefaultExpandedMediaControls = true;
-    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipPrevious, 1);
-    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipNext, 2);
 
     this.addSessionManagerListener();
 
@@ -447,7 +443,7 @@ export class CastButton extends CastButtonBase {
     return builder.build();
   }
 
-  loadMedia(media: CastMediaInfo, options?: LoadMediaOptions) {
+  loadMedia(media: CastMediaInfo, autoplay = true, position = 0) {
     // Add listeners to RemoteMediaclient
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.addListener(this.mRemoteMediaClientListener);
@@ -458,8 +454,11 @@ export class CastButton extends CastButtonBase {
     // Prepare load request
     const requestData = GCKMediaLoadRequestDataBuilder.new();
     requestData.mediaInformation = builtMediaInfo;
+    requestData.autoplay = +autoplay;  // 0/1
+    requestData.startTime = position;
 
     // Set other options
+    /*
     if (options) {
       requestData.autoplay = +options.autoplay;  // 0/1
       requestData.credentials = options.credentials;
@@ -473,6 +472,7 @@ export class CastButton extends CastButtonBase {
         requestData.activeTrackIDs = NSArray.arrayWithArray(options.activeTrackIds);
       }
     }
+    */
 
     // Load request
     remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
@@ -539,28 +539,32 @@ export class CastButton extends CastButtonBase {
     this.mMediaQueue = GCKMediaQueue.alloc().initWithRemoteMediaClient(remoteMediaClient);
     this.mMediaQueue.addDelegate(this.mMediaQueueDelegate);
 
+    // Add prev/next buttons to ExpandedMediaControls
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipPrevious, 1);
+    this.mCastContext.defaultExpandedMediaControlsViewController.setButtonTypeAtIndex(GCKUIMediaButtonType.SkipNext, 2);
+
     // Prepare load request and set queueData
     const requestData = GCKMediaLoadRequestDataBuilder.new();
     requestData.queueData = mediaQueueData.build();
     remoteMediaClient.loadMediaWithLoadRequestData(requestData.build());
   }
 
-  showController() {
+  showController(): void {
     // this.mCastContext.defaultExpandedMediaControlsViewController.view.subviews.objectAtIndex(4).subviews.objectAtIndex(0).subviews.objectAtIndex(1).subviews.objectAtIndex(0).enabled = true;
     // this.mCastContext.defaultExpandedMediaControlsViewController.view.subviews.objectAtIndex(4).subviews.objectAtIndex(0).subviews.objectAtIndex(3).subviews.objectAtIndex(0).enabled = true;
     this.mCastContext.presentDefaultExpandedMediaControls();
   }
 
-  showCastInstructions() {
+  showCastInstructions(): void {
     this.mCastContext.presentCastInstructionsViewControllerOnceWithCastButton(this.nativeView);
   }
 
-  showCastDialog() {
+  showCastDialog(): void {
     this.mCastContext.presentCastDialog();
   }
 
   // https://developers.google.com/cast/docs/reference/ios/interface_g_c_k_media_information
-  getMediaInfo() {
+  getMediaInfo(): CastMediaInfo | {} {
     const remoteMediaClient = this.getRemoteMediaClient();
     if (!remoteMediaClient) {
       return {};
@@ -569,19 +573,19 @@ export class CastButton extends CastButtonBase {
     return convertMediaInfo(mediaInfo);
   }
 
-  pauseMedia(customData?: any) {
+  pauseMedia(customData?: any): void {
     this.getRemoteMediaClient().pauseWithCustomData(customData);
   }
 
-  playMedia(customData?: any) {
+  playMedia(customData?: any): void {
     this.getRemoteMediaClient().playWithCustomData(customData);
   }
 
-  seekMedia(position: number, resumeState?: ResumeState, customData?: any) {
+  seekMedia(position: number, resumeState?: ResumeState, customData?: any): void {
     this.getRemoteMediaClient().seekToTimeIntervalResumeStateCustomData(position, resumeStateStringToEnum(resumeState), customData);
   }
 
-  stopMedia(customData?: any) {
+  stopMedia(customData?: any): void {
     this.getRemoteMediaClient().stopWithCustomData(customData);
   }
 
@@ -589,40 +593,65 @@ export class CastButton extends CastButtonBase {
     this.getRemoteMediaClient().setActiveTrackIDs(trackIds);
   }
 
-  setTintColor(color: string) {
+  setTintColor(color: string): void {
     const mRouteButton = this.getNativeView();
     mRouteButton.tintColor = new Color(color).ios;
   }
 
-  setVolume(volume: number, customData: any) {
+  setVolume(volume: number, customData: any): void {
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.setStreamVolumeCustomData(volume, customData);
   }
 
-  setMuted(muted: boolean, customData: any) {
+  setMuted(muted: boolean, customData: any): void {
     const remoteMediaClient = this.getRemoteMediaClient();
     remoteMediaClient.setStreamMutedCustomData(muted, customData);
   }
 
-  queueNextItem() {
+  queueNextItem(): void {
     this.getRemoteMediaClient().queueNextItem();
   }
 
-  queuePreviousItem() {
+  queuePreviousItem(): void {
     this.getRemoteMediaClient().queuePreviousItem();
   }
 
-  queueSetRepeatMode(repeatMode: RepeatMode) {
+  queueSetRepeatMode(repeatMode: RepeatMode): void {
     this.getRemoteMediaClient().queueSetRepeatMode(repeatModeStringToEnum(repeatMode));
   }
 
-  queueFetchItemIDs() {
+  queueFetchItemIDs(): void {
+    console.log('queueFetchItemIDs not implemented');
+    /*
     this.getRemoteMediaClient().queueFetchItemIDs();
+    */
   }
 
-  queueFetchItemAtIndex(index: number): any {
-    const item = this.mMediaQueue.itemAtIndexFetchIfNeeded(index, true);
-    return item;
+  queueFetchItemAtIndex(index: number): void {
+    console.log('queueFetchItemAtIndex not implemented');
+    /*
+    const item = this.mMediaQueue.itemAtIndex(index);
+
+    if (item) {
+      const activeTrackIds = item.activeTrackIDs
+      ? ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
+      : [];
+
+      const queueItem: QueueItem = {
+        mediaInformation: convertMediaInfo(item.mediaInformation),
+        itemID: item.itemID,
+        autoplay: item.autoplay,
+        startTime: item.startTime,
+        playbackDuration: item.playbackDuration,
+        preloadTime: item.preloadTime,
+        activeTrackIds: activeTrackIds,
+        customData: item.customData,
+      };
+
+      return queueItem;
+    }
+    return null;
+    */
   }
 
   queueInsertItem(options: QueueInsertItemOptions) {

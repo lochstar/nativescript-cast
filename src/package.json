@@ -1,6 +1,6 @@
 {
   "name": "nativescript-cast",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "NativeScript Chromecast Plugin.",
   "main": "cast",
   "typings": "cast.d.ts",

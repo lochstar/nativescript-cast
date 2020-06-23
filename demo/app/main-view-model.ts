@@ -2,14 +2,18 @@ import { Observable } from 'tns-core-modules/data/observable';
 import { EventData } from 'tns-core-modules/ui/core/view';
 import { Switch } from 'tns-core-modules/ui/switch';
 import {
-  CastEvent, CastMediaInfo, CastMediaStatus, PlayerState, RepeatMode,
-  // LoadQueueOptions,
+  CastEvent,
+  CastMediaInfo,
+  CastMediaStatus,
+  PlayerState,
+  RepeatMode,
+  StreamType,
+  MetadataType,
 } from 'nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;
   public canCast: boolean;
-  public hasCast: boolean;
   public hasControl: boolean;
 
   public autoplay: boolean;
@@ -31,10 +35,10 @@ export class MainViewModel extends Observable {
     {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
-      streamType: 'BUFFERED',
+      streamType: StreamType.BUFFERED,
       duration: 734,
       metadata: {
-        metadataType: 'MOVIE',
+        metadataType: MetadataType.MOVIE,
         title: 'Tears of Steel',
         subtitle: 'By Blender Foundation',
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',
@@ -73,10 +77,10 @@ export class MainViewModel extends Observable {
     {
       contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       contentType: 'video/mp4',
-      streamType: 'BUFFERED',
+      streamType: StreamType.BUFFERED,
       duration: 596,
       metadata: {
-        metadataType: 'MOVIE',
+        metadataType: MetadataType.MOVIE,
         title: 'Big Buck Bunny',
         subtitle: 'By Blender Foundation',
         description: 'Big Buck Bunny is licensed as Creative Commons Attribution 3.0.',
@@ -97,10 +101,10 @@ export class MainViewModel extends Observable {
     {
       contentId: 'https://abcradiolivehls-lh.akamaihd.net/i/doublejnsw_1@327293/master.m3u8',
       contentType: 'video/mp4',
-      streamType: 'LIVE',
+      streamType: StreamType.LIVE,
       duration: Infinity,
       metadata: {
-        metadataType: 'MUSIC_TRACK',
+        metadataType: MetadataType.MUSIC_TRACK,
         title: 'Double J',
         subtitle: 'Double J Radio',
         description: '',
@@ -120,7 +124,6 @@ export class MainViewModel extends Observable {
 
     this.cast = null;
     this.canCast = false;
-    this.hasCast = false;
     this.hasControl = false;
 
     this.autoplay = true;
@@ -138,12 +141,8 @@ export class MainViewModel extends Observable {
     }
 
     switch (args.data.eventName) {
-      case CastEvent.onProviderAdded:
-        this.set('hasCast', true);
-        break;
-
       case CastEvent.onSessionStarted:
-        case CastEvent.onSessionResumed:
+      case CastEvent.onSessionResumed:
         this.set('canCast', true);
         break;
       case CastEvent.onSessionEnding:
@@ -166,6 +165,7 @@ export class MainViewModel extends Observable {
         this.set('hasControl', status && status.playerState !== PlayerState.IDLE);
         break;
 
+      /*
       case CastEvent.mediaQueueChanged:
         this.cast.queueFetchItemIDs();
         break;
@@ -176,13 +176,19 @@ export class MainViewModel extends Observable {
         this.set('queueItems', args.data.queueItems);
         this.set('queueItemsString', JSON.stringify(args.data.queueItems, null, '  '));
         break;
+      */
       default:
         break;
     }
   }
 
-  handleAutoplaySwitchLoaded(argsloaded) {
-    const mySwitch: Switch = <Switch> argsloaded.object;
+  handleCastLoaded(args) {
+    console.log('handleCastLoaded');
+    console.log(args);
+  }
+
+  handleAutoplaySwitchLoaded(args) {
+    const mySwitch: Switch = <Switch> args.object;
     mySwitch.on('checkedChange', (args) => {
       const sw: Switch = <Switch> args.object;
       this.set('autoplay', sw.checked);
