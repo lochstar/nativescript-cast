@@ -9,7 +9,7 @@
     }
   },
   "dependencies": {
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "nativescript-cast": "file:../src",
     "nativescript-theme-core": "^1.0.4",
     "nativescript-unit-test-runner": "0.7.0",
