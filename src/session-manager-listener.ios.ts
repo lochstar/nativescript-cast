@@ -2,6 +2,7 @@ import { CastButtonBase } from './cast.common';
 import { CastButton } from './cast.ios';
 import { CastEvent } from './cast.types';
 
+@NativeClass()
 export class SessionManagerListenerImpl extends NSObject implements GCKSessionManagerListener {
   public static ObjCProtocols = [GCKSessionManagerListener];
   public owner: CastButton;

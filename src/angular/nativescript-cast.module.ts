@@ -1,6 +1,6 @@
-import { NgModule } from "@angular/core";
+import { NgModule } from '@angular/core';
 import { registerElement } from 'nativescript-angular/element-registry';
-import { isAndroid } from "tns-core-modules/platform";
+import { isAndroid } from '@nativescript/core';
 
 @NgModule()
 export class NativescriptCastModule {

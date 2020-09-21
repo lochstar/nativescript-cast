@@ -1,5 +1,7 @@
-import { ad } from 'tns-core-modules/utils/utils';
+// import { ad } from 'tns-core-modules/utils/utils';
+import { Utils } from '@nativescript/core';
 
+@NativeClass()
 @JavaProxy('org.nativescript.cast.OptionsProvider')
 @Interfaces([com.google.android.gms.cast.framework.OptionsProvider])
 class CastOptionsProvider extends java.lang.Object {
@@ -10,8 +12,8 @@ class CastOptionsProvider extends java.lang.Object {
 
   public getCastOptions(appContext: any) {
     // Get app_id from strings.xml
-    const appStringId = ad.resources.getStringId('app_id');
-    const appId = ad.getApplication().getString(appStringId);
+    const appStringId = Utils.ad.resources.getStringId('app_id');
+    const appId = Utils.ad.getApplication().getString(appStringId);
 
     const notificationOptions = new com.google.android.gms.cast.framework.media.NotificationOptions.Builder()
       .setTargetActivityClassName('org.nativescript.cast.CastActivity')

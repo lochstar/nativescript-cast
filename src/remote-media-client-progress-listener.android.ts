@@ -2,6 +2,7 @@
 import { CastButton } from './cast.android';
 // import { CastEvent } from './cast.types';
 
+@NativeClass()
 @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener])
 // @ts-ignore
 export class ProgressListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener {

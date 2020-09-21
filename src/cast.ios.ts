@@ -1,7 +1,6 @@
-import { ios } from 'tns-core-modules/utils/utils';
 import camelCase from'lodash/fp/camelCase';
 import upperFirst from'lodash/fp/upperFirst';
-import { Color } from 'tns-core-modules/color';
+import { Utils, Color } from '@nativescript/core';
 import { CastButtonBase } from './cast.common';
 import {
   CastMediaInfo,
@@ -191,8 +190,8 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
     return null;
   }
   const metadata = mediaInfo.metadata;
-  const metaDataKeys = ios.collections.nsArrayToJSArray(metadata.allKeys());
-  const images = <any[]>ios.collections.nsArrayToJSArray(metadata.images());
+  const metaDataKeys = Utils.ios.collections.nsArrayToJSArray(metadata.allKeys());
+  const images = <any[]>Utils.ios.collections.nsArrayToJSArray(metadata.images());
   let textTracks: CastTextTrack[] = [];
   let textTrackStyle: CastTextTrackStyle = {};
 
@@ -215,7 +214,7 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
   });
 
   if (mediaInfo.mediaTracks) {
-    const tracks = <any[]>ios.collections.nsArrayToJSArray(mediaInfo.mediaTracks);
+    const tracks = <any[]>Utils.ios.collections.nsArrayToJSArray(mediaInfo.mediaTracks);
     textTracks = tracks
       .filter((track: any) => track.type === GCKMediaTrackType.Text)
       .map((track) => {
@@ -256,6 +255,7 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
   };
 }
 
+@NativeClass()
 export class CastButton extends CastButtonBase {
   public nativeView: GCKUICastButton;
 
@@ -634,7 +634,7 @@ export class CastButton extends CastButtonBase {
 
     if (item) {
       const activeTrackIds = item.activeTrackIDs
-      ? ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
+      ? Utils.ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
       : [];
 
       const queueItem: QueueItem = {

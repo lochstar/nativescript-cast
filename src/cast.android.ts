@@ -1,6 +1,6 @@
 import camelCase from'lodash/fp/camelCase';
 import snakeCase from'lodash/fp/snakeCase';
-import { ad } from 'tns-core-modules/utils/utils';
+import { Utils } from '@nativescript/core';
 import { CastButtonBase } from './cast.common';
 import {
   CastEvent,
@@ -231,7 +231,7 @@ export function convertMediaInfo(mediaInfo: com.google.android.gms.cast.MediaInf
     return null;
   }
   const metadata = mediaInfo.getMetadata();
-  const metaDataKeys = ad.collections.stringSetToStringArray(metadata.keySet());
+  const metaDataKeys = Utils.ad.collections.stringSetToStringArray(metadata.keySet());
   const images = metadata.getImages();
   const tracks = mediaInfo.getMediaTracks();
   const textTracks: CastTextTrack[] = [];
@@ -282,6 +282,7 @@ export function convertMediaInfo(mediaInfo: com.google.android.gms.cast.MediaInf
   };
 }
 
+@NativeClass()
 export class CastButton extends CastButtonBase {
   public nativeView: androidx.mediarouter.app.MediaRouteButton;
 
@@ -306,7 +307,7 @@ export class CastButton extends CastButtonBase {
    * Creates new native button.
    */
   public createNativeView(): Object {
-    const appContext = ad.getApplicationContext();
+    const appContext = Utils.ad.getApplicationContext();
 
     initSessionManagerListener();
     // initProgressListener();

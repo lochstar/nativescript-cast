@@ -1,5 +1,6 @@
 import { CastButton } from './cast.android';
 
+@NativeClass()
 export class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
   public owner: CastButton;
 
