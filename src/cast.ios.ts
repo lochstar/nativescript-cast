@@ -255,7 +255,6 @@ export function convertMediaInfo(mediaInfo): CastMediaInfo {
   };
 }
 
-@NativeClass()
 export class CastButton extends CastButtonBase {
   public nativeView: GCKUICastButton;
 

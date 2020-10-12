@@ -6,8 +6,8 @@
   "typings": "cast.d.ts",
   "nativescript": {
     "platforms": {
-      "android": "6.5.0",
-      "ios": "6.5.0"
+      "android": "7.0.0",
+      "ios": "7.0.0"
     }
   },
   "scripts": {
@@ -53,9 +53,9 @@
     "@angular/compiler": "~8.2.12",
     "@angular/compiler-cli": "~8.2.12",
     "@angular/core": "~8.2.12",
-    "@nativescript/core": "~7.0.0",
-    "@nativescript/types": "~7.0.0",
-    "@nativescript/webpack": "~3.0.0",
+    "@nativescript/core": "^7.0.11",
+    "@nativescript/types": "^7.0.4",
+    "@nativescript/webpack": "^3.0.7",
     "lodash": "^4.17.15",
     "nativescript-angular": "~8.2.2",
     "prompt": "^1.0.0",
@@ -65,5 +65,8 @@
     "tslint": "^5.20.0",
     "typescript": "~3.9.0"
   },
-  "bootstrapper": "nativescript-plugin-seed"
+  "bootstrapper": "nativescript-plugin-seed",
+  "dependencies": {
+    "ts-node": "^9.0.0"
+  }
 }
