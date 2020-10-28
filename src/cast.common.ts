@@ -1,6 +1,8 @@
 import { View } from '@nativescript/core';
 import { Visibility } from '@nativescript/core/ui/styling/style-properties';
 
+export * from './cast';
+
 export abstract class CastButtonBase extends View {
   public static validMetadataKeys = [
     'creationDate',
