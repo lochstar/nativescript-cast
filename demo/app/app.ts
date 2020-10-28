@@ -1,6 +1,7 @@
 import { Application } from '@nativescript/core';
 
-if (Application.ios) {
+if (global.isIOS) {
+  @NativeClass()
   class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
     static ObjCProtocols = [GCKLoggerDelegate];
 
@@ -13,6 +14,7 @@ if (Application.ios) {
     }
   }
 
+  @NativeClass()
   class MyDelegate extends UIResponder implements UIApplicationDelegate {
     public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
 

@@ -263,14 +263,14 @@ export class CastButton extends CastButtonBase {
   public mCastContext: GCKCastContext;
   public mSessionManager: GCKSessionManager;
   public mSessionManagerListener: SessionManagerListenerImpl;
-  public mRemoteMediaClientListener: GCKRemoteMediaClientListener;
+  public mRemoteMediaClientListener: RemoteMediaClientListenerImpl;
 
   public mMediaQueue: GCKMediaQueue;
-  public mMediaQueueDelegate: GCKMediaQueueDelegate;
+  public mMediaQueueDelegate: MediaQueueDelegate;
 
-  constructor() {
-    super();
-  }
+  // constructor() {
+  //   super();
+  // }
 
   /**
    * Creates new native button.
@@ -278,7 +278,8 @@ export class CastButton extends CastButtonBase {
   public createNativeView(): Object {
     // Create new instance of GCKUICastButton
     // @ts-ignore
-    const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
+    // const button = GCKUICastButton.alloc().initWithFrame(CGRectMake(0, 0, 24, 24));
+    const button = new GCKUICastButton();
 
     // Get cast context and session manager
     this.mCastContext = GCKCastContext.sharedInstance();
@@ -286,12 +287,9 @@ export class CastButton extends CastButtonBase {
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl();
     this.mSessionManagerListener.owner = this;
-    // @ts-ignore
     this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl();
-    // @ts-ignore
     this.mRemoteMediaClientListener.owner = this;
 
-    // @ts-ignore
     this.mMediaQueueDelegate = new MediaQueueDelegate();
     // @ts-ignore
     this.mMediaQueueDelegate.owner = this;
