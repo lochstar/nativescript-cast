@@ -13,7 +13,7 @@ import {
 } from './cast.types';
 
 @NativeClass()
-export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
+class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
   public static ObjCProtocols = [GCKRemoteMediaClientListener];
   public owner: CastButton;
 
@@ -189,4 +189,4 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
   }
 }
 
-export const test = 'test';
+export { RemoteMediaClientListenerImpl };

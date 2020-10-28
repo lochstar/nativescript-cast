@@ -284,10 +284,10 @@ export class CastButton extends CastButtonBase {
     this.mCastContext = GCKCastContext.sharedInstance();
     this.mCastContext.useDefaultExpandedMediaControls = true;
     this.mSessionManager = this.mCastContext.sessionManager;
-    this.mSessionManagerListener = new SessionManagerListenerImpl;
+    this.mSessionManagerListener = new SessionManagerListenerImpl();
     this.mSessionManagerListener.owner = this;
     // @ts-ignore
-    this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl;
+    this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl();
     // @ts-ignore
     this.mRemoteMediaClientListener.owner = this;
 

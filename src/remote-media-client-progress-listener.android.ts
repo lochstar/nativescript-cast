@@ -5,7 +5,7 @@ import { CastButton } from './cast.android';
 @NativeClass()
 @Interfaces([com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener])
 // @ts-ignore
-export class ProgressListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener {
+class ProgressListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.media.RemoteMediaClient.ProgressListener {
   public owner: CastButton;
 
   constructor(owner) {
@@ -30,3 +30,5 @@ export class ProgressListenerImpl extends java.lang.Object implements com.google
     */
   }
 }
+
+export { ProgressListenerImpl };

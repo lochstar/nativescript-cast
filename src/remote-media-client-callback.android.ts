@@ -1,38 +1,35 @@
 import { CastButton } from './cast.android';
 
-function setup() {
-  @NativeClass()
-  export class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
-    public owner: CastButton;
+@NativeClass()
+class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
+  public owner: CastButton;
 
-    constructor(owner) {
-      super();
+  constructor(owner) {
+    super();
 
-      this.owner = owner;
+    this.owner = owner;
 
-      return global.__native(this);
-    }
-
-    public onStatusUpdated() {
-      this.owner.onMediaStatusUpdate();
-    }
-
-    public onMetadataUpdated() {
-    }
-
-    public onQueueStatusUpdated() {
-    }
-
-    public onPreloadStatusUpdated() {
-    }
-
-    public onSendingRemoteMediaRequest() {
-    }
-
-    public onAdBreakStatusUpdated() {
-    }
+    return global.__native(this);
   }
-  return RemoteMediaClientCallback;
+
+  public onStatusUpdated() {
+    this.owner.onMediaStatusUpdate();
+  }
+
+  public onMetadataUpdated() {
+  }
+
+  public onQueueStatusUpdated() {
+  }
+
+  public onPreloadStatusUpdated() {
+  }
+
+  public onSendingRemoteMediaRequest() {
+  }
+
+  public onAdBreakStatusUpdated() {
+  }
 }
 
-export const RemoteMediaClientCallback = setup();
+export { RemoteMediaClientCallback };
