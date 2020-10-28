@@ -263,10 +263,10 @@ export class CastButton extends CastButtonBase {
   public mCastContext: GCKCastContext;
   public mSessionManager: GCKSessionManager;
   public mSessionManagerListener: SessionManagerListenerImpl;
-  public mRemoteMediaClientListener: RemoteMediaClientListenerImpl;
+  public mRemoteMediaClientListener: GCKRemoteMediaClientListener;
 
   public mMediaQueue: GCKMediaQueue;
-  public mMediaQueueDelegate: MediaQueueDelegate;
+  public mMediaQueueDelegate: GCKMediaQueueDelegate;
 
   constructor() {
     super();
@@ -286,10 +286,13 @@ export class CastButton extends CastButtonBase {
     this.mSessionManager = this.mCastContext.sessionManager;
     this.mSessionManagerListener = new SessionManagerListenerImpl;
     this.mSessionManagerListener.owner = this;
+    // @ts-ignore
     this.mRemoteMediaClientListener = new RemoteMediaClientListenerImpl;
+    // @ts-ignore
     this.mRemoteMediaClientListener.owner = this;
 
-    this.mMediaQueueDelegate = new MediaQueueDelegate;
+    // @ts-ignore
+    this.mMediaQueueDelegate = new MediaQueueDelegate();
     // @ts-ignore
     this.mMediaQueueDelegate.owner = this;
 

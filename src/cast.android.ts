@@ -282,7 +282,6 @@ export function convertMediaInfo(mediaInfo: com.google.android.gms.cast.MediaInf
   };
 }
 
-@NativeClass()
 export class CastButton extends CastButtonBase {
   public nativeView: androidx.mediarouter.app.MediaRouteButton;
 

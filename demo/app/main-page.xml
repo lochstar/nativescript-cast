@@ -27,13 +27,13 @@
         <Button
           text="Load Media"
           tap="{{ handleLoadTap }}"
-          class="btn btn-primary"
+          class="-primary"
           isEnabled="{{ canCast }}"
         />
         <Button
           text="Load Queue"
           tap="{{ handleLoadQueueTap }}"
-          class="btn btn-primary"
+          class="-primary"
           isEnabled="{{ canCast }}"
         />
         <StackLayout>
@@ -53,19 +53,19 @@
         <Button
           text="Show Instructions"
           tap="{{ handleShowInstructionsTap }}"
-          class="btn btn-primary"
+          class="-primary"
           isEnabled="{{ !!cast }}"
         />
         <Button
           text="Show Dialog"
           tap="{{ handleShowDialogTap }}"
-          class="btn btn-primary"
+          class="-primary"
           isEnabled="{{ !!cast }}"
         />
         <Button
           text="Show Controller"
           tap="{{ handleShowControllerTap }}"
-          class="btn btn-primary"
+          class="-primary"
           isEnabled="{{ canCast }}"
         />
       </FlexboxLayout>
@@ -82,32 +82,32 @@
           <Button
             text="&#xf04c;"
             tap="{{ handlePauseTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="&#xf04e; +10"
             tap="{{ handleSeekTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="&#xf04d;"
             tap="{{ handleStopTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ canCast }}"
           />
 
           <Button
             text="&#xf100; Prev"
             tap="{{ handlePrevTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
           <Button
             text="&#xf101; Next"
             tap="{{ handleNextTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
         </FlexboxLayout>
@@ -120,19 +120,19 @@
           <Button
             text="Set Volume"
             tap="{{ handleSetVolumeTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="Toggle Mute"
             tap="{{ handleMuteTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ canCast }}"
           />
           <Button
             text="Switch Text Track"
             tap="{{ handleSwitchTextTrackTap }}"
-            class="btn btn-primary"
+            class="-primary"
             isEnabled="{{ mediaInfo.textTracks.length > 0 }}"
           />
         </FlexboxLayout>
@@ -188,20 +188,20 @@
           <Button
             text="Fetch Item"
             tap="{{ handleFetchQueueItemTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
           <Button
             text="Insert Item"
             tap="{{ handleInsertQueueItemTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
 
           <Button
             text="Insert Items"
             tap="{{ handleInsertQueueItemsTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
           />
         </FlexboxLayout>
@@ -215,19 +215,19 @@
           <Button
             text="Remove Items"
             tap="{{ handleRemoveItemsTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ itemIDs.length > 0 }}"
           />
           <Button
             text="Reorder Items"
             tap="{{ handleReorderItemsTap }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ itemIDs.length > 0 }}"
           />
           <Button
             text="Jump to Item"
             tap="{{ handleJumpToItem }}"
-            class="btn btn-primary fas"
+            class="-primary fas"
             isEnabled="{{ itemIDs.length > 0 }}"
           />
         </FlexboxLayout>
