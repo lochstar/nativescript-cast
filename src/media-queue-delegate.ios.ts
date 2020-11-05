@@ -3,6 +3,7 @@ import { CastButton } from './cast.android';
 import { CastEvent } from './cast.types';
 
 @NativeClass()
+// @ts-ignore
 class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
   public static ObjCProtocols = [GCKMediaQueueDelegate];
   public owner: CastButton;

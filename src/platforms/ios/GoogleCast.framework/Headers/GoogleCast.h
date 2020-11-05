@@ -1,5 +1,5 @@
 // GoogleCast Framework
-// Build generated on Mon Feb 24 11:36:36 PST 2020.
+// Build generated on Mon Oct  5 08:00:05 PDT 2020.
 // Copyright 2013-2020 Google Inc.
 
 
@@ -13,6 +13,7 @@
 #import <GoogleCast/GCKCastSession.h>
 #import <GoogleCast/GCKColor.h>
 #import <GoogleCast/GCKCommon.h>
+#import <GoogleCast/GCKCredentialsData.h>
 #import <GoogleCast/GCKDefines.h>
 #import <GoogleCast/GCKDevice.h>
 #import <GoogleCast/GCKDeviceProvider+Protected.h>

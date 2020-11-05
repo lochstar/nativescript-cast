@@ -106,6 +106,23 @@ GCK_EXPORT
  */
 @property(nonatomic, assign) BOOL stopReceiverApplicationWhenEndingSession;
 
+/**
+ * Whether cast devices discovery start only after a user taps on the @c GCKUICastButton the first
+ * time.
+ *
+ * If set to <code>YES</code>, the @c GCKUICastButton is displayed until a user taps on the cast
+ * button the first time. On the first tap, an interstitial is presented to explain why local
+ * network access permission is required for the cast to work. Discovery starts once the
+ * interstitial is dismissed. The cast button is shown again when a cast device is discovered on
+ * the local network. In successive App launches, @c GCKUICastButton is shown only when any cast
+ * device is discovered. If set to <code>NO</code>, device discovery starts based on the flag
+ * @c disableDiscoveryAutoStart. This flag comes into effect only on iOS 14 and above if the flag
+ * @c disableDiscoveryAutoStart is set to <code>NO</code>. Default value is <code>YES</code>.
+ *
+ * @since 4.5.0
+ */
+@property(nonatomic, assign) BOOL startDiscoveryAfterFirstTapOnCastButton;
+
 @end
 
 NS_ASSUME_NONNULL_END
