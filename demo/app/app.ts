@@ -29,12 +29,6 @@ if (global.isIOS) {
 
       return true;
     }
-
-    /*
-    applicationDidBecomeActive(application: UIApplication): void {
-      console.log('applicationDidBecomeActive: ' + application)
-    }
-    */
   }
 
   Application.ios.delegate = MyDelegate;

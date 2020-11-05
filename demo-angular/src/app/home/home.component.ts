@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { EventData } from 'tns-core-modules/ui/core/view';
+import { EventData } from '@nativescript/core';
 import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
 
 @Component({

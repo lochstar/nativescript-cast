@@ -11,7 +11,7 @@ NativeScript 6 or higher. For lower versions, you can use an older version of th
 ## Installation
 
 ```bash
-tns plugin add nativescript-cast
+ns plugin add nativescript-cast
 ```
 
 ## Usage
@@ -43,13 +43,13 @@ The Google Cast design checklist requires a sender app to provide an expanded co
 </activity>
 ```
 
-If you are using Webpack, add `'nativescript-cast/cast-options-provider'` to `appComponents`. You will have to repeat this step after performing a `tns update`.
+If you are using Webpack, add `'nativescript-cast/cast-options-provider'` to `appComponents`. You will have to repeat this step after performing a `ns update`.
 
 ```js
 // webpack.config.js
 const appComponents = [
-  'tns-core-modules/ui/frame',
-  'tns-core-modules/ui/frame/activity',
+  '@nativescript/core/ui/frame',
+  '@nativescript/core/ui/frame/activity',
   'nativescript-cast/cast-options-provider'
 ];
 ```
