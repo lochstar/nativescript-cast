@@ -1,0 +1,28 @@
+ActionBar {
+    background-color: #61DBFB;
+    color: white;
+}
+ 
+Button {
+    background-color: #61DBFB;
+    border-radius: 5;
+    height: 40;
+    margin: 7 10;
+    text-transform: none;
+}
+
+.whiteButton {
+    color: white;
+}
+
+Label {
+    font-size: 15;
+    color: #222222;
+}
+
+.box {
+    width: 50;
+    height: 50;
+    border-radius: 10;
+    background-color: #61DBFB;
+}

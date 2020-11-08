@@ -1,0 +1,22 @@
+<ActionBar title="Angular Demo"></ActionBar>
+
+<GridLayout rows="auto, *">
+    <StackLayout backgroundColor="#eeeeee" padding="10" borderBottomWidth="2" borderColor="#e3e3e3">
+        <GridLayout columns="*, *" margin="10 0">
+            <Button col="0" text="Select Property" (tap)="selectProperty()"></Button>
+            <StackLayout col="1" verticalAlignment="center">
+                <Label text="Selected Property:" fontWeight="bold"></Label>
+                <Label [text]="properties[selectedProperty]['name']"></Label>
+            </StackLayout>
+        </GridLayout>
+        <GridLayout columns="*, *" margin="10 0">
+            <Button col="0" text="Select Easing" (tap)="selectEasing()"></Button>
+            <StackLayout col="1" verticalAlignment="center">
+                <Label text="Selected Easing:" fontWeight="bold"></Label>
+                <Label [text]="easings[selectedEasing]['name']"></Label>
+            </StackLayout>
+        </GridLayout>
+        <Button [text]="startAnimationBtnText" (tap)="startTween()" [isEnabled]="!isBusy"></Button>
+    </StackLayout>
+    <AbsoluteLayout #box row="1" class="box" horizontalAlignment="center" verticalAlignment="center"></AbsoluteLayout>
+</GridLayout>
