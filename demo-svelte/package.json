@@ -1,5 +1,5 @@
 {
-  "name": "@nativescript-community/template-vue",
+  "name": "@nativescript-community/template-svelte",
   "main": "app.js",
   "version": "0.0.1",
   "homepage": "https://github.com/nativescript-community/plugin-seed",
