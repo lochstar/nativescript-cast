@@ -1,0 +1,9 @@
+@import "~@nativescript/theme/core";
+@import "~@nativescript/theme/default";
+
+$theme-color: #61DBFB;
+
+ActionBar {
+    background-color: $theme-color;
+    color: white;
+}

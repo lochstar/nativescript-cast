@@ -14,6 +14,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const hashSalt = Date.now().toString();
 const preprocessConfig =  require("./svelte.config.js");
 const svelteNativePreprocessor = require("svelte-native-preprocessor");
+const sass = require("sass");
 
 module.exports = env => {
 	// Add your custom Activities, Services and other Android app components here.
@@ -271,7 +272,31 @@ module.exports = env => {
 							loader: 'svelte-loader-hot',
 							options: {
 								dev: env.production ? false : true,
-								preprocess: [preprocessConfig.preprocess, svelteNativePreprocessor()],
+								preprocess: [
+									preprocessConfig.preprocess, 
+									svelteNativePreprocessor(),
+									{
+										style: ({ content, attributes }) => {
+											if (attributes.type !== 'text/scss') return;
+						
+											return new Promise((fulfil, reject) => {
+												sass.render({
+													data: content,
+													includePaths: ['src'],
+													sourceMap: true,
+													outFile: 'x' // this is necessary, but is ignored
+												}, (err, result) => {
+													if (err) return reject(err);
+						
+													fulfil({
+														code: result.css.toString(),
+														map: result.map.toString()
+													});
+												});
+											});
+										}
+									}
+								],
 								hotReload: env.production ? false : true,
 								hotOptions: {
 									injectCss: false,

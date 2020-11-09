@@ -9,6 +9,6 @@
 
 </script>
 
-<style lang="scss">
+<style type="text/scss">
 
 </style>
