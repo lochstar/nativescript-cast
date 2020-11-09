@@ -1,23 +1,13 @@
 {
-  "name": "@nativescript/template-hello-world-ng",
+  "name": "@nativescript-community/template-ng",
   "main": "main.js",
-  "version": "7.0.5",
-  "author": "NativeScript Team <oss@nativescript.org>",
-  "description": "NativeScript Application",
-  "license": "SEE LICENSE IN <your-license-filename>",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "nativescript",
-    "mobile",
-    "angular",
-    "{N}",
-    "template"
-  ],
-  "repository": "<fill-your-repository-here>",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nativescript-community/plugin-seed",
   "bugs": {
-    "url": "https://github.com/NativeScript/NativeScript/issues"
+    "url": "https://github.com/nativescript-community/plugin-seed/issues"
+  },
+  "scripts": {
+    "clean": "npx rimraf node_modules package-lock.json platforms hooks"
   },
   "dependencies": {
     "@angular/animations": "~10.1.0",
@@ -28,13 +18,12 @@
     "@angular/platform-browser": "~10.1.0",
     "@angular/platform-browser-dynamic": "~10.1.0",
     "@angular/router": "~10.1.0",
-    "@nativescript/angular": "~10.1.0",
-    "@nativescript/core": "~7.0.0",
+    "@nativescript/angular": "~10.1.7",
+    "@nativescript/core": "~7.0.13",
     "@nativescript/theme": "~3.0.0",
-    "@nativescript-community/tween": "../plugin",
-    "reflect-metadata": "~0.1.12",
-    "rxjs": "^6.6.0",
-    "zone.js": "~0.11.1"
+    "reflect-metadata": "~0.1.13",
+    "rxjs": "^6.6.3",
+    "zone.js": "~0.11.3"
   },
   "devDependencies": {
     "@angular/compiler-cli": "~10.1.0",
@@ -43,8 +32,7 @@
     "@nativescript/types": "~7.0.0",
     "@nativescript/webpack": "~3.0.0",
     "@ngtools/webpack": "~10.1.0",
-    "typescript": "~4.0.0"
-  },
-  "private": "true",
-  "readme": "NativeScript Application"
+    "sass": "^1.29.0",
+    "typescript": "~4.0.3"
+  }
 }
