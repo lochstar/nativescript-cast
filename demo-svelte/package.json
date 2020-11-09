@@ -1,48 +1,27 @@
 {
-  "name": "@nativescript/template-blank-svelte",
+  "name": "@nativescript-community/template-vue",
   "main": "app.js",
-  "displayName": "Blank Svelte",
-  "templateType": "App template",
-  "version": "7.0.0",
-  "description": "NativeScript Application",
-  "author": "NativeScript Team <oss@nativescript.org>",
-  "license": "SEE LICENSE IN <your-license-filename>",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "nstudio",
-    "nativescript",
-    "mobile",
-    "{N}",
-    "tns",
-    "template",
-    "category-general",
-    "svelte",
-    "svelte-native"
-  ],
-  "repository": "<fill-your-repository-here>",
-  "homepage": "https://github.com/NativeScript/nativescript-app-templates",
+  "version": "0.0.1",
+  "homepage": "https://github.com/nativescript-community/plugin-seed",
   "bugs": {
-    "url": "https://github.com/NativeScript/NativeScript/issues"
+    "url": "https://github.com/nativescript-community/plugin-seed/issues"
+  },
+  "scripts": {
+    "clean": "npx rimraf node_modules package-lock.json platforms hooks"
   },
   "dependencies": {
-    "@nativescript/core": "~7.0.0",
-    "@nativescript/theme": "~2.3.0",
-    "@nativescript-community/tween": "../plugin",
-    "svelte-native": "~0.9.4"
+    "@nativescript/core": "~7.0.13",
+    "@nativescript/theme": "~3.0.0",
+    "svelte-native": "~0.9.5"
   },
   "devDependencies": {
     "@nativescript/android": "7.0.1",
     "@nativescript/ios": "7.0.4",
     "@nativescript/webpack": "~3.0.0",
-    "svelte": "~3.24.1",
+    "svelte": "~3.29.4",
     "svelte-loader-hot": "~0.3.1",
-    "svelte-native-preprocessor": "^0.2.0",
-    "svelte-preprocess": "^4.5.1",
+    "svelte-native-preprocessor": "~0.2.0",
+    "svelte-preprocess": "^4.5.2",
     "typescript": "~4.0.3"
-  },
-  "gitHead": "f282c57dc05817a655bca5e81ce9d7228ae70d4c",
-  "private": "true",
-  "readme": "NativeScript Application"
+  }
 }

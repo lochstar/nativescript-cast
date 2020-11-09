@@ -7,7 +7,7 @@
     "url": "https://github.com/nativescript-community/plugin-seed/issues"
   },
   "scripts": {
-    "clean": "npx rimraf node_modules package-lock.json platforms hooks webpack.config.js"
+    "clean": "npx rimraf node_modules package-lock.json platforms hooks"
   },
   "dependencies": {
     "@nativescript/core": "~7.0.13",
