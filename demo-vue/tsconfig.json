@@ -10,24 +10,13 @@
         "noEmitHelpers": true,
         "noEmitOnError": true,
         "skipLibCheck": true,
-        "lib": [
-            "es6",
-            "dom",
-            "es2017"
-        ],
+        "lib": ["es6", "dom", "es2017"],
         "types": [],
         "baseUrl": ".",
         "paths": {
-            "~/*": [
-                "app/*"
-            ]
+            "~/*": ["app/*"]
         }
     },
-    "include": [
-      "app/**/*"
-    ],
-    "exclude": [
-        "node_modules",
-        "platforms"
-    ]
+    "include": ["app/**/*"],
+    "exclude": ["node_modules", "platforms"]
 }

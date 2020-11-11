@@ -8,8 +8,8 @@
     },
     "scripts": {
         "clean": "npx rimraf node_modules package-lock.json platforms hooks",
-        "format": "npx prettier --write './**/*.{js,svelte,md,html,css,scss,json}'",
-        "lint": "npm run format && npx eslint . --ext .ts,.svelte,.js --fix"
+        "format": "npx prettier --write './**/*.{ts,js,svelte,md,html,css,scss,json}'",
+        "lint": "npm run format && npx eslint . --ext .ts,.js,.svelte --fix"
     },
     "dependencies": {
         "@nativescript/core": "~7.0.13",

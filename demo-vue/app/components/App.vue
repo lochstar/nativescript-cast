@@ -1,7 +1,7 @@
 <template>
-    <Page >
+    <Page>
         <ActionBar>
-            <Label text="Vue.js Demo"/>
+            <Label text="Vue.js Demo" />
         </ActionBar>
 
         <StackLayout>
@@ -11,21 +11,20 @@
 </template>
 
 <script lang="typescript">
-  export default {
+
+export default {
     data() {
         return {
-        }
+        };
     },
     computed: {
-      message() {
-        return "Blank {N}-Vue app";
-      }
+        message() {
+            return 'Blank {N}-Vue app';
+        }
     },
     methods: {
     }
-  };
+};
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>
