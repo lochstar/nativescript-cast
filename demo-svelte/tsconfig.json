@@ -8,26 +8,13 @@
         "noEmitHelpers": true,
         "noEmitOnError": true,
         "skipLibCheck": true,
-        "lib": [
-            "es6",
-            "dom",
-            "es2017"
-        ],
-        "types": [
-            "svelte"
-        ],
+        "lib": ["es6", "dom", "es2017"],
+        "types": ["svelte"],
         "baseUrl": ".",
         "paths": {
-            "~/*": [
-                "app/*"
-            ]
+            "~/*": ["app/*"]
         }
     },
-    "include": [
-        "app/**/*"
-    ],
-    "exclude": [
-        "node_modules",
-        "platforms"
-    ]
+    "include": ["app/**/*"],
+    "exclude": ["node_modules", "platforms"]
 }
