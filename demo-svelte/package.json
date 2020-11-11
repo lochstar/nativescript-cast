@@ -8,8 +8,7 @@
     },
     "scripts": {
         "clean": "npx rimraf node_modules package-lock.json platforms hooks",
-        "lint": "./node_modules/.bin/eslint ./ --ext .ts,.svelte,.js",
-        "format": "./node_modules/.bin/eslint ./ --ext .ts,.svelte,.js --fix"
+        "lint": "./node_modules/.bin/eslint . --ext .ts,.svelte,.js --fix"
     },
     "dependencies": {
         "@nativescript/core": "~7.0.13",
