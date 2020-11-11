@@ -1,8 +1,6 @@
 {
+    "extends": "../tsconfig",
     "compilerOptions": {
-        "module": "esnext",
-        "target": "es2017",
-        "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": false,
         "experimentalDecorators": true,
@@ -16,7 +14,7 @@
             "es2017"
         ],
         "types": [
-          "svelte"
+            "svelte"
         ],
         "baseUrl": ".",
         "paths": {
@@ -26,7 +24,7 @@
         }
     },
     "include": [
-      "app/**/*"
+        "app/**/*"
     ],
     "exclude": [
         "node_modules",
