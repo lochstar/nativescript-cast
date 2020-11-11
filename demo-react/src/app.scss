@@ -1,7 +1,7 @@
-@import "~@nativescript/theme/core";
-@import "~@nativescript/theme/default";
+@import '~@nativescript/theme/core';
+@import '~@nativescript/theme/default';
 
-$theme-color: #61DBFB;
+$theme-color: #61dbfb;
 
 ActionBar {
     background-color: $theme-color;

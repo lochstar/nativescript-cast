@@ -1,0 +1,7 @@
+package-lock.json
+webpack.config.js
+webpack.typescript.js
+node_modules/
+App_Resources/
+hooks/
+platforms/

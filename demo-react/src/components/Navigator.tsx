@@ -1,7 +1,7 @@
-import * as React from "react";
+import * as React from 'react';
 import { BaseNavigationContainer } from '@react-navigation/core';
-import { stackNavigatorFactory } from "react-nativescript-navigation";
-import { First } from "./FirstScreen";
+import { stackNavigatorFactory } from 'react-nativescript-navigation';
+import { First } from './FirstScreen';
 
 const StackNavigator = stackNavigatorFactory();
 

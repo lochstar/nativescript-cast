@@ -31,3 +31,4 @@ package-lock.json
 .vscode/
 
 !.eslintrc.js
+!.prettierrc.js
