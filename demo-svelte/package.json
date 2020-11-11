@@ -1,28 +1,35 @@
 {
-  "name": "@nativescript-community/template-svelte",
-  "main": "app.js",
-  "version": "0.0.1",
-  "homepage": "https://github.com/nativescript-community/plugin-seed",
-  "bugs": {
-    "url": "https://github.com/nativescript-community/plugin-seed/issues"
-  },
-  "scripts": {
-    "clean": "npx rimraf node_modules package-lock.json platforms hooks"
-  },
-  "dependencies": {
-    "@nativescript/core": "~7.0.13",
-    "@nativescript/theme": "~3.0.0",
-    "svelte-native": "~0.9.5"
-  },
-  "devDependencies": {
-    "@nativescript/android": "7.0.1",
-    "@nativescript/ios": "7.0.4",
-    "@nativescript/webpack": "~3.0.0",
-    "sass": "^1.29.0",
-    "svelte": "~3.29.4",
-    "svelte-loader-hot": "~0.3.1",
-    "svelte-native-preprocessor": "~0.2.0",
-    "svelte-preprocess": "^4.5.2",
-    "typescript": "~4.0.3"
-  }
+    "name": "@nativescript-community/template-svelte",
+    "main": "app.js",
+    "version": "0.0.1",
+    "homepage": "https://github.com/nativescript-community/plugin-seed",
+    "bugs": {
+        "url": "https://github.com/nativescript-community/plugin-seed/issues"
+    },
+    "scripts": {
+        "clean": "npx rimraf node_modules package-lock.json platforms hooks",
+        "lint": "./node_modules/.bin/eslint ./ --ext .ts,.svelte,.js",
+        "format": "./node_modules/.bin/eslint ./ --ext .ts,.svelte,.js --fix"
+    },
+    "dependencies": {
+        "@nativescript/core": "~7.0.13",
+        "@nativescript/theme": "~3.0.0",
+        "svelte-native": "~0.9.5"
+    },
+    "devDependencies": {
+        "@nativescript/android": "7.0.1",
+        "@nativescript/ios": "7.0.4",
+        "@nativescript/webpack": "~3.0.0",
+        "@typescript-eslint/eslint-plugin": "^4.7.0",
+        "@typescript-eslint/parser": "^4.7.0",
+        "eslint": "^7.13.0",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-svelte3": "^2.7.3",
+        "sass": "^1.29.0",
+        "svelte": "~3.29.4",
+        "svelte-loader-hot": "~0.3.1",
+        "svelte-native-preprocessor": "~0.2.0",
+        "svelte-preprocess": "^4.5.2",
+        "typescript": "~4.0.3"
+    }
 }
