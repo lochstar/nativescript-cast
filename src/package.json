@@ -1,6 +1,6 @@
 {
   "name": "nativescript-cast",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "NativeScript Chromecast Plugin.",
   "main": "cast",
   "typings": "cast.d.ts",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "build": "npm run tsc && npm run build.native && build.angular",
+    "build": "npm run tsc && npm run build.native && npm run build.angular",
     "build.native": "node scripts/build-native.js",
     "build.angular": "node ./angular/build.ts",
     "postclone": "npm i && node scripts/postclone.js && cd ../demo && npm i && npx rimraf -- package-lock.json && cd ../src",
@@ -27,7 +27,8 @@
     "demo-angular.ios": "npm run tsc && cd ../demo-angular && ns run ios",
     "demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
     "plugin.prepare": "npm run build && cd ../demo && ns plugin remove nativescript-cast && ns plugin add ../src && cd ../demo-angular && ns plugin remove nativescript-cast && ns plugin add ../src",
-    "setup": "npm i && ts-patch install",
+    "setup": "npm i && npm run ts-patch",
+    "ts-patch": "ts-patch install",
     "clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm run setup",
     "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'",
     "prepack": "npm run build.native"

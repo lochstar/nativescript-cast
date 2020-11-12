@@ -31,6 +31,13 @@ pack() {
     node_modules/.bin/tsc
     cd ..
 
+    # build angular
+    echo 'Building /src/angular...'
+    npm run build.angular
+    mv "$TO_SOURCE_DIR/angular/dist" "$TO_SOURCE_DIR/angular2"
+    rm -r "$TO_SOURCE_DIR/angular"
+    mv "$TO_SOURCE_DIR/angular2" "$TO_SOURCE_DIR/angular"
+
     echo 'Creating package...'
     # create package dir
     mkdir "$PACK_DIR"
