@@ -4,7 +4,9 @@ export default {
     id: 'org.nativescript.demong',
     appResourcesPath: 'App_Resources',
     android: {
+        maxLogcatObjectSize: 2048,
+        markingMode: 'none',
         v8Flags: '--expose_gc',
-        markingMode: 'none'
+        codeCache: true
     }
 } as NativeScriptConfig;
