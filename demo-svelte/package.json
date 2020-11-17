@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "@nativescript/core": "~7.0.13",
+        "@nativescript/detox": "^1.0.0",
         "@nativescript/theme": "~3.0.0",
         "svelte-native": "~0.9.5"
     },
@@ -22,6 +23,7 @@
         "@nativescript/webpack": "~3.0.0",
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
+        "detox": "^17.11.4",
         "eslint": "^7.13.0",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-svelte3": "^2.7.3",

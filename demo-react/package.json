@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@nativescript/core": "~7.0.13",
+        "@nativescript/detox": "^1.0.0",
         "@nativescript/theme": "^3.0.0",
         "@react-navigation/native": "^5.4.3",
         "react": "^16.13.1",
@@ -33,6 +34,7 @@
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
         "babel-loader": "8.0.6",
+        "detox": "^17.11.4",
         "eslint": "^7.13.0",
         "eslint-config-prettier": "^6.15.0",
         "eslint-plugin-prettier": "^3.1.4",

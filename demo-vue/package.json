@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "@nativescript/core": "~7.0.13",
+        "@nativescript/detox": "^1.0.0",
         "@nativescript/theme": "~3.0.0",
         "nativescript-vue": "~2.8.1"
     },
@@ -25,6 +26,7 @@
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
         "babel-loader": "~8.1.0",
+        "detox": "^17.11.4",
         "eslint": "^7.13.0",
         "eslint-plugin-vue": "^7.1.0",
         "nativescript-vue-template-compiler": "~2.8.1",
