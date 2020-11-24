@@ -48,6 +48,7 @@ module.exports = env => {
         // You can provide the following flags when running 'tns run android|ios'
         snapshot, // --env.snapshot
         production, // --env.production
+        development, // --env.development
         uglify, // --env.uglify
         report, // --env.report
         sourceMap, // --env.sourceMap
@@ -108,7 +109,7 @@ module.exports = env => {
 
     nsWebpack.processAppComponents(appComponents, platform);
     const config = {
-        mode: production ? 'production' : 'development',
+        mode: development ? 'development' : 'production',
         context: appFullPath,
         externals,
         watchOptions: {
