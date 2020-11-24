@@ -46,6 +46,7 @@ module.exports = env => {
         // You can provide the following flags when running 'tns run android|ios'
         snapshot, // --env.snapshot
         production, // --env.production
+        development, // --env.development
         report, // --env.report
         hmr, // --env.hmr
         sourceMap, // --env.sourceMap
@@ -62,7 +63,7 @@ module.exports = env => {
     const isAnySourceMapEnabled = !!sourceMap || !!hiddenSourceMap;
     const externals = nsWebpack.getConvertedExternals(env.externals);
 
-    const mode = production ? "production" : "development"
+    const mode = development ? "development" : "production"
 
     const appFullPath = resolve(projectRoot, appPath);
     const hasRootLevelScopedModules = nsWebpack.hasRootLevelScopedModules({ projectDir: projectRoot });
