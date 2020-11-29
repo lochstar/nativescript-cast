@@ -2,11 +2,17 @@ import { NgModule } from '@angular/core';
 import { Routes } from '@angular/router';
 import { NativeScriptRouterModule } from '@nativescript/angular';
 
-import { HomeComponent } from './home/home.component';
+import { MenuComponent } from './menu/menu.component';
+import { Demo1Component } from './demo1/demo1.component';
+import { Demo2Component } from './demo2/demo2.component';
+import { DevelopmentComponent } from './development/development.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: '/items', pathMatch: 'full' },
-    { path: 'items', component: HomeComponent }
+    { path: '', redirectTo: '/menu', pathMatch: 'full' },
+    { path: 'menu', component: MenuComponent },
+    { path: 'demo1', component: Demo1Component },
+    { path: 'demo2', component: Demo2Component },
+    { path: 'development', component: DevelopmentComponent }
 ];
 
 @NgModule({

@@ -6,4 +6,13 @@ $theme-color: #ed3e04;
 ActionBar {
     background-color: $theme-color;
     color: white;
+
+    Label {
+        color: white;
+    }
+}
+
+Button {
+    background-color: $theme-color;
+    color: white;
 }
