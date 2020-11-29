@@ -1,3 +1,6 @@
 export type MainStackParamList = {
-    first: {};
+    menu: {};
+    demo1: {};
+    demo2: {};
+    development: {};
 };

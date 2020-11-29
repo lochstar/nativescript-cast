@@ -9,7 +9,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 module.exports = (env) => {
     env = env || {};
     const hmr = env.hmr;
-    const production = env.production;
+    const production = !env.development;
     const isAnySourceMapEnabled = !!env.sourceMap || !!env.hiddenSourceMap;
 
     const baseConfig = webpackConfig(env);

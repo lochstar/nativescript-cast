@@ -6,7 +6,7 @@
         </ActionBar>
 
         <StackLayout>
-            <Label text="This is the development demo." />
+            <Label text="This is the development demo..." />
         </StackLayout>
     </Page>
 </template>
