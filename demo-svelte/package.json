@@ -23,7 +23,7 @@
         "@nativescript/webpack": "~3.0.0",
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
-        "detox": "^17.11.4",
+        "detox": "^17.14.1",
         "eslint": "^7.13.0",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-svelte3": "^2.7.3",

@@ -37,7 +37,7 @@
         "@ngtools/webpack": "~10.1.0",
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
-        "detox": "^17.11.4",
+        "detox": "^17.14.1",
         "eslint": "^7.13.0",
         "prettier": "^2.1.2",
         "sass": "^1.29.0",

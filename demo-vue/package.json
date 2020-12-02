@@ -26,7 +26,7 @@
         "@typescript-eslint/eslint-plugin": "^4.7.0",
         "@typescript-eslint/parser": "^4.7.0",
         "babel-loader": "~8.1.0",
-        "detox": "^17.11.4",
+        "detox": "^17.14.1",
         "eslint": "^7.13.0",
         "eslint-plugin-vue": "^7.1.0",
         "nativescript-vue-template-compiler": "~2.8.1",

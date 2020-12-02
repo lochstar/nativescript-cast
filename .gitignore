@@ -32,3 +32,5 @@ package-lock.json
 
 !.eslintrc.js
 !.prettierrc.js
+
+!e2e/*.js
