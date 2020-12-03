@@ -1,4 +1,7 @@
 import { svelteNative } from 'svelte-native';
-import App from './App.svelte';
+import Menu from './Menu.svelte';
 
-svelteNative(App, {});
+import VersionNumber from '@nativescript-community/plugin-seed/svelte';
+VersionNumber.register();
+
+svelteNative(Menu, {});

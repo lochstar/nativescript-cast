@@ -18,6 +18,7 @@
         "@nativescript/core": "~7.0.13",
         "@nativescript/detox": "^1.0.0",
         "@nativescript/theme": "^3.0.0",
+        "@nativescript-community/plugin-seed": "../plugin",
         "@react-navigation/native": "^5.4.3",
         "react": "^16.13.1",
         "react-nativescript": "^2.1.0",

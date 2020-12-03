@@ -34,6 +34,7 @@ export default {
                 animated: false
             });
         }
+
     },
     methods: {
         goToDemo(component) {

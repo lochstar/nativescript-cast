@@ -6,7 +6,8 @@
         </ActionBar>
 
         <StackLayout>
-            <Label text="This is the first demo..." />
+            <Label text="The version is:" />
+            <VersionNumber />
         </StackLayout>
     </Page>
 </template>

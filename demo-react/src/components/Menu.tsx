@@ -37,15 +37,6 @@ export function Menu({ navigation }: MenuProps) {
                     {demo.name}
                 </button>
             ))}
-            {/* <button
-                onTap={() => {
-                    goToDemo('hello');
-                }}
-            >
-                Demo 1
-            </button> */}
-            {/* <button onTap={goToDemo('hello')}>Demo 2</button>
-            <button onTap={goToDemo('hello')}>Development</button> */}
         </stackLayout>
     );
 }

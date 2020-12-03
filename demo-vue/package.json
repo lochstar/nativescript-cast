@@ -15,6 +15,7 @@
         "@nativescript/core": "~7.0.13",
         "@nativescript/detox": "^1.0.0",
         "@nativescript/theme": "~3.0.0",
+        "@nativescript-community/plugin-seed": "../plugin",
         "nativescript-vue": "~2.8.1"
     },
     "devDependencies": {
