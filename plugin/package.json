@@ -1,0 +1,33 @@
+{
+    "name": "@nativescript-community/plugin-seed",
+    "version": "0.0.1",
+    "description": "This is the description for the plugin seed. This is what will be published to NPM.",
+    "main": "./plugin-seed",
+    "sideEffects": false,
+    "typings": "./plugin-seed.d.ts",
+    "nativescript": {
+        "platforms": {
+            "android": "6.0.0",
+            "ios": "6.0.0"
+        }
+    },
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS",
+        "Angular",
+        "React",
+        "Svelte",
+        "Vue"
+    ],
+    "bugs": {
+        "url": "https://github.com/nativescript-community/plugin-seed/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nativescript-community/plugin-seed"
+    },
+    "license": "Apache-2.0",
+    "readmeFilename": "README.md"
+}
