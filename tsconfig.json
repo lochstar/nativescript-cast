@@ -31,6 +31,6 @@
         "plugins": [{ "transform": "./node_modules/@nativescript/webpack/transformers/ns-transform-native-classes", "type": "raw" }]
     },
     "include": ["src/**/*", "./references.d.ts"],
-    "exclude": ["node_modules", "platforms", "demo-svelte"],
+    "exclude": ["node_modules", "platforms", "demo-svelte", "demo-vue", "demo-ng", "demo-react"],
     "compileOnSave": false
 }

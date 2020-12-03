@@ -5,7 +5,7 @@ describe('Plugin Seed Tests', () => {
 
     it('Go to Demo 1', async () => {
         await element(by.text('Demo 1')).tap();
-        await expect(element(by.text('This is the first demo...'))).toBeVisible();
+        await expect(element(by.text('The version is:'))).toBeVisible();
         await goBack();
     });
 
