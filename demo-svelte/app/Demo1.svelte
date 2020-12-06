@@ -3,7 +3,7 @@
 
 <page>
     <actionBar title="Demo 1">
-        <navigationButton text="Go back" android.systemIcon="ic_menu_back" on:tap="{goBack}"></navigationButton>
+        <navigationButton text="Go back" on:tap="{goBack}"></navigationButton>
     </actionBar>
     <stackLayout>
         <label text="The version is:"></label>
