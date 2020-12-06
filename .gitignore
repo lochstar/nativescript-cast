@@ -34,7 +34,7 @@ package-lock.json
 
 !e2e/*.js
 !detox.config.js
-!devices.js
+devices.js
 
 *.framework
 **/*.js.map
