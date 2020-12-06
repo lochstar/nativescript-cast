@@ -4,3 +4,7 @@ node_modules/
 App_Resources/
 hooks/
 platforms/
+demo-ng/
+demo-react/
+demo-svelte/
+demo-vue/
