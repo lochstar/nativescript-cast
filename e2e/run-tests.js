@@ -84,18 +84,18 @@ function generateDetoxCommand(platforms, frameworks, build, run) {
 
 const ls = spawn(command, { shell: true });
 
-ls.stdout.on('data', data => {
+ls.stdout.on('data', (data) => {
     process.stdout.write(`${data}`);
 });
 
-ls.stderr.on('data', data => {
+ls.stderr.on('data', (data) => {
     process.stderr.write(`${data}`);
 });
 
-ls.on('error', error => {
+ls.on('error', (error) => {
     console.log(`error: ${error.message}`);
 });
 
-ls.on('close', code => {
+ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
 });

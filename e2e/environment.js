@@ -11,7 +11,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
         // This is strictly optional.
         this.registerListeners({
             SpecReporter,
-            WorkerAssignReporter,
+            WorkerAssignReporter
         });
     }
 }

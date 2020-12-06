@@ -1,10 +1,8 @@
 package-lock.json
-webpack.config.js
 node_modules/
-App_Resources/
-hooks/
-platforms/
+plugin/
 demo-ng/
 demo-react/
 demo-svelte/
 demo-vue/
+docs/

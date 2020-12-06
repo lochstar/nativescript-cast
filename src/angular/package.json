@@ -2,17 +2,17 @@
     "name": "@nativescript-community/plugin-seed-angular",
     "main": "index.js",
     "ngPackage": {
-      "dest": "../../plugin/angular",
-      "lib": {
-        "entryFile": "index.ts",
-        "umdModuleIds": {
-          "@nativescript/core": "ns-core",
-          "@nativescript/angular": "ns-angular",
-          "@nativescript-community/plugin-seed": "ns-plugin-seed"
-        }
-      },
-      "whitelistedNonPeerDependencies": [
-        "."
-      ]
+        "dest": "../../plugin/angular",
+        "lib": {
+            "entryFile": "index.ts",
+            "umdModuleIds": {
+                "@nativescript/core": "ns-core",
+                "@nativescript/angular": "ns-angular",
+                "@nativescript-community/plugin-seed": "ns-plugin-seed"
+            }
+        },
+        "whitelistedNonPeerDependencies": [
+            "."
+        ]
     }
-  }
+}
