@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 import { NativeScriptModule } from '@nativescript/angular';
 
-import { NativeScriptVersionNumberModule } from "@nativescript-community/plugin-seed/angular";
+import { NativeScriptVersionNumberModule } from '@nativescript-community/plugin-seed/angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';

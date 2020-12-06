@@ -8,5 +8,5 @@ export default {
         markingMode: 'none',
         v8Flags: '--expose_gc',
         codeCache: true
-    },
+    }
 } as NativeScriptConfig;
