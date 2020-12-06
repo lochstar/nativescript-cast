@@ -12,7 +12,10 @@
         "e2e.build": "./e2e/run-tests.js -b",
         "e2e.run": "./e2e/run-tests.js -r",
         "e2e": "./e2e/run-tests.js",
-        "doc": "typedoc --out docs --tsconfig tsconfig.doc.json --includeDeclarations --excludeExternals --mode file --ignoreCompilerErrors --excludeNotExported --excludePrivate --theme minimal"
+        "doc": "typedoc --out docs --tsconfig tsconfig.doc.json --includeDeclarations --excludeExternals --mode file --ignoreCompilerErrors --excludeNotExported --excludePrivate --theme minimal",
+        "lint.demos": "cd demo-ng && npm run lint && cd ../demo-react && npm run lint && cd ../demo-svelte && npm run lint && cd ../demo-vue && npm run lint",
+        "format": "npx prettier --write './**/*.{ts,js,md,html,css,scss,json}'",
+        "lint": "npm run lint.demos && npm run format && npx eslint . --ext .ts --fix"
     },
     "devDependencies": {
         "@angular/animations": "~10.1.6",
