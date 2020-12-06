@@ -3,11 +3,11 @@
 
 <page>
     <actionBar title="Demo 1">
-        <navigationButton text="Go back" on:tap="{goBack}"></navigationButton>
+        <navigationButton text="Go back" on:tap={goBack} />
     </actionBar>
     <stackLayout>
-        <label text="The version is:"></label>
-        <versionNumber></versionNumber>
+        <label text="The version is:" />
+        <versionNumber />
     </stackLayout>
 </page>
 

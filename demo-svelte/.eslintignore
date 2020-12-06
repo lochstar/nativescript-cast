@@ -4,3 +4,4 @@ node_modules/
 App_Resources/
 hooks/
 platforms/
+svelte.config.js

@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['eslint:recommended', 'prettier'],
+    extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint', 'prettier/@typescript-eslint'],
     env: {
         es6: true,
         node: true

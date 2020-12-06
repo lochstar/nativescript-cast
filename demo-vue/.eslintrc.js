@@ -1,7 +1,8 @@
 module.exports = {
-    extends: ['plugin:prettier/recommended', 'plugin:vue/essential'],
+    extends: ['plugin:prettier/recommended', 'plugin:vue/essential', 'prettier/vue'],
     env: {
-        browser: true
+        browser: true,
+        node: true
     },
     parser: 'vue-eslint-parser',
     parserOptions: {

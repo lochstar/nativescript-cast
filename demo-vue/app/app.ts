@@ -7,5 +7,5 @@ Vue.use(VersionNumber);
 Vue.config.silent = true;
 
 new Vue({
-    render: (h) => h('frame', [h(Menu)])
+    render: h => h('frame', [h(Menu)])
 }).$start();

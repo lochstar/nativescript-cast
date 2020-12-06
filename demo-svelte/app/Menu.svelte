@@ -2,16 +2,15 @@
 </style>
 
 <page>
-    <actionBar title="Svelte Demo"></actionBar>
+    <actionBar title="Svelte Demo" />
     <scrollView>
         <stackLayout>
             {#each demos as demo}
                 <button
-                    text="{demo.name}"
-                    on:tap="{() => {
+                    text={demo.name}
+                    on:tap={() => {
                         goToDemo(demo.component);
-                    }}"
-                ></button>
+                    }} />
             {/each}
         </stackLayout>
     </scrollView>

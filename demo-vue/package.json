@@ -8,7 +8,7 @@
     },
     "scripts": {
         "clean": "npx rimraf node_modules package-lock.json platforms hooks",
-        "format": "npx prettier --write './**/*.{ts,js,vue,md,html,css,scss,json}'",
+        "format": "npx prettier --write './**/*.{ts,js,vue}'",
         "lint": "npm run format && npx eslint . --ext .ts,.vue,.js --fix"
     },
     "dependencies": {
@@ -24,12 +24,14 @@
         "@nativescript/android": "7.0.1",
         "@nativescript/ios": "7.0.4",
         "@nativescript/webpack": "~3.0.8",
-        "@typescript-eslint/eslint-plugin": "^4.7.0",
-        "@typescript-eslint/parser": "^4.7.0",
+        "@typescript-eslint/eslint-plugin": "^4.9.0",
+        "@typescript-eslint/parser": "^4.9.0",
         "babel-loader": "~8.1.0",
         "detox": "^17.14.1",
-        "eslint": "^7.13.0",
-        "eslint-plugin-vue": "^7.1.0",
+        "eslint": "^7.15.0",
+        "eslint-config-prettier": "^7.0.0",
+        "eslint-plugin-prettier": "^3.2.0",
+        "eslint-plugin-vue": "^7.2.0",
         "nativescript-vue-template-compiler": "~2.8.1",
         "prettier": "^2.1.2",
         "sass": "^1.29.0",

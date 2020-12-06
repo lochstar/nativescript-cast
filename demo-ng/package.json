@@ -8,7 +8,7 @@
     },
     "scripts": {
         "clean": "npx rimraf node_modules package-lock.json platforms hooks",
-        "format": "npx prettier --write './**/*.{ts,js,md,html,css,scss,json}'",
+        "format": "npx prettier --write './**/*.{ts,js}'",
         "lint": "npm run format && npx eslint . --ext .ts,.js --fix"
     },
     "dependencies": {

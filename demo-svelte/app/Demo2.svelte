@@ -3,9 +3,9 @@
 
 <page>
     <actionBar title="Demo 2">
-        <navigationButton text="Go back" on:tap="{goBack}"></navigationButton>
+        <navigationButton text="Go back" on:tap={goBack} />
     </actionBar>
-    <stackLayout><label text="This is the second demo..."></label></stackLayout>
+    <stackLayout><label text="This is the second demo..." /></stackLayout>
 </page>
 
 <script lang="typescript">

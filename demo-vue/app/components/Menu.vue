@@ -14,8 +14,7 @@
     </Page>
 </template>
 
-<script lang="typescript">
-
+<script lang="ts">
 import Demo1 from './Demo1.vue';
 import Demo2 from './Demo2.vue';
 import Development from './Development.vue';
@@ -24,19 +23,18 @@ export default {
     data() {
         return {
             demos: [
-                {name: 'Demo 1', component: Demo1},
-                {name: 'Demo 2', component: Demo2},
-                {name: 'Development', component: Development},
+                { name: 'Demo 1', component: Demo1 },
+                { name: 'Demo 2', component: Demo2 },
+                { name: 'Development', component: Development }
             ]
         };
     },
     mounted() {
-        if(process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development') {
             this.$navigateTo(Development, {
                 animated: false
             });
         }
-
     },
     methods: {
         goToDemo(component) {
