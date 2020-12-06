@@ -3,16 +3,18 @@
 
 <page>
     <actionBar title="Svelte Demo"></actionBar>
-    <stackLayout>
-        {#each demos as demo}
-            <button
-                text="{demo.name}"
-                on:tap="{() => {
-                    goToDemo(demo.component);
-                }}"
-            ></button>
-        {/each}
-    </stackLayout>
+    <scrollView>
+        <stackLayout>
+            {#each demos as demo}
+                <button
+                    text="{demo.name}"
+                    on:tap="{() => {
+                        goToDemo(demo.component);
+                    }}"
+                ></button>
+            {/each}
+        </stackLayout>
+    </scrollView>
 </page>
 
 <script lang="typescript">

@@ -4,11 +4,13 @@
             <Label text="Vue.js Demo" />
         </ActionBar>
 
-        <StackLayout>
-            <StackLayout v-for="demo in demos" :key="demo.name">
-                <Button :text="demo.name" @tap="goToDemo(demo.component)" />
+        <ScrollView>
+            <StackLayout>
+                <StackLayout v-for="demo in demos" :key="demo.name">
+                    <Button :text="demo.name" @tap="goToDemo(demo.component)" />
+                </StackLayout>
             </StackLayout>
-        </StackLayout>
+        </ScrollView>
     </Page>
 </template>
 

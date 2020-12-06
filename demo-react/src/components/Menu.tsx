@@ -26,17 +26,19 @@ export function Menu({ navigation }: MenuProps) {
     }
 
     return (
-        <stackLayout>
-            {demos.map((demo) => (
-                <button
-                    key={demo.name}
-                    onTap={() => {
-                        goToDemo(demo.component);
-                    }}
-                >
-                    {demo.name}
-                </button>
-            ))}
-        </stackLayout>
+        <scrollView>
+            <stackLayout>
+                {demos.map((demo) => (
+                    <button
+                        key={demo.name}
+                        onTap={() => {
+                            goToDemo(demo.component);
+                        }}
+                    >
+                        {demo.name}
+                    </button>
+                ))}
+            </stackLayout>
+        </scrollView>
     );
 }
