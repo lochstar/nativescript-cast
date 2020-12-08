@@ -1,0 +1,15 @@
+{
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": false,
+    "eslint.validate": [
+        "javascript",
+        "svelte"
+    ],
+    "eslint.workingDirectories": [
+        "demo-ng",
+        "demo-react",
+        "demo-svelte",
+        "demo-vue"
+    ],
+    "svelte.plugin.svelte.format.enable": false,
+}

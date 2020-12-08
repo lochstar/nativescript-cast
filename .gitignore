@@ -26,9 +26,6 @@ yarn-error.log*
 tmp/
 package-lock.json
 
-# Visual Studio Code
-.vscode/
-
 !.eslintrc.js
 !.prettierrc.js
 
