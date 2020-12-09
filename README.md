@@ -67,22 +67,22 @@ This seed also contains [Detox](https://github.com/wix/Detox) end-to-end testing
 
 If you haven't used Detox before, you will have to do a little global setup to get it running on your computer. The following instructions are taken from [NativeScript Detox](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md).
 
-## Global Setup
+### Global Setup
 
-### Install `detox-cli`
+#### Install `detox-cli`
 
 ```bash
 npm install -g detox-cli
 ```
 
-### Install applesimutils (iOS)
+#### Install applesimutils (iOS)
 
 ```bash
 brew tap wix/brew
 brew install applesimutils
 ```
 
-## Project Setup
+### Project Setup
 
 All of the demos are ready for Detox out of the box. The same testing files are ran across different frameworks to confirm the same behavior.
 
@@ -97,13 +97,13 @@ module.exports = {
 };
 ```
 
-## Writing Tests
+### Writing Tests
 
 The default test is located under `e2e/tests.e2e.js`. This simple test just navigates between the different demos. Take a look at the [Usage](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md#usage) section of the [NativeScript Detox](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md) plugin to learn more about writing tests for your plugin.
 
 Even if e2e testing doesn't seem to fit the use-case of your plugin, it can still be helping just to confirm the plugin builds and runs on iOS and Android as well as all of the different frameworks.
 
-## Running
+### Running
 
 There are some helper scripts available to make Detox testing easier. The following are a few examples:
 
