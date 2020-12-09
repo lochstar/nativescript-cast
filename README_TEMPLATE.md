@@ -20,7 +20,8 @@ Description of your plugin.
 6. [Usage in Vue](#usage-in-vue)
 7. [Usage in Svelte](#usage-in-svelte)
 8. [Usage in React](#usage-in-react)
-9. [Demos](#demos)
+9. [Contribute](#contribute)
+10. [Demos](#demos)
 
 ## Installation
 Run the following command from the root of your project:
@@ -67,6 +68,9 @@ $ npm run build # && npm run build.angular
 $ cd demo-ng # or demo-vue or demo-svelte
 $ ns run ios|android
 ```
+
+## Contribute
+We love PRs! Check out the [contributing guidelines](CONTRIBUTING.md). If you want to contribute, but you are not sure where to start - look for issues labeled help wanted.
 
 ## Questions
 
