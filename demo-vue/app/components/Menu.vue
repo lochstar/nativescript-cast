@@ -15,9 +15,9 @@
 </template>
 
 <script lang="ts">
-import Demo1 from './Demo1.vue';
-import Demo2 from './Demo2.vue';
-import Development from './Development.vue';
+import Demo1 from './linked-components/Demo1.vue';
+import Demo2 from './linked-components/Demo2.vue';
+import Development from './linked-components/Development.vue';
 
 export default {
     data() {

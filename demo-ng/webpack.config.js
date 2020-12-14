@@ -236,7 +236,7 @@ module.exports = env => {
         "nativescript-angular": "@nativescript/angular",
         ...fileReplacements
       },
-      symlinks: true
+      symlinks: false
     },
     resolveLoader: {
       symlinks: false

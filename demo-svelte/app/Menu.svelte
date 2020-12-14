@@ -17,9 +17,9 @@
 </page>
 
 <script lang="typescript">
-    import Demo1 from './Demo1.svelte';
-    import Demo2 from './Demo2.svelte';
-    import Development from './Development.svelte';
+    import Demo1 from './linked-components/Demo1.svelte';
+    import Demo2 from './linked-components/Demo2.svelte';
+    import Development from './linked-components/Development.svelte';
 
     import { navigate } from 'svelte-native';
     import { onMount } from 'svelte';

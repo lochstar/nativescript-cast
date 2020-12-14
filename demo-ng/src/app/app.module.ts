@@ -5,9 +5,9 @@ import { NativeScriptVersionNumberModule } from '@nativescript-community/plugin-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { Demo1Component } from './demo1/demo1.component';
-import { Demo2Component } from './demo2/demo2.component';
-import { DevelopmentComponent } from './development/development.component';
+import { Demo1Component } from './linked-components/demo1/demo1.component';
+import { Demo2Component } from './linked-components/demo2/demo2.component';
+import { DevelopmentComponent } from './linked-components/development/development.component';
 
 @NgModule({
     bootstrap: [AppComponent],
