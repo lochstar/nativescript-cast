@@ -137,7 +137,7 @@ module.exports = env => {
             ],
             alias,
             // resolve symlinks to symlinked modules
-            symlinks: true,
+            symlinks: false,
         },
         resolveLoader: {
             // don't resolve symlinks to symlinked loaders

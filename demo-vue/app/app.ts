@@ -1,8 +1,8 @@
 import Vue from 'nativescript-vue';
 import Menu from './components/Menu.vue';
 
-import VersionNumber from '@nativescript-community/plugin-seed/vue';
-Vue.use(VersionNumber);
+import { install } from './components/linked-components/install';
+install();
 
 Vue.config.silent = true;
 
