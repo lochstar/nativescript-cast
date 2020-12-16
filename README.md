@@ -1,5 +1,10 @@
 # nativescript-cast
 
+[![NPM version][npm-image]][npm-url]
+
+[npm-image]:https://badge.fury.io/js/%40codelab%2Fnativescript-cast.svg
+[npm-url]:https://npmjs.org/package/@codelab/nativescript-cast
+
 Chromecast support for NativeScript 7+.
 
 ## Requirements
