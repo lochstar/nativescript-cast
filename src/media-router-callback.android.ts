@@ -2,7 +2,8 @@ import { CastButtonBase } from './cast.common';
 import { CastButton } from './cast.android';
 import { CastEvent } from './cast.types';
 
-export class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
+@NativeClass()
+class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.Callback {
   public owner: CastButton;
 
   constructor(owner) {
@@ -118,3 +119,5 @@ export class MediaRouterCallback extends androidx.mediarouter.media.MediaRouter.
     });
   }
 }
+
+export { MediaRouterCallback };

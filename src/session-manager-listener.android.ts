@@ -2,9 +2,10 @@ import { CastButtonBase } from './cast.common';
 import { CastButton } from './cast.android';
 import { CastEvent } from './cast.types';
 
+@NativeClass()
 @Interfaces([com.google.android.gms.cast.framework.SessionManagerListener])
 // @ts-ignore
-export class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
+class SessionManagerListenerImpl extends java.lang.Object implements com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session> {
   public owner: CastButton;
 
   constructor(owner) {
@@ -97,3 +98,5 @@ export class SessionManagerListenerImpl extends java.lang.Object implements com.
     });
   }
 }
+
+export { SessionManagerListenerImpl };

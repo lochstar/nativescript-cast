@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
-import { EventData } from 'tns-core-modules/ui/core/view';
-import { CastEvent, CastMediaInfo, CastMediaStatus, PlayerState } from 'nativescript-cast/cast.types';
+import { EventData } from '@nativescript/core';
+import {
+  CastEvent,
+  CastMediaInfo,
+  CastMediaStatus,
+  PlayerState,
+  StreamType,
+  MetadataType,
+} from '@codelab/nativescript-cast/cast.types';
 
 @Component({
   selector: 'app-home',
@@ -61,10 +68,10 @@ export class HomeComponent {
     const media: CastMediaInfo = {
       contentId: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TearsOfSteel.ism/manifest',
       contentType: 'application/vnd.ms-sstr+xml',
-      streamType: 'BUFFERED',
+      streamType: StreamType.BUFFERED,
       duration: 734,
       metadata: {
-        metadataType: 'MOVIE',
+        metadataType: MetadataType.MOVIE,
         title: 'Tears of Steel',
         subtitle: 'By Blender Foundation',
         description: 'Tears of Steel is licensed as Creative Commons Attribution 3.0.',

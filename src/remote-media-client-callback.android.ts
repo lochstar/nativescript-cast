@@ -1,6 +1,7 @@
 import { CastButton } from './cast.android';
 
-export class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
+@NativeClass()
+class RemoteMediaClientCallback extends com.google.android.gms.cast.framework.media.RemoteMediaClient.Callback {
   public owner: CastButton;
 
   constructor(owner) {
@@ -30,3 +31,5 @@ export class RemoteMediaClientCallback extends com.google.android.gms.cast.frame
   public onAdBreakStatusUpdated() {
   }
 }
+
+export { RemoteMediaClientCallback };

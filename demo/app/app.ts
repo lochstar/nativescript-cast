@@ -1,6 +1,7 @@
-import * as application from 'tns-core-modules/application';
+import { Application } from '@nativescript/core';
 
-if (application.ios) {
+if (global.isIOS) {
+  @NativeClass()
   class MyLoggerDelegateImpl extends NSObject implements GCKLoggerDelegate {
     static ObjCProtocols = [GCKLoggerDelegate];
 
@@ -13,6 +14,7 @@ if (application.ios) {
     }
   }
 
+  @NativeClass()
   class MyDelegate extends UIResponder implements UIApplicationDelegate {
     public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
 
@@ -27,15 +29,9 @@ if (application.ios) {
 
       return true;
     }
-
-    /*
-    applicationDidBecomeActive(application: UIApplication): void {
-      console.log('applicationDidBecomeActive: ' + application)
-    }
-    */
   }
 
-  application.ios.delegate = MyDelegate;
+  Application.ios.delegate = MyDelegate;
 }
 
-application.run({ moduleName: 'app-root' });
+Application.run({ moduleName: 'app-root' });

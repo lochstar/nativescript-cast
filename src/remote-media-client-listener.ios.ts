@@ -1,4 +1,4 @@
-import { ios } from 'tns-core-modules/utils/utils';
+import { Utils } from '@nativescript/core';
 import { CastButtonBase } from './cast.common';
 import {
   CastButton,
@@ -12,7 +12,8 @@ import {
   CastMediaStatus,
 } from './cast.types';
 
-export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
+@NativeClass()
+class RemoteMediaClientListenerImpl extends NSObject implements GCKRemoteMediaClientListener {
   public static ObjCProtocols = [GCKRemoteMediaClientListener];
   public owner: CastButton;
 
@@ -50,7 +51,7 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
     let parsedQueueItemIDs = [];
 
     if (queueItemIDs.count > 0) {
-      parsedQueueItemIDs = ios.collections.nsArrayToJSArray(queueItemIDs);
+      parsedQueueItemIDs = Utils.ios.collections.nsArrayToJSArray(queueItemIDs);
     }
 
     this.owner.sendEvent(CastButtonBase.castEvent, {
@@ -66,11 +67,11 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
     const parsedQueueItems = [];
 
     if (queueItems.count > 0) {
-      const arr = ios.collections.nsArrayToJSArray(queueItems);
+      const arr = Utils.ios.collections.nsArrayToJSArray(queueItems);
 
       arr.forEach((item: any) => {
         const activeTrackIds = item.activeTrackIDs
-          ? ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
+          ? Utils.ios.collections.nsArrayToJSArray(item.activeTrackIDs).map((trackId) => +trackId)
           : [];
 
         const queueItem: QueueItem = {
@@ -147,20 +148,20 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
     }
 
     const activeTrackIds = mediaStatus.activeTrackIDs
-      ? ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
+      ? Utils.ios.collections.nsArrayToJSArray(mediaStatus.activeTrackIDs).map((trackId) => +trackId)
       : [];
 
     let queueData = null;
     if (mediaStatus.queueData) {
-        queueData = {
-          name: mediaStatus.queueData.name,
-          queueID: mediaStatus.queueData.queueID,
-          queueType: queueTypeEnumToString(mediaStatus.queueData.queueType),
-          repeatMode: repeatModeEnumToString(mediaStatus.queueData.repeatMode),
-          // containerMetadata
-          startIndex: mediaStatus.queueData.startIndex,
-          startTime: mediaStatus.queueData.startTime,
-        };
+      queueData = {
+        name: mediaStatus.queueData.name,
+        queueID: mediaStatus.queueData.queueID,
+        queueType: queueTypeEnumToString(mediaStatus.queueData.queueType),
+        repeatMode: repeatModeEnumToString(mediaStatus.queueData.repeatMode),
+        // containerMetadata
+        startIndex: mediaStatus.queueData.startIndex,
+        startTime: mediaStatus.queueData.startTime,
+      };
     }
 
     return {
@@ -187,3 +188,5 @@ export class RemoteMediaClientListenerImpl extends NSObject implements GCKRemote
     };
   }
 }
+
+export { RemoteMediaClientListenerImpl };

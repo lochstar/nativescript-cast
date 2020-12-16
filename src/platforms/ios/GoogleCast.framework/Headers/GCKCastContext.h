@@ -6,6 +6,7 @@
 #import <Foundation/Foundation.h>
 
 @class GCKCastOptions;
+@class GCKCredentialsData;
 @class GCKDiscoveryManager;
 @class GCKDeviceProvider;
 @class GCKError;
@@ -103,6 +104,21 @@ GCK_EXPORT
  * @param category A string that uniquely identifies the type of device.
  */
 - (void)unregisterDeviceProviderForCategory:(NSString *)category;
+
+/**
+ * Sets the credentials data of the current user. You should call this API with the current user
+ * information before starting a cast session and whenever user account is changed.
+ *
+ * The credentials data will be embedded in the launch request. If it is to launch an
+ * Android TV app, the app can use the credentials data to determine if the app supports
+ * this specific user. If not, the cast app will be launched instead.
+ *
+ * If an Android TV app is launched, the credential data will be passed to the app, within
+ * the launch intent. The app can use this data to personalize the user experience.
+ *
+ * @param credentialsData An instance of @c GCKCredentialsData. May be <code>nil</code>.
+ */
+- (void)setLaunchCredentialsData:(GCKCredentialsData *_Nullable)credentialsData;
 
 @end
 

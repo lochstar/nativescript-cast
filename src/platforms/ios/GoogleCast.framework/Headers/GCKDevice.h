@@ -43,6 +43,18 @@ typedef NS_OPTIONS(NSInteger, GCKDeviceCapabilities) {
   GCKDeviceCapabilityMultizoneGroup = 1 << 5,
   /** The device is a dynamic group. */
   GCKDeviceCapabilityDynamicGroup = 1 << 6,
+  /**
+   * The device is a multichannel group.
+   *
+   * @since 4.4.7
+   */
+  GCKDeviceCapabilityMultiChannelGroup = 1 << 7,
+  /**
+   * The device is a multichannel member.
+   *
+   * @since 4.4.7
+   */
+  GCKDeviceCapabilityMultiChannelMember = 1 << 8,
   /** The device has master or fixed volume mode capability. */
   GCKDeviceCapabilityMasterOrFixedVolume = 1 << 11,
   /** The device has attenuation or fixed volume mode capability. */

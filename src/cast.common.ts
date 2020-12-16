@@ -1,5 +1,7 @@
-import { View } from 'tns-core-modules/ui/core/view';
-import { Visibility } from 'tns-core-modules/ui/styling/style-properties';
+import { View } from '@nativescript/core';
+import { Visibility } from '@nativescript/core/ui/styling/style-properties';
+
+export * from './cast';
 
 export abstract class CastButtonBase extends View {
   public static validMetadataKeys = [

@@ -1,17 +1,24 @@
 # nativescript-cast
 
-Chromecast support for NativeScript 6.
+Chromecast support for NativeScript 7+.
 
 ## Requirements
 
 You must have a valid Chromecast Application ID. You can obtain one at the [Google Cast Developer Console](https://cast.google.com/publish/).
 
-NativeScript 6 or higher. For lower versions, you can use an older version of this plugin `0.1.2`.
-
 ## Installation
 
+Note: Since NativeScript 7, the package name is now `@codelab/nativescript-cast`.
+
 ```bash
-tns plugin add nativescript-cast
+# NativeScript 7
+ns plugin add @codelab/nativescript-cast
+
+# Nativescript 6
+tns plugin add nativescript-cast@0.3.0
+
+# NativeScript 5
+tns plugin add nativescript-cast@0.1.2
 ```
 
 ## Usage
@@ -43,18 +50,9 @@ The Google Cast design checklist requires a sender app to provide an expanded co
 </activity>
 ```
 
-If you are using Webpack, add `'nativescript-cast/cast-options-provider'` to `appComponents`. You will have to repeat this step after performing a `tns update`.
+If you are using Webpack, you will need to include `'@codelab/nativescript-cast/cast-options-provider'` in `appComponents`.
 
-```js
-// webpack.config.js
-const appComponents = [
-  'tns-core-modules/ui/frame',
-  'tns-core-modules/ui/frame/activity',
-  'nativescript-cast/cast-options-provider'
-];
-```
-
-Alternatively you can create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
+To do this, create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
 
 ---
 
@@ -68,22 +66,31 @@ Set your Application ID.
 <string>4F8B3483</string>
 ```
 
-Add the following before your `application.run()`. This will initialise the `GCKCastContext` with the Application ID from your `Info.plist` file.
+You'll need to set up a delegate to initialise the `GCKCastContext` with your `AppID`. See the [demo](demo/app/app.ts) for an example.
 
 ```ts
-import * as application from 'tns-core-modules/application';
-import * as utils from 'tns-core-modules/utils/utils';
+import { Application } from '@nativescript/core';
 
-application.on(application.launchEvent, (args) => {
-  if (args.ios !== undefined) {
-    // AppID value from Info.plist
-    const mainBundle = utils.ios.getter(NSBundle, NSBundle.mainBundle);
-    const appId = mainBundle.infoDictionary.objectForKey('AppID');
+if (global.isIOS) {
+  @NativeClass()
+  class MyDelegate extends UIResponder implements UIApplicationDelegate {
+    public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
 
-    const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
-    GCKCastContext.setSharedInstanceWithOptions(castOptions);
+    applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
+      const appId = NSBundle.mainBundle.objectForInfoDictionaryKey('AppID');
+      const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
+      GCKCastContext.setSharedInstanceWithOptions(castOptions);
+
+      // Optional logger
+      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new();
+      GCKLogger.sharedInstance().delegate = delegate;
+
+      return true;
+    }
   }
-});
+
+  Application.ios.delegate = MyDelegate;
+}
 ```
 
 #### ⚠️ iOS 12+ & Xcode 10 ⚠️
@@ -98,6 +105,12 @@ iOS 13+ requires Bluetooth and Microphone permissions in order to use Guest Mode
 
 See [iOS Guest Mode](https://developers.google.com/cast/docs/guest_mode#ios_guest_mode) for more info.
 
+#### ⚠️ iOS 14+ ⚠️
+
+iOS 14+ has some permission changes. See [iOS Permission Changes](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_14) for more info.
+
+Be sure to set `NSBonjourServices` with your `AppID` as explained in the documentation above. See the [demo](demo/app/App_Resources/iOS/Info.plist#L25-32) for an example.
+
 ---
 
 ### Place `CastButton` in to your view.
@@ -109,7 +122,7 @@ See [iOS Guest Mode](https://developers.google.com/cast/docs/guest_mode#ios_gues
   xmlns="http://schemas.nativescript.org/tns.xsd"
   loaded="pageLoaded"
   class="page"
-  xmlns:cast="nativescript-cast"
+  xmlns:cast="@codelab/nativescript-cast"
 >
   <ActionBar title="App Name">
     <ActionItem ios.position="right">
@@ -127,7 +140,7 @@ See [iOS Guest Mode](https://developers.google.com/cast/docs/guest_mode#ios_gues
 Add `NativescriptCastModule` in your app's module `imports`, typically in `app.module.ts`.
 
 ```ts
-import { NativescriptCastModule } from 'nativescript-cast/angular';
+import { NativescriptCastModule } from '"@codelab/nativescript-cast/angular';
 
 @NgModule({
   imports: [
@@ -153,7 +166,7 @@ Include in your template.
 Register the element in your app's main entry point, typically `main.ts`.
 
 ```js
-Vue.registerElement('CastButton', () => require('nativescript-cast').CastButton);
+Vue.registerElement('CastButton', () => require('n"@codelab/ativescript-cast').CastButton);
 ```
 
 Include in your template.

@@ -2,15 +2,14 @@ import { CastButtonBase } from './cast.common';
 import { CastButton } from './cast.android';
 import { CastEvent } from './cast.types';
 
-export class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
+@NativeClass()
+// @ts-ignore
+class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegate {
   public static ObjCProtocols = [GCKMediaQueueDelegate];
   public owner: CastButton;
 
-  constructor() {
-    super();
-
-    // necessary when extending TypeScript constructors
-    return global.__native(this);
+  static new(): GCKMediaQueueDelegate {
+    return <GCKMediaQueueDelegate>super.new();
   }
 
   mediaQueueDidReloadItems(queue: GCKMediaQueue): void {
@@ -59,3 +58,5 @@ export class MediaQueueDelegate extends NSObject implements GCKMediaQueueDelegat
     });
   }
 }
+
+export { MediaQueueDelegate };

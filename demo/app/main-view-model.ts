@@ -1,6 +1,4 @@
-import { Observable } from 'tns-core-modules/data/observable';
-import { EventData } from 'tns-core-modules/ui/core/view';
-import { Switch } from 'tns-core-modules/ui/switch';
+import { EventData, Observable, Switch } from '@nativescript/core';
 import {
   CastEvent,
   CastMediaInfo,
@@ -9,7 +7,7 @@ import {
   RepeatMode,
   StreamType,
   MetadataType,
-} from 'nativescript-cast/cast.types';
+} from '@codelab/nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;

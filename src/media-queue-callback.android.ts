@@ -2,7 +2,8 @@ import { CastButtonBase } from './cast.common';
 import { CastButton, convertMediaInfo } from './cast.android';
 import { CastEvent, QueueItem } from './cast.types';
 
-export class MediaQueueCallback extends com.google.android.gms.cast.framework.media.MediaQueue.Callback {
+@NativeClass()
+class MediaQueueCallback extends com.google.android.gms.cast.framework.media.MediaQueue.Callback {
   public owner: CastButton;
 
   constructor(owner) {
@@ -84,3 +85,5 @@ export class MediaQueueCallback extends com.google.android.gms.cast.framework.me
     });
   }
 }
+
+export { MediaQueueCallback };

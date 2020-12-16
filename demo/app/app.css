@@ -1,4 +1,5 @@
-﻿@import '~nativescript-theme-core/css/core.light.css';
+﻿@import "~@nativescript/theme/css/core.css";
+@import "~@nativescript/theme/css/default.css";
 
 .far {
   font-family: 'Font Awesome 5 Free', 'fa-regular-400';
@@ -11,18 +12,15 @@
 }
 
 ActionBar {
+  background: var(--light-accent);
   color: #fff;
-}
-
-.page {
-  /* margin: 10 0; */
 }
 
 .controls {
   margin: 10 16;
 }
 
-.controls .btn {
+.controls > Button {
   font-size: 16;
   margin: 0;
   font-weight: bold;
