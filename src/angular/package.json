@@ -6,7 +6,7 @@
 			"umdModuleIds": {
 				"@nativescript/core": "ns-core",
 				"@nativescript/angular": "ns-angular",
-				"nativescript-cast": "nativescript-cast"
+				"@codelab/nativescript-cast": "ns-cast"
 			}
 		},
 		"whitelistedNonPeerDependencies": [

@@ -4,7 +4,7 @@
 		"types": ["node"],
 		"baseUrl": ".",
 		"paths": {
-			"nativescript-cast": ["../"]
+			"@codelab/nativescript-cast": ["../"]
 		}
 	}
 }
