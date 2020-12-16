@@ -78,7 +78,6 @@
           justifyContent="space-between"
           class="controls"
         >
-
           <Button
             text="&#xf04c;"
             tap="{{ handlePauseTap }}"
