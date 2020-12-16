@@ -8,9 +8,11 @@ You must have a valid Chromecast Application ID. You can obtain one at the [Goog
 
 ## Installation
 
+Note: Since NativeScript 7, the package name is now `@codelab/nativescript-cast`.
+
 ```bash
 # NativeScript 7
-ns plugin add nativescript-cast
+ns plugin add @codelab/nativescript-cast
 
 # Nativescript 6
 tns plugin add nativescript-cast@0.3.0
@@ -48,7 +50,7 @@ The Google Cast design checklist requires a sender app to provide an expanded co
 </activity>
 ```
 
-If you are using Webpack, you will need to include `'nativescript-cast/cast-options-provider'` in `appComponents`.
+If you are using Webpack, you will need to include `'@codelab/nativescript-cast/cast-options-provider'` in `appComponents`.
 
 To do this, create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
 
@@ -120,7 +122,7 @@ Be sure to set `NSBonjourServices` with your `AppID` as explained in the documen
   xmlns="http://schemas.nativescript.org/tns.xsd"
   loaded="pageLoaded"
   class="page"
-  xmlns:cast="nativescript-cast"
+  xmlns:cast="@codelab/nativescript-cast"
 >
   <ActionBar title="App Name">
     <ActionItem ios.position="right">
@@ -138,7 +140,7 @@ Be sure to set `NSBonjourServices` with your `AppID` as explained in the documen
 Add `NativescriptCastModule` in your app's module `imports`, typically in `app.module.ts`.
 
 ```ts
-import { NativescriptCastModule } from 'nativescript-cast/angular';
+import { NativescriptCastModule } from '"@codelab/nativescript-cast/angular';
 
 @NgModule({
   imports: [
@@ -164,7 +166,7 @@ Include in your template.
 Register the element in your app's main entry point, typically `main.ts`.
 
 ```js
-Vue.registerElement('CastButton', () => require('nativescript-cast').CastButton);
+Vue.registerElement('CastButton', () => require('n"@codelab/ativescript-cast').CastButton);
 ```
 
 Include in your template.

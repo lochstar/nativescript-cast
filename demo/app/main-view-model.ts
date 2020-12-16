@@ -7,7 +7,7 @@ import {
   RepeatMode,
   StreamType,
   MetadataType,
-} from 'nativescript-cast/cast.types';
+} from '@codelab/nativescript-cast/cast.types';
 
 export class MainViewModel extends Observable {
   public cast: any;

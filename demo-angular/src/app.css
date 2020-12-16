@@ -1,21 +1,36 @@
 @import "~@nativescript/theme/css/core.css";
 @import "~@nativescript/theme/css/default.css";
 
-.page {
-  margin: 10 0;
+.far {
+  font-family: 'Font Awesome 5 Free', 'fa-regular-400';
+  font-weight: 400;
+}
+
+.fas {
+  font-family: 'Font Awesome 5 Free', 'fa-solid-900';
+  font-weight: 900;
+}
+
+ActionBar {
+  background: var(--light-accent);
+  color: #fff;
 }
 
 .controls {
   margin: 10 16;
 }
 
-.controls .btn {
-  font-family: 'Font Awesome 5 Free', 'fa-solid-900';
+.controls > Button {
   font-size: 16;
   margin: 0;
+  font-weight: bold;
 }
 
-.media-info {
+Label {
+  margin: 0 16;
+}
+
+.json {
   font-family: monospace;
   font-size: 12;
   background-color: #ccc;

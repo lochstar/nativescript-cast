@@ -7,7 +7,7 @@
 </ActionBar>
 <StackLayout>
   <Button
-    class="btn btn-primary btn-active"
+    class="-primary"
     text="Load Media"
     isEnabled="{{ canCast }}"
     (onTap)="handleLoadTap()"
@@ -20,49 +20,49 @@
       <Button
         text="&#xff04b; Play"
         (onTap)="handlePlayTap()"
-        class="btn btn-primary"
+        class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04c; Pause"
         (onTap)="handlePauseTap()"
-        class="btn btn-primary"
+        class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04e; Seek"
         (onTap)="handleSeekTap()"
-        class="btn btn-primary"
+        class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04d; Stop"
         (onTap)="handleStopTap()"
-        class="btn btn-primary"
+        class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
     </FlexboxLayout>
     <Button
       text="Show controller"
       (onTap)="handleShowControllerTap()"
-      class="btn btn-primary"
+      class="-primary"
       isEnabled="{{ canCast }}"
     ></Button>
     <Button
       text="Switch Text Track"
       (onTap)="handleSwitchTextTrackTap()"
-      class="btn btn-primary"
+      class="-primary"
       isEnabled="{{ canCast }}"
     ></Button>
     <TextView
       text="{{ mediaStatusString }}"
       editable="false"
-      class="media-info"
+      class="json"
     ></TextView>
     <TextView
       text="{{ mediaInfoString }}"
       editable="false"
-      class="media-info"
+      class="json"
     ></TextView>
   </StackLayout>
 </StackLayout>

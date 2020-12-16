@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { registerElement } from "@nativescript/angular";
-import { CastButton } from "nativescript-cast";
+import { CastButton } from "@codelab/nativescript-cast";
 
 @NgModule()
 export class NativescriptCastModule {}

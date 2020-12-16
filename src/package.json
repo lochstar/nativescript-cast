@@ -1,5 +1,5 @@
 {
-  "name": "nativescript-cast",
+  "name": "@codelab/nativescript-cast",
   "version": "0.4.0",
   "description": "NativeScript Chromecast Plugin.",
   "main": "cast",
@@ -26,7 +26,7 @@
     "demo-angular.android": "npm run tsc && cd ../demo-angular && ns run android",
     "demo-angular.ios": "npm run tsc && cd ../demo-angular && ns run ios",
     "demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
-    "plugin.prepare": "npm run build && cd ../demo && ns plugin remove nativescript-cast && ns plugin add ../src && cd ../demo-angular && ns plugin remove nativescript-cast && ns plugin add ../src",
+    "plugin.prepare": "npm run build && cd ../demo && ns plugin remove @codelab/nativescript-cast && ns plugin add ../src && cd ../demo-angular && ns plugin remove @codelab/nativescript-cast && ns plugin add ../src",
     "setup": "npm i && npm run ts-patch",
     "ts-patch": "ts-patch install",
     "clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm run setup",

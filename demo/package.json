@@ -6,10 +6,10 @@
     "ci.tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
   },
   "dependencies": {
+    "@codelab/nativescript-cast": "file:../src",
     "@nativescript/core": "^7.0.12",
     "@nativescript/theme": "^3.0.0",
-    "lodash": "^4.17.15",
-    "nativescript-cast": "file:../src"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@nativescript/android": "7.0.1",

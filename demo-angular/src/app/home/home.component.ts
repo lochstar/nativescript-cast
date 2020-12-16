@@ -7,7 +7,7 @@ import {
   PlayerState,
   StreamType,
   MetadataType,
-} from 'nativescript-cast/cast.types';
+} from '@codelab/nativescript-cast/cast.types';
 
 @Component({
   selector: 'app-home',
