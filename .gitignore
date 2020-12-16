@@ -22,6 +22,7 @@ demo/*.d.ts
 !demo/webpack.config.js
 demo/lib
 demo/platforms
+demo-angular/platforms
 node_modules
 publish/src
 publish/package
