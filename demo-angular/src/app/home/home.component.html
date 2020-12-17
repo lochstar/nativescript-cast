@@ -19,25 +19,25 @@
       class="controls">
       <Button
         text="&#xff04b; Play"
-        (onTap)="handlePlayTap()"
+        (onTap)="handlePlayTap($event)"
         class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04c; Pause"
-        (onTap)="handlePauseTap()"
+        (onTap)="handlePauseTap($event)"
         class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04e; Seek"
-        (onTap)="handleSeekTap()"
+        (onTap)="handleSeekTap($event)"
         class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>
       <Button
         text="&#xff04d; Stop"
-        (onTap)="handleStopTap()"
+        (onTap)="handleStopTap($event)"
         class="-primary fas"
         isEnabled="{{ canCast }}"
       ></Button>

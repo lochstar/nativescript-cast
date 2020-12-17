@@ -1,14 +1,26 @@
 {
   "name": "nativescript-cast-angular",
   "main": "bundles/nativescript-cast-angular.umd.js",
+  "module_ivy_ngcc": "../../__ivy_ngcc__/angular/dist/fesm2015/nativescript-cast-angular.js",
   "module": "fesm2015/nativescript-cast-angular.js",
+  "es2015_ivy_ngcc": "../../__ivy_ngcc__/angular/dist/fesm2015/nativescript-cast-angular.js",
   "es2015": "fesm2015/nativescript-cast-angular.js",
   "esm2015": "esm2015/nativescript-cast-angular.js",
+  "fesm2015_ivy_ngcc": "../../__ivy_ngcc__/angular/dist/fesm2015/nativescript-cast-angular.js",
   "fesm2015": "fesm2015/nativescript-cast-angular.js",
   "typings": "nativescript-cast-angular.d.ts",
   "metadata": "nativescript-cast-angular.metadata.json",
   "sideEffects": false,
   "dependencies": {
     "tslib": "^2.0.0"
+  },
+  "__processed_by_ivy_ngcc__": {
+    "es2015": "10.2.4",
+    "fesm2015": "10.2.4",
+    "module": "10.2.4",
+    "typings": "10.2.4"
+  },
+  "scripts": {
+    "prepublishOnly": "node --eval \"console.error('ERROR: Trying to publish a package that has been compiled by NGCC. This is not allowed.\\nPlease delete and rebuild the package, without compiling with NGCC, before attempting to publish.\\nNote that NGCC may have been run by importing this package into another project that is being built with Ivy enabled.\\n')\" && exit 1"
   }
 }
