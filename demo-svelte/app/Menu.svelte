@@ -17,18 +17,11 @@
 </page>
 
 <script lang="typescript">
-    import Demo1 from './linked-components/Demo1.svelte';
-    import Demo2 from './linked-components/Demo2.svelte';
-    import Development from './linked-components/Development.svelte';
 
     import { navigate } from 'svelte-native';
     import { onMount } from 'svelte';
 
-    const demos = [
-        { name: 'Demo 1', component: Demo1 },
-        { name: 'Demo 2', component: Demo2 },
-        { name: 'Development', component: Development }
-    ];
+    import { demos } from './linked-components/install';
 
     function goToDemo(component) {
         navigate({
@@ -44,9 +37,10 @@
 
     onMount(() => {
         if (process.env.NODE_ENV === 'development') {
+            const Development = demos.find(({ name }) => name === 'Development');
             setTimeout(() => {
                 navigate({
-                    page: Development,
+                    page: Development.component,
                     animated: false
                 });
             }, 0);
