@@ -1,22 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterExtensions } from '@nativescript/angular';
+import { demos } from '../linked-components/install.module';
 
 @Component({
     selector: 'ns-menu',
     templateUrl: './menu.component.html'
 })
 export class MenuComponent implements OnInit {
-    demos = [
-        { name: 'Demo 1', component: 'demo1' },
-        { name: 'Demo 2', component: 'demo2' },
-        { name: 'Development', component: 'development' }
-    ];
-
+    demos = demos;
     constructor(private router: RouterExtensions) {}
 
     ngOnInit(): void {
         if (process.env.NODE_ENV === 'development') {
-            this.router.navigate(['development']);
+            const Development = demos.find(({ name }) => name === 'Development');
+            if (Development) {
+                this.router.navigate([Development.path]);
+            }
         }
     }
 
