@@ -15,25 +15,22 @@
 </template>
 
 <script lang="ts">
-import Demo1 from './linked-components/Demo1.vue';
-import Demo2 from './linked-components/Demo2.vue';
-import Development from './linked-components/Development.vue';
+import { demos } from './linked-components/install';
 
 export default {
     data() {
         return {
-            demos: [
-                { name: 'Demo 1', component: Demo1 },
-                { name: 'Demo 2', component: Demo2 },
-                { name: 'Development', component: Development }
-            ]
+            demos
         };
     },
     mounted() {
         if (process.env.NODE_ENV === 'development') {
-            this.$navigateTo(Development, {
-                animated: false
-            });
+            const Development = demos.find(({ name }) => name === 'Development');
+            if (Development) {
+                this.$navigateTo(Development.component, {
+                    animated: false
+                });
+            }
         }
     },
     methods: {
