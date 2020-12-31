@@ -38,12 +38,14 @@
     onMount(() => {
         if (process.env.NODE_ENV === 'development') {
             const Development = demos.find(({ name }) => name === 'Development');
-            setTimeout(() => {
-                navigate({
-                    page: Development.component,
-                    animated: false
-                });
-            }, 0);
+            if (Development) {
+                setTimeout(() => {
+                    navigate({
+                        page: Development.component,
+                        animated: false
+                    });
+                }, 0);
+            }
         }
     });
 </script>

@@ -3,26 +3,24 @@ import { RouteProp } from '@react-navigation/core';
 import { FrameNavigationProp } from 'react-nativescript-navigation';
 import { MainStackParamList } from './NavigationParamList';
 
+import { demos } from './linked-components/install';
 interface MenuProps {
     route: RouteProp<MainStackParamList, 'menu'>;
     navigation: FrameNavigationProp<MainStackParamList, 'menu'>;
 }
 
 export function Menu({ navigation }: MenuProps) {
-    const demos = [
-        { name: 'Demo 1', component: 'demo1' },
-        { name: 'Demo 2', component: 'demo2' },
-        { name: 'Development', component: 'development' }
-    ];
-
     function goToDemo(component) {
         navigation.navigate(component);
     }
 
     if (process.env.NODE_ENV === 'development') {
-        setTimeout(() => {
-            navigation.navigate('development');
-        }, 0);
+        const Development = demos.find(({ name }) => name === 'Development');
+        if (Development) {
+            setTimeout(() => {
+                navigation.navigate('development');
+            }, 0);
+        }
     }
 
     return (
@@ -32,7 +30,7 @@ export function Menu({ navigation }: MenuProps) {
                     <button
                         key={demo.name}
                         onTap={() => {
-                            goToDemo(demo.component);
+                            goToDemo(demo.path);
                         }}
                     >
                         {demo.name}
