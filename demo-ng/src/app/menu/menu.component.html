@@ -1,9 +1,0 @@
-<ActionBar title="Angular Demo"></ActionBar>
-
-<ScrollView>
-    <StackLayout>
-        <StackLayout *ngFor="let demo of demos">
-            <Button text="{{ demo.name }}" (tap)="goToDemo(demo.path)"></Button>
-        </StackLayout>
-    </StackLayout>
-</ScrollView>
