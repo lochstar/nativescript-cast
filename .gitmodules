@@ -1,0 +1,12 @@
+[submodule "demo-ng"]
+	path = demo-ng
+	url = https://github.com/keerl/demo-ng.git
+[submodule "demo-react"]
+	path = demo-react
+	url = https://github.com/keerl/demo-react.git
+[submodule "demo-svelte"]
+	path = demo-svelte
+	url = https://github.com/keerl/demo-svelte.git
+[submodule "demo-vue"]
+	path = demo-vue
+	url = https://github.com/keerl/demo-vue.git
