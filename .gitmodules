@@ -1,6 +1,7 @@
 [submodule "demo-ng"]
 	path = demo-ng
 	url = https://github.com/keerl/demo-ng.git
+	ignore = dirty
 [submodule "demo-react"]
 	path = demo-react
 	url = https://github.com/keerl/demo-react.git
