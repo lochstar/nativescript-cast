@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 
 import { NativeScriptVersionNumberModule } from '@nativescript-community/plugin-seed/angular';
 
@@ -8,7 +8,8 @@ import { DevelopmentComponent } from './development/development.component';
 
 @NgModule({
     imports: [NativeScriptVersionNumberModule],
-    exports: [NativeScriptVersionNumberModule]
+    exports: [NativeScriptVersionNumberModule],
+    schemas: [NO_ERRORS_SCHEMA]
 })
 export class InstallModule {}
 
@@ -17,3 +18,5 @@ export const demos = [
     { name: 'Demo 2', path: 'demo2', component: Demo2Component },
     { name: 'Development', path: 'development', component: DevelopmentComponent }
 ];
+
+export const COMPONENTS = [Demo1Component, Demo2Component, DevelopmentComponent];
