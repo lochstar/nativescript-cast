@@ -4,6 +4,11 @@ This is a repo for the NativeScript Community plugin seed. Its goal is to standa
 
 This plugin seed contains demos (Angular, Vue, Svelte, and React), documentation generation, and release management w/ Lerna.
 
+You must clone this repo recursively to download the submodules as well.
+```
+git clone https://github.com/nativescript-community/plugin-seed.git --recursive
+```
+
 | <img src="images/plugin-seed-diagram.png" /> |
 | --- |
 | Plugin Seed Project Structure |
