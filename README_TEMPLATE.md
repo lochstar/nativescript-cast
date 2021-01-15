@@ -58,15 +58,37 @@ Show example of a simple use case of your plugin in an Svelte app.
 Show example of a simple use case of your plugin in an React app.
 
 ## Demos
-This repository includes Angular, Vue.js, Svelte, and React demos. In order to run these execute the following in your shell:
-```shell
-$ git clone https://github.com/@nativescript-community/plugin-name
-$ cd ui-plugin-name
-$ npm i
-$ npm run setup
-$ npm run build # && npm run build.angular
-$ cd demo-ng # or demo-vue or demo-svelte
-$ ns run ios|android
+This repository includes Angular, Vue.js, Svelte, and React demos. In order to run these execute the following in your terminal:
+
+Install Dependencies:
+```bash
+npm i # or your preferred package manager's install command
+```
+
+Run Setup:
+```bash
+npm run setup
+```
+
+Building Plugin:
+```bash
+npm run build
+
+# or for Angular
+npm run build.angular
+```
+
+Setup Demos:
+```
+npm run demo.setup
+```
+
+Running Demos:
+```bash
+npm run demo.[ng|react|svelte|vue].[ios|android]
+
+# Example:
+npm run demo.svelte.ios
 ```
 
 ## Contribute
