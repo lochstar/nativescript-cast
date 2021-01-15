@@ -76,7 +76,7 @@ There is also a `package.json` inside the `demo-snippets` directory. This allows
 
 The demos contain a "development mode" which will automatically navigate to the development page upon launch. This prevents repeated taps when actively developing the plugin.
 
-To run in development mode, simply add the `--env.development` flag to your command to run the app.
+To run in development mode, simply add the `.dev`  flag to your command (`npm run demo.svelte.ios.dev`) to run the app. Or if you're running using `ns run` just add the flag `--env.development`.
 
 ## Tools
 
