@@ -2,21 +2,22 @@
 
 This is a repo for the NativeScript Community plugin seed. Its goal is to standardize and streamline the plugin development of community plugins. This is an alternative to NativeScript's monorepo plugin seed. 
 
-This plugin seed contains demos (Angular, Vue, Svelte, and React), Detox E2E testing, documentation generation, release management w/ Lerna, and standardized formatting/linting.
+This plugin seed contains demos (Angular, Vue, Svelte, and React), documentation generation, and release management w/ Lerna.
 
+| <img src="images/plugin-seed-diagram.png" /> |
+| --- |
+| Plugin Seed Project Structure |
 ## Table of Contents
 1. [Development](#development)
 2. [Demos](#demos)
-3. [Detox E2E Testing](#detox-e2e-testing)
-4. [Formatting / Linting](#formatting-/-linting)
-5. [Docs](#docs)
-6. [Community Website](#community-website)
-7. [README Template](#readme-template)
-7. [Contribution Guide](#contribution-guide)
+3. [Docs](#docs)
+4. [Community Website](#community-website)
+5. [README Template](#readme-template)
+6. [Contribution Guide](#contribution-guide)
 
 ## Development
 
-To build the plugin's source code use the following steps:
+To build the plugin's source code and run demos use the following steps:
 
 Install Dependencies:
 ```bash
@@ -28,7 +29,7 @@ Run Setup:
 npm run setup
 ```
 
-Building:
+Building Plugin:
 ```bash
 npm run build
 
@@ -36,24 +37,40 @@ npm run build
 npm run build.angular
 ```
 
-You should now be able to run the demos using the compiled source code.
-
-To clean the project, simply run:
-```bash
-npm run clean
+Setup Demos:
 ```
-   
+npm run demo.setup
+```
+
+Running Demos:
+```bash
+npm run demo.[ng|react|svelte|vue].[ios|android]
+
+# Example:
+npm run demo.svelte.ios
+```
 ## Demos
 
-As stated aboved, there is a demo for each framework: Angular, Vue, Svelte, and React. 
+### Structure
+
+
+As stated aboved, there is a demo for each framework: Angular, Vue, Svelte, and React. Each demo flavor is a Git submodule and the actual demo code is not meant to edited directly, but rather there are demo snippets for each flavor that will be symbolically linked to the demos. This allows for significantly simplier maintenance for developers.
 
 <img src="https://i.imgur.com/anV3Pxq.png" height="500" />
 
 The demo template has a menu system that allows for the ability to show off multiple examples of the plugin in an organized way. 
 
-There is also a dedicated development demo which is a workspace for the development of the plugin. Sometimes in development there are special cases and obscure things you need to test, but don't need to be shown in the other demos. 
+There is also a dedicated development demo which is a workspace for the development of the plugin. Sometimes in development there are special cases and obscure things you need to test, but don't need to be shown in the "show-off" demos. 
 
-The non-development demos should be for new users testing out the plugin to see the capabilities and understand how it works. These should ideally be the same across all demos.
+The non-development demos should be for new users testing out the plugin to see the capabilities and understand how it works. These should *ideally* be the same across all demos.
+
+### Snippets
+
+<img src="images/demo-snippets-structure.png" />
+
+The `demo-snippets` directory contains the specific demo code for the plugin. Each component is essentially another demo page. Each framework directory has a `install.ts` file which will allow you at add any specific code that needs to be ran in the top-level of the demo. This is also where you register what components you want to be added to the demo.
+
+There is also a `package.json` inside the `demo-snippets` directory. This allows you to add (or modify) any dependencies you need to be added to the demos.
 
 ### Development Mode
 
@@ -61,111 +78,9 @@ The demos contain a "development mode" which will automatically navigate to the 
 
 To run in development mode, simply add the `--env.development` flag to your command to run the app.
 
-## Detox E2E Testing
+## Tools
 
-This seed also contains [Detox](https://github.com/wix/Detox) end-to-end testing built-in. This allows for advanced automated testing of your plugin.
-
-If you haven't used Detox before, you will have to do a little global setup to get it running on your computer. The following instructions are taken from [NativeScript Detox](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md).
-
-### Global Setup
-
-#### Install `detox-cli`
-
-```bash
-npm install -g detox-cli
-```
-
-#### Install applesimutils (iOS)
-
-```bash
-brew tap wix/brew
-brew install applesimutils
-```
-
-### Project Setup
-
-All of the demos are ready for Detox out of the box. The same testing files are ran across different frameworks to confirm the same behavior.
-
-The only thing that needs to be modified is `devices.js` in this project's root directory. This file tells Detox what simulator/device to use for testing.
-
-Modify `devices.js` to look something like this:
-
-```javascript
-module.exports = {
-    ios: 'iPhone 12 Pro Max',
-    android: 'Pixel_3a_API_29'
-};
-```
-
-### Writing Tests
-
-The default test is located under `e2e/tests.e2e.js`. This simple test just navigates between the different demos. Take a look at the [Usage](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md#usage) section of the [NativeScript Detox](https://github.com/NativeScript/plugins/blob/master/packages/detox/README.md) plugin to learn more about writing tests for your plugin.
-
-Even if e2e testing doesn't seem to fit the use-case of your plugin, it can still be helping just to confirm the plugin builds and runs on iOS and Android as well as all of the different frameworks.
-
-### Running
-
-There are some helper scripts available to make Detox testing easier. The following are a few examples:
-
-Build apps and run tests (iOS, Android, and all frameworks):
-
-```bash
-npm run e2e
-```
-
-Build apps only (iOS, Android, and all frameworks):
-
-```bash
-npm run e2e:build
-```
-
-Run tests only (iOS, Android, and all frameworks):
-
-```bash
-npm run e2e:run
-```
-
-For more specific testing cases (iOS only, specific frameworks, etc) run the help command (`./e2e/run-tests.js --help`) on the testing helper script:
-
-```
-Usage: run-tests -p num -h num
-
-Options:
-      --help        Show help                                          [boolean]
-      --version     Show version number                                [boolean]
-  -p, --platforms   The platforms to test on.
-                [array] [choices: "ios", "android"] [default: ["ios","android"]]
-  -f, --frameworks  The frameworks to test on.
-                     [array] [choices: "ng", "vue", "svelte", "react"] [default:
-                                                  ["ng","vue","svelte","react"]]
-  -b, --build       Flag to ONLY run building of the projects.
-                                                      [boolean] [default: false]
-  -r, --run         Flag to ONLY run testing (no building) of the projects.
-                                                      [boolean] [default: false]
-
-Examples:
-  run-tests                       Builds and runs e2e testing on all supported
-                                  platforms and frameworks.
-  run-tests -b                    Build e2e testing for all supported platforms
-                                  and frameworks.
-  run-tests -r                    Run e2e testing for all supported platforms
-                                  and frameworks.
-  run-tests -p ios                Builds and runs e2e testing for all frameworks
-                                  only on iOS.
-  run-tests -f ng vue             Builds an d runs e2e testing on Angular and
-                                  Vue.js.
-  run-tests -p android -f svelte  Builds and runs e2e testing for Svelte on iOS.
-```
-
-## Formatting / Linting
-
-This plugin seed also contains built-in formatting and linting with [Prettier](https://prettier.io/) and [ESList](https://eslint.org/). 
-
-Each demo/framework has its own configuration as well as a configuration for the plugin source code.
-
-Formatting/linting will try to automatically run every time a commit is made to the repo using [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged). 
-
-If for some reason the linting doesn't run automatically, you can run it manually with `npm run lint`. For for specific formatting/linting cases, look at the `scripts` section in the `package.json`.
+There is a linked submodule called `tools`. This contains utility scripts that can be ran on the plugin. Currently, it only contains one script called `setup-demos.js` and this is used to link the plugin's demo snippets to the actual demo code. This is what is ran with `npm run demo.setup`. In the future, there may also be scripts to update dependencies, manage e2e testing, etc.
 ## Docs
 
 This plugin also contains the ability to generate documentation for your plugin using [TypeDoc](https://typedoc.org/).
