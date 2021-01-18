@@ -15,10 +15,11 @@ git clone https://github.com/nativescript-community/plugin-seed.git --recursive
 ## Table of Contents
 1. [Development](#development)
 2. [Demos](#demos)
-3. [Docs](#docs)
-4. [Community Website](#community-website)
-5. [README Template](#readme-template)
-6. [Contribution Guide](#contribution-guide)
+3. [Tools](#tools)
+4. [Docs](#docs)
+5. [Community Website](#community-website)
+6. [README Template](#readme-template)
+7. [Contribution Guide](#contribution-guide)
 
 ## Development
 
@@ -85,7 +86,14 @@ To run in development mode, simply add the `.dev`  flag to your command (`npm ru
 
 ## Tools
 
-There is a linked submodule called `tools`. This contains utility scripts that can be ran on the plugin. Currently, it only contains one script called `setup-demos.js` and this is used to link the plugin's demo snippets to the actual demo code. This is what is ran with `npm run demo.setup`. In the future, there may also be scripts to update dependencies, manage e2e testing, etc.
+There is a linked submodule called `tools`. This contains utility scripts that can be ran on the plugin. 
+
+### Setup Plugins
+`setup-demos.js` is used to link the plugin's demo snippets to the actual demo code. This is what is ran with `npm run demo.setup`. 
+
+### Sync
+`sync.js` is used to update the `devDependencies` and `scripts` portions of the `package.json` in order to match the "template" `package.json` (`./tools/package.json`). This is used to quickly and easily update plugins and keep a common set of dependencies. That can also be ran with `npm run sync` (or `npm run sync.test` for a dry-run).
+
 ## Docs
 
 This plugin also contains the ability to generate documentation for your plugin using [TypeDoc](https://typedoc.org/).

@@ -15,7 +15,6 @@
         "build": "rm -f .tsbuildinfo && npm run tsc",
         "build.angular": "ng-packagr -p src/angular/package.json -c src/angular/tsconfig.json",
         "commitmsg": "commitlint -e $GIT_PARAMS",
-        "demo.setup": "node ./tools/setup-demos.js",
         "demo.ng.android": "npm run build.angular && cd ./demo-ng && ns run android --no-hmr",
         "demo.ng.android.dev": "npm run build.angular && cd ./demo-ng && ns run android --no-hmr --env.development",
         "demo.ng.ios": "npm run build.angular && cd ./demo-ng && ns run ios --no-hmr",
@@ -24,6 +23,7 @@
         "demo.react.android.dev": "npm run build && cd ./demo-react && ns run android --no-hmr --env.development",
         "demo.react.ios": "npm run build && cd ./demo-react && ns run ios --no-hmr",
         "demo.react.ios.dev": "npm run build && cd ./demo-react && ns run ios --no-hmr --env.development",
+        "demo.setup": "node ./tools/setup-demos.js",
         "demo.svelte.android": "npm run build && cd ./demo-svelte && ns run android --no-hmr",
         "demo.svelte.android.dev": "npm run build && cd ./demo-svelte && ns run android --no-hmr --env.development",
         "demo.svelte.ios": "npm run build && cd ./demo-svelte && ns run ios --no-hmr",
@@ -35,6 +35,8 @@
         "doc": "typedoc --out docs --tsconfig tsconfig.doc.json --includeDeclarations --excludeExternals --mode file --ignoreCompilerErrors --excludeNotExported --excludePrivate --theme minimal",
         "publish": "npm run setup && npm run build && npm run build.angular && lerna publish --create-release=github",
         "setup": "ts-patch install",
+        "sync": "node ./tools/sync.js -w && npx sort-package-json",
+        "sync.test": "node ./tools/sync.js",
         "tsc": "cpy '**/*.d.ts' '../plugin' --parents --cwd=src && tsc -skipLibCheck -d"
     },
     "dependencies": {
