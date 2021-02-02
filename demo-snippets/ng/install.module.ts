@@ -13,6 +13,8 @@ import { DevelopmentComponent } from './development/development.component';
 })
 export class InstallModule {}
 
+export function install() { }
+
 export const demos = [
     { name: 'Demo 1', path: 'demo1', component: Demo1Component },
     { name: 'Demo 2', path: 'demo2', component: Demo2Component },
