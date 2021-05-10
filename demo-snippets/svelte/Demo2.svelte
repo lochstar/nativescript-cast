@@ -1,4 +1,4 @@
-<style type="text/scss">
+<style>
 </style>
 
 <page>

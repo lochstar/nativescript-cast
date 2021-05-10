@@ -6,6 +6,7 @@ import { Demo1Component } from './demo1/demo1.component';
 import { Demo2Component } from './demo2/demo2.component';
 import { DevelopmentComponent } from './development/development.component';
 
+export const COMPONENTS = [Demo1Component, Demo2Component, DevelopmentComponent];
 @NgModule({
     imports: [NativeScriptVersionNumberModule],
     exports: [NativeScriptVersionNumberModule],
@@ -21,4 +22,3 @@ export const demos = [
     { name: 'Development', path: 'development', component: DevelopmentComponent }
 ];
 
-export const COMPONENTS = [Demo1Component, Demo2Component, DevelopmentComponent];
