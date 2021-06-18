@@ -1,4 +1,3 @@
-// import { ad } from 'tns-core-modules/utils/utils';
 import { Utils } from '@nativescript/core';
 
 @NativeClass()
@@ -33,3 +32,5 @@ class CastOptionsProvider extends java.lang.Object {
     return null;
   }
 }
+
+export { CastOptionsProvider };
