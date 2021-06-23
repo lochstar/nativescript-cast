@@ -1,9 +1,8 @@
 # nativescript-cast
 
-[![NPM version][npm-image]][npm-url]
-
-[npm-image]:https://badge.fury.io/js/%40codelab%2Fnativescript-cast.svg
-[npm-url]:https://npmjs.org/package/@codelab/nativescript-cast
+[![npm downloads](https://img.shields.io/npm/dm/@codelab/nativescript-cast.svg)](https://www.npmjs.com/package/@codelab/nativescript-cast)
+[![npm downloads](https://img.shields.io/npm/dt/@codelab/nativescript-cast.svg)](https://www.npmjs.com/package/@codelab/nativescript-cast)
+[![npm](https://img.shields.io/npm/v/@codelab/nativescript-cast.svg)](https://www.npmjs.com/package/@codelab/nativescript-cast)
 
 Chromecast support for NativeScript 7+.
 
@@ -59,7 +58,9 @@ The Google Cast design checklist requires a sender app to provide an expanded co
 
 If you are using Webpack, you will need to include `'@codelab/nativescript-cast/cast-options-provider'` in `appComponents`.
 
-To do this, create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
+To do this, create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration).
+
+For NativeScript 8+ the plugin should add this file automatically for you. See [nativescript.webpack.ts](nativescript.webpack.ts) for the configuration.
 
 ---
 
@@ -370,6 +371,16 @@ See [cast.types](src/cast.types.ts) for method options.
 - `queueJumpToItem(itemID: number, playPosition?: number, customData? any): void`
 
   Jump to queue item by ID.
+
+## Contribute
+
+We love PRs! Check out the [contributing guidelines](CONTRIBUTING.md). If you want to contribute, but you are not sure where to start - look for issues labeled help wanted.
+
+See (NativeScript Community Plugin Seed)[https://github.com/nativescript-community/plugin-seed] for a full explanation of how this project is set up.
+
+```
+git clone https://github.com/lochstar/nativescript-cast.git --recursive
+```
 
 ## TODO
 

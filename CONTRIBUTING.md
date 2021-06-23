@@ -18,16 +18,16 @@ Before you begin make sure there is an issue for the bug or feature you will be 
 
 Following these steps is the best way to get your code included in the project:
 
-1. Fork and clone the @nativescript-community/my-plugin repo:
+1. Fork and clone the nativescript-cast repo:
 
 ```bash
-git clone https://github.com/<your-git-username>/@nativescript-community/my-plugin.git
+git clone https://github.com/<your-git-username>/nativescript-cast.git
 
 # Navigate to the newly cloned directory
-cd @nativescript-community/my-plugin
+cd nativescript-cast
 
 # Add an "upstream" remote pointing to the original repo.
-git remote add upstream https://github.com/nativescript-community/my-plugin.git
+git remote add upstream https://github.com/lochstar/nativescript-cast.git
 ```
 
 2. Create a branch for your PR
