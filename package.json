@@ -1,16 +1,32 @@
 {
-    "name": "@nativescript-community/plugin-seed",
+    "name": "@codelab/nativescript-cast",
     "version": "1.0.0",
-    "homepage": "https://github.com/nativescript-community/plugin-seed#readme",
-    "bugs": {
-        "url": "https://github.com/nativescript-community/plugin-seed/issues"
+    "description": "NativeScript Chromecast Plugin.",
+    "homepage": "https://github.com/lochstar/nativescript-cast#readme",
+    "main": "src/cast",
+    "typings": "src/cast.d.ts",
+    "nativescript": {
+        "platforms": {
+            "android": "8.0.0",
+            "ios": "8.0.0"
+        }
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/nativescript-community/plugin-seed.git"
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS",
+        "Chromecast",
+        "Cast"
+    ],
+    "author": {
+        "name": "Lochlan McBride",
+        "email": "lochlan@gmail.com"
+    },
+    "bugs": {
+        "url": "https://github.com/lochstar/nativescript-cast/issues"
     },
     "license": "ISC",
-    "author": "",
     "scripts": {
         "build": "rm -f .tsbuildinfo && npm run tsc",
         "build.angular": "ng-packagr -p src/angular/package.json -c src/angular/tsconfig.json",
@@ -31,7 +47,7 @@
         "start": "./node_modules/.bin/ntl -A -s 15 -o",
         "sync": "node ./tools/sync.js -w && npx sort-package-json",
         "sync.test": "node ./tools/sync.js",
-        "tsc": "cpy '**/*.d.ts' '../plugin' --parents --cwd=src && tsc -skipLibCheck -d",
+        "tsc": "cpy '**/*.d.ts' 'platforms/**' '../plugin' --parents --cwd=src && tsc -skipLibCheck -d",
         "watch": "npm run tsc -- -w"
     },
     "devDependencies": {

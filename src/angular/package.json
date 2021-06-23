@@ -1,5 +1,5 @@
 {
-    "name": "@nativescript-community/plugin-seed-angular",
+    "name": "@codelab/nativescript-cast-angular",
     "main": "index.js",
     "ngPackage": {
         "dest": "../../plugin/angular",
@@ -8,10 +8,10 @@
             "umdModuleIds": {
                 "@nativescript/core": "ns-core",
                 "@nativescript/angular": "ns-angular",
-                "@nativescript-community/plugin-seed": "ns-plugin-seed"
+                "@codelab/nativescript-cast": "ns-cast"
             }
         },
-        "whitelistedNonPeerDependencies": [
+        "allowedNonPeerDependencies": [
             "."
         ]
     }

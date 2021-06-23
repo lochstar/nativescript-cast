@@ -1,7 +1,7 @@
-import { VersionNumber } from '../plugin-seed';
+import { CastButton } from '../cast';
 
 export default {
     install(Vue) {
-        Vue.registerElement('VersionNumber', () => VersionNumber, {});
+        Vue.registerElement('CastButton', () => CastButton, {});
     }
 };

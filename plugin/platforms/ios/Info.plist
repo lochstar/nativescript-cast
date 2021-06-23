@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--Describe the permissions, features or other configurations required by your plugin for iOS.-->
+	<key>NSMicrophoneUsageDescription</key>
+    <string>This app uses uses microphone access to listen for ultrasonic tokens
+when pairing with nearby Cast devices</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>This app uses Bluetooth to discover nearby Cast devices.</string>
+</dict>
+</plist>

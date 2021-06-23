@@ -1,15 +1,15 @@
 import { Directive, NO_ERRORS_SCHEMA, NgModule } from '@angular/core';
 import { registerElement } from '@nativescript/angular';
-import { VersionNumber } from '@nativescript-community/plugin-seed';
+import { CastButton } from '@codelab/nativescript-cast';
 
-@Directive({ selector: 'VersionNumber' })
-export class VersionNumberDirective {}
+@Directive({ selector: 'CastButton' })
+export class CastButtonDirective {}
 
 @NgModule({
-    declarations: [VersionNumberDirective],
-    exports: [VersionNumberDirective],
+    declarations: [CastButtonDirective],
+    exports: [CastButtonDirective],
     schemas: [NO_ERRORS_SCHEMA]
 })
-export class NativeScriptVersionNumberModule {}
+export class NativeScriptCastButtonModule {}
 
-registerElement('VersionNumber', () => VersionNumber);
+registerElement('CastButton', () => CastButton);

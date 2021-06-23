@@ -1,4 +1,4 @@
-import { register } from '@nativescript-community/plugin-seed/react';
+import { register } from '@codelab/nativescript-cast/react';
 
 import { Demo1 } from './Demo1';
 import { Demo2 } from './Demo2';

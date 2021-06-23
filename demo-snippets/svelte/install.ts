@@ -1,11 +1,11 @@
-import VersionNumber from '@nativescript-community/plugin-seed/svelte';
+import CastButton from '@codelab/nativescript-cast/svelte';
 
 import Demo1 from './Demo1.svelte';
 import Demo2 from './Demo2.svelte';
 import Development from './Development.svelte';
 
 export function install() {
-    VersionNumber.register();
+    CastButton.register();
 }
 
 export const demos = [
