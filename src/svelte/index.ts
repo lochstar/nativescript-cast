@@ -1,12 +1,12 @@
 import { NativeViewElementNode, registerElement } from 'svelte-native/dom';
-import { VersionNumber } from '../plugin-seed';
+import { CastButton } from '../cast';
 
-export default class VersionNumberElement extends NativeViewElementNode<VersionNumber> {
+export default class CastButtonElement extends NativeViewElementNode<CastButton> {
     constructor() {
-        super('versionNumber', VersionNumber);
+        super('castButton', CastButton);
     }
 
     static register() {
-        registerElement('versionNumber', () => new VersionNumberElement());
+        registerElement('castButton', () => new CastButtonElement());
     }
 }

@@ -2,6 +2,6 @@
     "name": "@nativescript-community/template-snippet",
     "version": "0.0.1",
     "dependencies": {
-        "@nativescript-community/plugin-seed": "../plugin"
+        "@codelab/nativescript-cast": "../plugin"
     }
 }

@@ -1,16 +1,18 @@
 import { NativeScriptProps, ViewAttributes, registerElement } from 'react-nativescript';
-import { VersionNumber as NativeScriptVersionNumber } from '../plugin-seed';
+import { CastButton as NativeScriptCastButton } from '../cast';
 
 export function register() {
-    registerElement('versionNumber', () => require('../').VersionNumber);
+    registerElement('castButton', () => require('../cast').CastButton);
 }
 
-interface VersionNumberAttributes extends ViewAttributes {}
+interface CastButtonAttributes extends ViewAttributes {
+    onCast?: (eventName: string, data?: any) => any;
+}
 
 declare global {
     namespace JSX {
         interface IntrinsicElements {
-            versionNumber: NativeScriptProps<VersionNumberAttributes, NativeScriptVersionNumber>;
+            castButton: NativeScriptProps<CastButtonAttributes, NativeScriptCastButton>;
         }
     }
 }
