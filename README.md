@@ -1,116 +1,382 @@
-# NativeScript Community Plugin Seed
+# nativescript-cast
 
-This is a repo for the NativeScript Community plugin seed. Its goal is to standardize and streamline the plugin development of community plugins. This is an alternative to NativeScript's monorepo plugin seed. 
+[![NPM version][npm-image]][npm-url]
 
-This plugin seed contains demos (Angular, Vue, Svelte, and React), documentation generation, and release management w/ Lerna.
+[npm-image]:https://badge.fury.io/js/%40codelab%2Fnativescript-cast.svg
+[npm-url]:https://npmjs.org/package/@codelab/nativescript-cast
 
-You must clone this repo recursively to download the submodules as well.
-```
-git clone https://github.com/nativescript-community/plugin-seed.git --recursive
-```
+Chromecast support for NativeScript 7+.
 
-| <img src="images/plugin-seed-diagram.png" /> |
-| --- |
-| Plugin Seed Project Structure |
-## Table of Contents
-1. [Development](#development)
-2. [Demos](#demos)
-3. [Tools](#tools)
-4. [Docs](#docs)
-5. [Community Website](#community-website)
-6. [README Template](#readme-template)
-7. [Contribution Guide](#contribution-guide)
+## Requirements
 
-## Development
+You must have a valid Chromecast Application ID. You can obtain one at the [Google Cast Developer Console](https://cast.google.com/publish/).
 
-To build the plugin's source code and run demos use the following steps:
+## Installation
 
-## Install Dependencies:
+Note: Since NativeScript 7, the package name is now `@codelab/nativescript-cast`.
+
 ```bash
-npm i # or 'yarn install' or 'pnpm install'
+# NativeScript 7
+ns plugin add @codelab/nativescript-cast
+
+# Nativescript 6
+tns plugin add nativescript-cast@0.3.0
+
+# NativeScript 5
+tns plugin add nativescript-cast@0.1.2
 ```
 
-### Interactive Menu:
-To start the interactive menu, run `npm start` (or `yarn start` or `pnpm start`). This will list all of the commonly used scripts.
+## Usage
 
-<img src="images/interactive-menu.png" />
+### Android
 
-### Building Plugin:
-```bash
-npm run build
+Set your Application ID.
 
-# or for Angular
-npm run build.angular
+```xml
+<!-- App_Resources/Android/src/main/res/values/strings.xml -->
+<string name="app_id">4F8B3483</string>
 ```
 
-### Running Demos:
-```bash
-npm run demo.[ng|react|svelte|vue].[ios|android]
+The Google Cast design checklist requires a sender app to provide an expanded controller. Include `ExpandedControllerActivity` in your `AndroidManifest.xml`.
 
-# Example:
-npm run demo.svelte.ios
+```xml
+<!-- App_Resources/Android/src/main/res/AndroidManifest.xml -->
+<application>
+    <activity
+    android:name="com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity"
+    android:label="@string/app_name"
+    android:launchMode="singleTask"
+    android:screenOrientation="portrait">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+    </intent-filter>
+    <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value="com.tns.NativeScriptActivity"/>
+    </activity>
+</application>
 ```
 
-### Automatic Redirect
-In some cases, you might want to be redirected to a specific demo every time the app starts. This can be done by adding a `--env.redirect=[demo_name]` to the run demo command.
+If you are using Webpack, you will need to include `'@codelab/nativescript-cast/cast-options-provider'` in `appComponents`.
 
-The `[demo_name]` comes from whatever the demo's `path` is that is defined in the framework's `install.ts` script.
+To do this, create a [custom webpack configuration](https://docs.nativescript.org/tooling/custom-webpack-configuration). See the [demo](demo/webpack.config.custom.js) for an example.
 
-For example, the Vue demo snippet's `install.ts` contains the following demos:
+---
+
+### iOS
+
+Set your Application ID.
+
+```xml
+<!-- App_Resources/iOS/Info.plist -->
+<key>AppID</key>
+<string>4F8B3483</string>
+```
+
+You'll need to set up a delegate to initialise the `GCKCastContext` with your `AppID`. See the [demo](demo/app/app.ts) for an example.
+
 ```ts
-export const demos = [
-    { name: 'Demo 1', path: "demo1", component: Demo1 },
-    { name: 'Demo 2', path: "demo2", component: Demo2 },
-    { name: 'Development', path: "development", component: Development }
-];
+import { Application } from '@nativescript/core';
+
+if (global.isIOS) {
+  @NativeClass()
+  class MyDelegate extends UIResponder implements UIApplicationDelegate {
+    public static ObjCProtocols = [UIApplicationDelegate, GCKLoggerDelegate];
+
+    applicationDidFinishLaunchingWithOptions(application: UIApplication, launchOptions: NSDictionary<string, any>): boolean {
+      const appId = NSBundle.mainBundle.objectForInfoDictionaryKey('AppID');
+      const castOptions = GCKCastOptions.alloc().initWithReceiverApplicationID(appId);
+      GCKCastContext.setSharedInstanceWithOptions(castOptions);
+
+      // Optional logger
+      const delegate: MyLoggerDelegateImpl = MyLoggerDelegateImpl.new();
+      GCKLogger.sharedInstance().delegate = delegate;
+
+      return true;
+    }
+  }
+
+  Application.ios.delegate = MyDelegate;
+}
 ```
-This means you can set `[demo_name]` to `demo1`, `demo2`, or `development`.
-## Demos
 
-### Structure
+#### ⚠️ iOS 12+ & Xcode 10 ⚠️
 
+If developing using Xcode 10 and targeting iOS devices running iOS 12 or higher, the "Access WiFi Information" capability is required in order to discover and connect to Cast devices. The plugin comes with an `app.entitlements` which will add this capability to the workspace, however, you must also `Add the Access WiFi information feature to your App ID` .
 
-As stated aboved, there is a demo for each framework: Angular, Vue, Svelte, and React. Each demo flavor is a Git submodule and the actual demo code is not meant to edited directly, but rather there are demo snippets for each flavor that will be linked to the demos. This allows for significantly simplier maintenance for developers.
+See [iOS sender setup](https://developers.google.com/cast/docs/ios_sender/) for more info.
 
-<img src="https://i.imgur.com/anV3Pxq.png" height="500" />
+#### ⚠️ iOS 13+ & Guest Mode ⚠️
 
-The demo template has a menu system that allows for the ability to show off multiple examples of the plugin in an organized way. 
+iOS 13+ requires Bluetooth and Microphone permissions in order to use Guest Mode with Chromecast. This plugin sets these permissions in the `Info.plist` file.
 
-There is also a dedicated development demo which is a workspace for the development of the plugin. Sometimes in development there are special cases and obscure things you need to test, but don't need to be shown in the "show-off" demos. 
+See [iOS Guest Mode](https://developers.google.com/cast/docs/guest_mode#ios_guest_mode) for more info.
 
-The non-development demos should be for new users testing out the plugin to see the capabilities and understand how it works. These should *ideally* be the same across all demos.
+#### ⚠️ iOS 14+ ⚠️
 
-### Snippets
+iOS 14+ has some permission changes. See [iOS Permission Changes](https://developers.google.com/cast/docs/ios_sender/ios_permissions_changes#ios_14) for more info.
 
-<img src="images/demo-snippets-structure.png" />
+Be sure to set `NSBonjourServices` with your `AppID` as explained in the documentation above. See the [demo](demo/app/App_Resources/iOS/Info.plist#L25-32) for an example.
 
-The `demo-snippets` directory contains the specific demo code for the plugin. Each component is essentially another demo page. Each framework directory has a `install.ts` file which will allow you at add any specific code that needs to be ran in the top-level of the demo. This is also where you register what components you want to be added to the demo.
+---
 
-There is also a `package.json` inside the `demo-snippets` directory. This allows you to add (or modify) any dependencies you need to be added to the demos.
+### Place `CastButton` in to your view.
 
-## Tools
+#### NativeScript
 
-There is a linked submodule called `tools`. This contains utility scripts that can be ran on the plugin. 
+```xml
+<Page
+  xmlns="http://schemas.nativescript.org/tns.xsd"
+  loaded="pageLoaded"
+  class="page"
+  xmlns:cast="@codelab/nativescript-cast"
+>
+  <ActionBar title="App Name">
+    <ActionItem ios.position="right">
+      <StackLayout>
+        <cast:CastButton cast="{{ handleCastEvent }}" />
+      </StackLayout>
+    </ActionItem>
+  </ActionBar>
+  <!-- ... -->
+</Page>
+```
 
-### Setup Plugins
-`setup.js` is used to link the plugin's demo snippets to the actual demo code. This script is ran from each demo's `preinstall` script in their `package.json`.
+#### Angular
 
-### Sync
-`sync.js` is used to update the `dependencies`, `devDependencies`, and `scripts` portions of the `package.json` in order to match the "template" `package.json` (`./tools/package.json`). This is used to quickly and easily update plugins and keep a common set of dependencies. That can also be ran with `npm run sync` (or `npm run sync.test` for a dry-run).
+Add `NativescriptCastModule` in your app's module `imports`, typically in `app.module.ts`.
 
+```ts
+import { NativescriptCastModule } from '"@codelab/nativescript-cast/angular';
 
-## Community Website
+@NgModule({
+  imports: [
+    NativescriptCastModule
+  ]
+});
+```
 
-Publishing your plugin on the [NativeScript Community Website](https://nativescript-community.github.io/) is as simple as publishing under the `@nativescript-community` scope and modifying your `plugin/package.json` file. 
+Include in your template.
 
-See the following image to understand what fields in the `package.json` correspond to the parts of the website.
+```html
+<ActionBar [title]="App Name" >
+  <ActionItem ios.position="right">
+    <StackLayout>
+      <CastButton (cast)="handleCastEvent($event)"></CastButton>
+    </StackLayout>
+  </ActionItem>
+</ActionBar>
+```
 
-<img src="https://i.imgur.com/b2VhI3y.png" />
+#### Vue
 
-## README Template
+Register the element in your app's main entry point, typically `main.ts`.
 
-A boilerplate README for youl plugin is located [here](README_TEMPLATE.md). Rename this file to just `README.md` to make it your actual readme and update it with your plugin's content.
+```js
+Vue.registerElement('CastButton', () => require('@codelab/ativescript-cast').CastButton);
+```
 
-## Contribution Guide
+Include in your template.
 
-A basic contribution guide for your plugin is located [here](CONTRIBUTING.md).
+```xml
+<ActionBar title="App Name">
+  <ActionItem ios.position="right">
+    <StackLayout>
+      <CastButton @cast="handleCastEvent" />
+    </StackLayout>
+  </ActionItem>
+</ActionBar>
+
+```
+
+#### Event handler
+
+Set up an event handler for all cast [events](#events). The cast instance is available on `args.object`.
+
+```ts
+handleCastEvent(args): void {
+  console.log('cast: ' + args.object);
+  console.log('eventName: ' + args.data.eventName);
+}
+```
+
+#### Casting
+
+When the Cast receiver is ready, you can load your media.
+
+```ts
+const mediaInfo = {
+  contentId: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
+  contentType: 'video/mp4',
+  streamType: 'BUFFERED',
+  duration: undefined,
+  metadata: {
+    metadataType: 'MOVIE',
+    title: 'Tears of Steel',
+    subtitle: 'By Blender Foundation',
+    description: 'Sintel is an independently produced short film, initiated by the Blender Foundation.',
+    images: [
+      {
+        url: 'http://storage.googleapis.com/gtv-videos-bucket/sample/images_480x270/TearsOfSteel.jpg',
+        width: 480,
+        height: 270,
+      }
+    ]
+  },
+  textTracks: [
+    {
+      src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-en.vtt',
+      contentType: 'text/vtt',
+      name: 'English',
+      language: 'en'
+    },
+    {
+      src: 'https://amssamples.streaming.mediaservices.windows.net/bc57e088-27ec-44e0-ac20-a85ccbcd50da/TOS-es.vtt',
+      contentType: 'text/vtt',
+      name: 'Spanish',
+      language: 'es'
+    }
+  ],
+  textTrackStyle: {
+    foregroundColor: '#0000cc',
+    backgroundColor: '#00cc00',
+  },
+  customData: {
+    anything: 'you like'
+  }
+};
+
+cast.loadMedia(mediaInfo);
+```
+
+## API
+
+### <a name="events"></a>Events
+
+Event names follow the Android naming structure.
+iOS events are passed from `GCKSessionManagerListener`, `GCKRemoteMediaClientListener` and `GCKMediaQueueDelegate`.
+Android events are passed from `SessionManagerListener`, `MediaRouter.Callback` and `MediaQueue.Callback`.
+
+| NativeScript             | Android                | iOS                                          |
+| ------------------------ | ---------------------- | -------------------------------------------- |
+| onSessionEnded           | onSessionEnded         | didEndSession                                |
+| onSessionEnding          | onSessionEnding        | willEndSession                               |
+| onSessionResumed         | onSessionResumed       | didResumeSession                             |
+| onSessionResuming        | onSessionResuming      | willResumeSession                            |
+| onSessionStarted         | onSessionStarted       | didStartSession                              |
+| onSessionStartFailed     | onSessionStartFailed   | didFailToStartSession                        |
+| onSessionStarting        | onSessionStarting      | willStartSession                             |
+| onSessionSuspended       | onSessionSuspended     | didSuspendSession                            |
+| onDeviceVolumeChanged    | onRouteVolumeChanged   | didReceiveDeviceVolume                       |
+| onDeviceChanged          | onRouteChanged         | didUpdateDevice                              |
+| onMediaStatusChanged     | onStatusUpdated        | remoteMediaClientDidUpdateMediaStatus        |
+| mediaQueueWillChange     | mediaQueueWillChange   | mediaQueueWillChange                         |
+| itemsReloaded            | itemsReloaded          | mediaQueueDidReloadItems                     |
+| itemsInsertedInRange     | itemsInsertedInRange   | didInsertItemsInRange                        |
+| itemsUpdatedAtIndexes    | itemsUpdatedAtIndexes  | didUpdateItemsAtIndexes                      |
+| itemsRemovedAtIndexes    | itemsRemovedAtIndexes  | didRemoveItemsAtIndexes                      |
+| mediaQueueChanged        | mediaQueueChanged      | mediaQueueDidChange                          |
+
+All unlisted events are ignored. See related documentation for futher details.
+
+#### Android
+
+  - [SessionManagerListener](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/SessionManagerListener)
+  - [MediaRouter.Callback](https://developer.android.com/reference/androidx/mediarouter/media/MediaRouter.Callback?hl=id)
+  - [MediaQueue.Callback](https://developers.google.com/android/reference/com/google/android/gms/cast/framework/media/MediaQueue.Callback)
+
+### iOS
+
+  - [GCKSessionManagerListener](https://developers.google.com/cast/v3/reference/ios/protocol_g_c_k_session_manager_listener-p)
+  - [GCKRemoteMediaClientListener](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_remote_media_client_listener-p)
+  - [GCKMediaQueueDelegate](https://developers.google.com/cast/docs/reference/ios/protocol_g_c_k_media_queue_delegate-p)
+
+### Methods
+
+See [cast.types](src/cast.types.ts) for method options.
+
+- `loadMedia(media: CastMediaInfo, options?: LoadMediaOptions): void`
+
+  Loads the specified media.
+
+- `loadQueue(options: LoadQueueOptions): void`
+
+  Loads a queue of media items.
+
+- `playMedia(customData? any): void`
+
+  Plays the loaded media.
+
+- `pauseMedia(customData? any): void`
+
+  Pauses the loaded media.
+
+- `seekMedia(position: number, resumeState?: ResumeState , customData?: any): void`
+
+  Seeks the loaded media to position (seconds).
+
+- `stopMedia(customData? any): void`
+
+  Stops the loaded media.
+
+- `showController(): void`
+
+  Show the expanded controller.
+
+- `showCastInstructions(title: string, singleTime: boolean): void`
+
+  Shows the Cast instructions overlay. `title` and `singleTime` arguments are Android-only.
+
+- `showCastDialog(): void`
+
+  Show the Cast destination dialog.
+
+- `getMediaInfo(): CastMediaInfo`
+
+  Returns the loaded media info.
+
+- `setActiveTrackIds([trackIds]): void`
+
+  Pass an array of IDs defined in `textTracks` to show subtitles. Pass an empty array to hide.
+
+- `queueNextItem(): void`
+
+  Play the next item in the queue.
+
+- `queuePreviousItem(): void`
+
+  Play the previous item in the queue.
+
+- `queueSetRepeatMode(repeatMode: RepeatMode): void`
+
+  Set the queue repeat mode.
+
+- `queueInsertItem(options: QueueInsertItemOptions): void`
+
+  Insert a single queue item.
+
+- `queueInsertItems(options: QueueInsertItemsOptions): void`
+
+  Insert multiple queue items.
+
+- `queueRemoveItems(itemIDs: number[], customData?: any): void`
+
+  Remove queue items by ID.
+
+- `queueReorderItems(itemIDs: number[], beforeItemID: number, customData?: any): void`
+
+  Reorder queue items by ID.
+
+- `queueJumpToItem(itemID: number, playPosition?: number, customData? any): void`
+
+  Jump to queue item by ID.
+
+## TODO
+
+- More queue-related functions.
+- Complete [Cast Reference app](https://developers.google.com/cast/docs/downloads) that adheres to the [Google Cast Design Checklist](https://developers.google.com/cast/docs/design_checklist/sender).
+
+## Acknowledgements
+
+- [CodeLab](https://www.codelab.com.au/) - Current employer. Developed this plugin whilst learning NativeScript.
+- [loop.tv](https://loop.tv/) - Financed the development of Queue Support.

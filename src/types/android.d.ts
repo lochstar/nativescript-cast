@@ -1,4 +1,4 @@
-/// <reference path="android-declarations.d.ts"/>
+/// <reference path="types/android-declarations.d.ts"/>
 
 declare module androidx {
 	export module appcompat {

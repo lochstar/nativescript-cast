@@ -22,8 +22,12 @@ yarn-error.log*
 .idea
 .cloud
 .project
+.vscode
+.history
 tmp/
 package-lock.json
+LOG.md
+NOTES.md
 
 !.eslintrc.js
 !.prettierrc.js
