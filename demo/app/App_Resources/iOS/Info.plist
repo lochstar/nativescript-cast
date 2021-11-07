@@ -30,6 +30,8 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>${PRODUCT_NAME} uses the local network to discover Cast-enabled devices on your WiFi
 	network.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>${PRODUCT_NAME} uses Bluetooth to discover Cast-enabled devices around you
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
