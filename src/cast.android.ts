@@ -811,8 +811,6 @@ export class CastButton extends CastButtonBase {
           break;
       }
 
-      const queueData = mediaStatus.getQueueData();
-
       status = {
         activeTrackIds,
         playerState,
@@ -827,7 +825,14 @@ export class CastButton extends CastButtonBase {
         loadingItemID: mediaStatus.getLoadingItemId(),
         preloadedItemID: mediaStatus.getPreloadedItemId(),
 
-        queueData: {
+        queueData: null,
+
+        queueItemCount: mediaStatus.getQueueItemCount(),
+      };
+
+      const queueData = mediaStatus.getQueueData();
+      if (queueData) {
+        status.queueData = {
           name: queueData.getName(),
           queueID: queueData.getQueueId(),
           queueType: queueTypeEnumToString(queueData.getQueueType()),
@@ -836,9 +841,8 @@ export class CastButton extends CastButtonBase {
           // containerMetadata: getContainerMetadata(),
           startIndex: queueData.getStartIndex(),
           startTime: queueData.getStartTime(),
-        },
-        queueItemCount: mediaStatus.getQueueItemCount(),
-      };
+        };
+      }
     }
     this.sendEvent(CastButtonBase.castEvent, {
       eventName: CastEvent.onMediaStatusChanged,
