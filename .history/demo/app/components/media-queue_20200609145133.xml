@@ -1,0 +1,16 @@
+<StackLayout class="p-20" loaded="onLoaded">
+  <Label text="Queue" />
+
+  <Button
+    text="&#xf100; Prev"
+    tap="{{ handlePrevTap }}"
+    class="btn btn-primary fas"
+    isEnabled="{{ canCast }}"
+  />
+  <Button
+    text="&#xf101; Next"
+    tap="{{ handleNextTap }}"
+    class="btn btn-primary fas"
+    isEnabled="{{ canCast }}"
+  />
+</StackLayout>

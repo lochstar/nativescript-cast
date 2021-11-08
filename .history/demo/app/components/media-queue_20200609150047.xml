@@ -1,0 +1,31 @@
+<StackLayout class="p-20" loaded="onLoaded" xmlns:lv="nativescript-ui-listview">
+  <Label text="Queue" />
+
+  <FlexboxLayout
+    orientation="horizontal"
+    justifyContent="space-between"
+    class="controls"
+  >
+    <Button
+      text="&#xf100; Prev"
+      tap="{{ handlePrevTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+    <Button
+      text="&#xf101; Next"
+      tap="{{ handleNextTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+  </FlexboxLayout>
+
+  <lv:RadListView items="{{ mediaItems }}" >
+    <lv:RadListView.itemTemplate>
+      <StackLayout orientation="vertical">
+        <Label fontSize="20" text="{{ metadata.title }}"/>
+        <Label fontSize="14" text="{{ metadata.description }}"/>
+      </StackLayout>
+    </lv:RadListView.itemTemplate>
+  </lv:RadListView>
+</StackLayout>

@@ -1,0 +1,19 @@
+{
+	"name": "nativescript-cast-angular",
+	"ngPackage": {
+		"lib": {
+			"entryFile": "index.ts",
+			"umdModuleIds": {
+				"@nativescript/core": "ns-core",
+				"@nativescript/angular": "ns-angular",
+				"@codelab/nativescript-cast": "nativescript-cast"
+			}
+		},
+		"whitelistedNonPeerDependencies": [
+			"."
+		]
+	},
+	"depedencies": {
+		"@codelab/nativescript-cast": "../"
+	}
+}

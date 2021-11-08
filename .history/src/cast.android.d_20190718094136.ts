@@ -1,0 +1,34 @@
+import { CastButtonBase } from './cast.common';
+import { CastMediaInfo } from './cast.types';
+export declare class CastButton extends CastButtonBase {
+    nativeView: androidx.appcompat.app.MediaRouteButton;
+    CastDevice: com.google.android.gms.cast.CastDevice;
+    mCastContext: com.google.android.gms.cast.framework.CastContext;
+    mSessionManager: com.google.android.gms.cast.framework.SessionManager;
+    mSessionManagerListener: com.google.android.gms.cast.framework.SessionManagerListener<com.google.android.gms.cast.framework.Session>;
+    mRemoteMediaClientListener: com.google.android.gms.cast.framework.media.RemoteMediaClient.Listener;
+    mMediaRouter: androidx.appcompat.media.MediaRouter;
+    mMediaRouterCallback: androidx.appcompat.media.MediaRouter.Callback;
+    mMediaRouteSelector: androidx.appcompat.media.MediaRouteSelector;
+    constructor();
+    createNativeView(): Object;
+    getNativeView(): any;
+    initNativeView(): void;
+    disposeNativeView(): void;
+    addMediaRouterCallback(): void;
+    removeMediaRouterCallback(): void;
+    addSessionManagerListener(): void;
+    removeSessionManagerListener(): void;
+    getRemoteMediaClient(): com.google.android.gms.cast.framework.media.RemoteMediaClient;
+    loadMedia(mediaInfo: CastMediaInfo, autoplay?: boolean, position?: number): void;
+    showController(): void;
+    getMediaInfo(): CastMediaInfo;
+    pauseMedia(customData?: java.lang.Object.JSONObject): void;
+    playMedia(customData?: java.lang.Object.JSONObject): void;
+    seekMedia(position: number, resumeState?: number, customData?: java.lang.Object.JSONObject): void;
+    stopMedia(customData?: java.lang.Object.JSONObject): void;
+    setActiveTrackIds(trackIds: number[]): void;
+    setTintColor(color: string): void;
+    onMediaStatusUpdate(): void;
+    convertMediaInfo(mediaInfo: com.google.android.gms.cast.MediaInfo): CastMediaInfo;
+}

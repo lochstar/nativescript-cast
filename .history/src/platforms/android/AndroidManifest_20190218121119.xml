@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!--Describe the permissions, features or other configurations required by your plugin for Android.
+		To read more about android permissions go to https://developer.android.com/guide/topics/permissions/index.html -->
+	<!--EXAMPLE: uses-permission android:name="android.permission.INTERNET"/> -->
+
+  <application>
+		<meta-data
+			android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+			android:value="org.nativescript.cast.OptionsProvider"
+		/>
+
+		<activity
+			android:name=".expandedcontrols.ExpandedControlsActivity"
+			android:label="@string/app_name"
+			android:launchMode="singleTask"
+			android:theme="@style/Theme.CastVideosDark"
+			android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"/>
+			</intent-filter>
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.google.sample.cast.refplayer.VideoBrowserActivity"/>
+		</activity>
+  </application>
+
+</manifest>

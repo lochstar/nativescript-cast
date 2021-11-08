@@ -5,7 +5,7 @@ import Demo1 from './Demo1.vue';
 import Demo2 from './Demo2.vue';
 import Development from './Development.vue';
 
-export function install() {
+export function installPlugin() {
     Vue.use(CastButton);
 }
 

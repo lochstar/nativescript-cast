@@ -4,7 +4,7 @@ import { Demo1 } from './Demo1';
 import { Demo2 } from './Demo2';
 import { Development } from './Development';
 
-export function install() {
+export function installPlugin() {
     register();
 }
 

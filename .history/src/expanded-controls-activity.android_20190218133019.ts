@@ -1,0 +1,45 @@
+import {
+  setActivityCallbacks,
+  AndroidActivityCallbacks,
+} from 'tns-core-modules/ui/frame';
+
+@JavaProxy('org.nativescript.cast.ExpandedControlsActivity')
+class ExpandedControlsActivity extends com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity {
+  private _callbacks: AndroidActivityCallbacks;
+
+  public onCreate(savedInstanceState: android.os.Bundle): void {
+    if (!this._callbacks) {
+      setActivityCallbacks(this);
+    }
+    this._callbacks.onCreate(this, savedInstanceState, super.onCreate);
+  }
+
+  public onCreateOptionsMenu(menu): void {
+    console.log('onCreateOptionsMenu');
+  }
+
+  public onSaveInstanceState(outState: android.os.Bundle): void {
+    this._callbacks.onSaveInstanceState(this, outState, super.onSaveInstanceState);
+  }
+
+  public onStart(): void {
+    this._callbacks.onStart(this, super.onStart);
+  }
+
+  public onStop(): void {
+    this._callbacks.onStop(this, super.onStop);
+  }
+
+  public onDestroy(): void {
+    this._callbacks.onDestroy(this, super.onDestroy);
+  }
+
+  public onBackPressed(): void {
+    this._callbacks.onBackPressed(this, super.onBackPressed);
+  }
+
+  public onRequestPermissionsResult(requestCode: number, permissions: Array<string>, grantResults: Array<number>): void {
+    this._callbacks.onRequestPermissionsResult(this, requestCode, permissions, grantResults, undefined /*TODO: Enable if needed*/);
+  }
+
+}

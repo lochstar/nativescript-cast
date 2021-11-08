@@ -1,0 +1,266 @@
+<Page
+  xmlns="http://schemas.nativescript.org/tns.xsd"
+  loaded="pageLoaded"
+  class="page"
+  xmlns:cast="@codelab/nativescript-cast"
+>
+  <ActionBar title="Cast Demo">
+    <ActionItem
+      ios.position="right"
+    >
+      <StackLayout>
+        <cast:CastButton
+          id="cast"
+          color="#ffffff"
+          cast="{{ handleCastEvent }}"
+        />
+      </StackLayout>
+    </ActionItem>
+  </ActionBar>
+  <ScrollView>
+    <StackLayout>
+      <FlexboxLayout
+        orientation="horizontal"
+        justifyContent="space-between"
+        class="controls"
+      >
+        <Button
+          text="Load Media"
+          tap="{{ handleLoadTap }}"
+          class="-primary"
+          isEnabled="{{ canCast }}"
+        />
+        <Button
+          text="Load Queue"
+          tap="{{ handleLoadQueueTap }}"
+          class="-primary"
+          isEnabled="{{ canCast }}"
+        />
+        <StackLayout>
+          <Label text="Autoplay" />
+          <Switch
+            checked="{{ autoplay }}"
+            loaded="handleAutoplaySwitchLoaded"
+          />
+        </StackLayout>
+      </FlexboxLayout>
+
+      <FlexboxLayout
+        orientation="horizontal"
+        justifyContent="space-between"
+        class="controls ui"
+      >
+        <Button
+          text="Show Instructions"
+          tap="{{ handleShowInstructionsTap }}"
+          class="-primary"
+          isEnabled="{{ !!cast }}"
+        />
+        <Button
+          text="Show Dialog"
+          tap="{{ handleShowDialogTap }}"
+          class="-primary"
+          isEnabled="{{ !!cast }}"
+        />
+        <Button
+          text="Show Controller"
+          tap="{{ handleShowControllerTap }}"
+          class="-primary"
+          isEnabled="{{ canCast }}"
+        />
+      </FlexboxLayout>
+
+      <StackLayout
+        visibility="{{ canCast ? 'visible' : 'collapsed'}}"
+      >
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+
+          <Button
+            text="&#xf04c;"
+            tap="{{ handlePauseTap }}"
+            class="-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xf04e; +10"
+            tap="{{ handleSeekTap }}"
+            class="-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="&#xf04d;"
+            tap="{{ handleStopTap }}"
+            class="-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+
+          <Button
+            text="&#xf100; Prev"
+            tap="{{ handlePrevTap }}"
+            class="-primary fas"
+            isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+          />
+          <Button
+            text="&#xf101; Next"
+            tap="{{ handleNextTap }}"
+            class="-primary fas"
+            isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+          />
+        </FlexboxLayout>
+
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+          <Button
+            text="Set Volume"
+            tap="{{ handleSetVolumeTap }}"
+            class="-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="Toggle Mute"
+            tap="{{ handleMuteTap }}"
+            class="-primary fas"
+            isEnabled="{{ canCast }}"
+          />
+          <Button
+            text="Switch Text Track"
+            tap="{{ handleSwitchTextTrackTap }}"
+            class="-primary"
+            isEnabled="{{ mediaInfo.textTracks.length > 0 }}"
+          />
+        </FlexboxLayout>
+
+        <!--
+        <Label text="Queue" />
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+          <StackLayout>
+            <Label text="Item Index" />
+            <TextField
+              text="{{ itemIndex }}"
+              maxLength="99"
+              width="40"
+              textAlignment="center"
+              backgroundColor="#ddd"
+            />
+          </StackLayout>
+
+          <StackLayout>
+            <Label text="Before ID" />
+            <TextField
+              text="{{ beforeItemID }}"
+              keyboardType="number"
+              maxLength="99"
+              width="30"
+              textAlignment="center"
+              backgroundColor="#ddd"
+            />
+          </StackLayout>
+
+          <StackLayout>
+            <Label text="Item IDs" />
+            <TextField
+              text="{{ itemIDs }}"
+              maxLength="99"
+              width="100"
+              textAlignment="center"
+              backgroundColor="#ddd"
+            />
+          </StackLayout>
+        </FlexboxLayout>
+        -->
+        <!--
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+          <Button
+            text="Fetch Item"
+            tap="{{ handleFetchQueueItemTap }}"
+            class="-primary fas"
+            isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+          />
+          <Button
+            text="Insert Item"
+            tap="{{ handleInsertQueueItemTap }}"
+            class="-primary fas"
+            isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+          />
+
+          <Button
+            text="Insert Items"
+            tap="{{ handleInsertQueueItemsTap }}"
+            class="-primary fas"
+            isEnabled="{{ mediaStatus.queueItemCount > 0 }}"
+          />
+        </FlexboxLayout>
+        -->
+        <!--
+        <FlexboxLayout
+          orientation="horizontal"
+          justifyContent="space-between"
+          class="controls"
+        >
+          <Button
+            text="Remove Items"
+            tap="{{ handleRemoveItemsTap }}"
+            class="-primary fas"
+            isEnabled="{{ itemIDs.length > 0 }}"
+          />
+          <Button
+            text="Reorder Items"
+            tap="{{ handleReorderItemsTap }}"
+            class="-primary fas"
+            isEnabled="{{ itemIDs.length > 0 }}"
+          />
+          <Button
+            text="Jump to Item"
+            tap="{{ handleJumpToItem }}"
+            class="-primary fas"
+            isEnabled="{{ itemIDs.length > 0 }}"
+          />
+        </FlexboxLayout>
+        -->
+
+        <!--
+        <TextView
+          text="{{ queueItemIDs }}"
+          editable="false"
+          class="json"
+        />
+        <TextView
+          visibility="{{ queueItemsString.length > 0 ? 'visible' : 'collapsed'}}"
+          text="{{ queueItemsString }}"
+          editable="false"
+          class="json"
+        />
+        -->
+
+        <Label text="Media Status" />
+        <TextView
+          text="{{ mediaStatusString }}"
+          editable="false"
+          class="json"
+        />
+
+        <Label text="Media Info" />
+        <TextView
+          text="{{ mediaInfoString }}"
+          editable="false"
+          class="json"
+        />
+      </StackLayout>
+    </StackLayout>
+  </ScrollView>
+</Page>

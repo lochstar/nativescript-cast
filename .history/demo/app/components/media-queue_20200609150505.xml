@@ -1,0 +1,23 @@
+<StackLayout class="p-20" loaded="onLoaded" xmlns:lv="nativescript-ui-listview">
+  <Label text="Queue" />
+  <Label text="{{ mediaItems }}" />
+
+  <FlexboxLayout
+    orientation="horizontal"
+    justifyContent="space-between"
+    class="controls"
+  >
+    <Button
+      text="&#xf100; Prev"
+      tap="{{ handlePrevTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+    <Button
+      text="&#xf101; Next"
+      tap="{{ handleNextTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+  </FlexboxLayout>
+</StackLayout>

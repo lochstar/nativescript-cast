@@ -1,0 +1,77 @@
+{
+  "name": "@codelab/nativescript-cast",
+  "version": "0.4.1",
+  "description": "NativeScript Chromecast Plugin.",
+  "main": "cast",
+  "typings": "cast.d.ts",
+  "nativescript": {
+    "platforms": {
+      "android": "7.0.0",
+      "ios": "7.0.0"
+    }
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "build": "npm run tsc && npm run build.native && npm run build.angular",
+    "build.native": "node scripts/build-native.js",
+    "build.angular": "node ./angular/build.ts",
+    "postclone": "npm i && node scripts/postclone.js && cd ../demo && npm i && npx rimraf -- package-lock.json && cd ../src",
+    "test.android": "npm run tsc && npm run tslint && cd ../demo && ns build android && ns test android --justlaunch",
+    "test.ios": "npm run tsc && npm run tslint && cd ../demo && ns build ios && ns test ios --justlaunch",
+    "tslint": "cd .. && tslint \"**/*.ts\" --config tslint.json --exclude \"**/node_modules/**\"",
+    "plugin.tscwatch": "npm run tsc -- -w",
+    "demo.android": "npm run tsc && cd ../demo && ns run android --no-hmr",
+    "demo.ios": "npm run tsc && cd ../demo && ns run ios",
+    "demo.reset": "cd ../demo && npx rimraf -- hooks node_modules platforms package-lock.json",
+    "demo-angular.android": "npm run tsc && cd ../demo-angular && ns run android",
+    "demo-angular.ios": "npm run tsc && cd ../demo-angular && ns run ios",
+    "demo-angular.reset": "cd ../demo-angular && npx rimraf -- hooks node_modules platforms package-lock.json",
+    "plugin.prepare": "npm run build && cd ../demo && ns plugin remove @codelab/nativescript-cast && ns plugin add ../src && cd ../demo-angular && ns plugin remove @codelab/nativescript-cast && ns plugin add ../src",
+    "setup": "npm i && npm run ts-patch",
+    "ts-patch": "ts-patch install",
+    "ts-patch.check": "ts-patch check",
+    "clean": "npm run demo.reset && npm run demo-angular.reset && npx rimraf -- node_modules package-lock.json && npm run setup",
+    "ci.tslint": "npm i && tslint '**/*.ts' --config '../tslint.json' --exclude '**/node_modules/**'",
+    "prepack": "npm run build.native"
+  },
+  "keywords": [
+    "NativeScript",
+    "JavaScript",
+    "Android",
+    "iOS",
+    "Chromecast",
+    "Cast"
+  ],
+  "author": {
+    "name": "Lochlan McBride",
+    "email": "lochlan@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/lochstar/nativescript-cast/issues"
+  },
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/lochstar/nativescript-cast",
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "@angular/common": "^10.2.1",
+    "@angular/compiler": "^10.2.1",
+    "@angular/compiler-cli": "^10.2.1",
+    "@angular/core": "^10.2.1",
+    "@nativescript/angular": "^10.1.7",
+    "@nativescript/core": "^7.0.13",
+    "@nativescript/types": "^7.0.4",
+    "@nativescript/webpack": "^3.0.8",
+    "lodash": "^4.17.15",
+    "ng-packagr": "^10.1.2",
+    "prompt": "^1.0.0",
+    "rimraf": "^2.6.2",
+    "semver": "^5.6.0",
+    "ts-patch": "^1.3.0",
+    "tslint": "^5.20.0",
+    "typescript": "^4.0.5"
+  },
+  "bootstrapper": "nativescript-plugin-seed",
+  "dependencies": {
+    "ts-node": "^9.0.0"
+  }
+}

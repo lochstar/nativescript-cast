@@ -1,0 +1,7 @@
+ <menu xmlns:android="//schemas.android.com/apk/res/android"
+      xmlns:app="//schemas.android.com/apk/res-auto" >
+    <item
+    android:id="@+id/media_route_menu_item"
+    app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+    app:showAsAction="always" />
+ </menu>

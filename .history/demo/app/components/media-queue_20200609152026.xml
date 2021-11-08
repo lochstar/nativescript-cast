@@ -1,0 +1,29 @@
+<StackLayout class="p-20" loaded="onLoaded">
+  <Label text="Queue" />
+  <Label text="{{ selected }}" />
+
+  <FlexboxLayout
+    orientation="horizontal"
+    justifyContent="space-between"
+    class="controls"
+  >
+    <Button
+      text="&#xf100; Prev"
+      tap="{{ handlePrevTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+    <Button
+      text="&#xf101; Next"
+      tap="{{ handleNextTap }}"
+      class="btn btn-primary fas"
+      isEnabled="{{ canCast }}"
+    />
+  </FlexboxLayout>
+
+  <ListView id="listView1" items="{{ mediaItems }}">
+    <ListView.itemTemplate>
+      <Label id="label1" text="{{ title }}"  />
+    </ListView.itemTemplate>
+  </ListView>
+</StackLayout>

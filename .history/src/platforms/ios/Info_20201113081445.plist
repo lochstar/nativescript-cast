@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>This app uses uses microphone access to listen for ultrasonic tokens
+when pairing with nearby Cast devices</string>
+
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>This app uses Bluetooth to discover nearby Cast devices.</string>
+
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_googlecast._tcp</string>
+        <string>_ABCD1234._googlecast._tcp</string>
+    </array>
+</dict>
+</plist>

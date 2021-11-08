@@ -14,7 +14,7 @@ export const COMPONENTS = [Demo1Component, Demo2Component, DevelopmentComponent]
 })
 export class InstallModule {}
 
-export function install() { }
+export function installPlugin() { }
 
 export const demos = [
     { name: 'Demo 1', path: 'demo1', component: Demo1Component },
