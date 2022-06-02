@@ -55,7 +55,7 @@
     "@angular/common": "^10.2.1",
     "@angular/compiler": "^10.2.1",
     "@angular/compiler-cli": "^10.2.1",
-    "@angular/core": "^10.2.1",
+    "@angular/core": "^11.0.5",
     "@nativescript/angular": "^10.1.7",
     "@nativescript/core": "^7.0.13",
     "@nativescript/types": "^7.0.4",
