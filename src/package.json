@@ -59,7 +59,7 @@
     "@nativescript/angular": "^10.1.7",
     "@nativescript/core": "^7.0.13",
     "@nativescript/types": "^7.0.4",
-    "@nativescript/webpack": "^3.0.8",
+    "@nativescript/webpack": "^5.0.10",
     "lodash": "^4.17.15",
     "ng-packagr": "^10.1.2",
     "prompt": "^1.0.0",
